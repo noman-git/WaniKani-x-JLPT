@@ -1,0 +1,5231 @@
+[
+  {
+    "id": 783,
+    "expression": "ああ",
+    "reading": "ああ",
+    "meaning": "Ah!, Oh!",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 794,
+    "expression": "あそこ",
+    "reading": "あそこ",
+    "meaning": "there, over there, that place",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 798,
+    "expression": "あちら",
+    "reading": "あちら",
+    "meaning": "this way (polite)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 802,
+    "expression": "あっち",
+    "reading": "あっち",
+    "meaning": "over there",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 803,
+    "expression": "あなた",
+    "reading": "あなた",
+    "meaning": "you",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 805,
+    "expression": "あの",
+    "reading": "あの",
+    "meaning": "that over there; like that, that way; um...",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 814,
+    "expression": "あれ",
+    "reading": "あれ",
+    "meaning": "that one (over there)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 815,
+    "expression": "いい",
+    "reading": "いい",
+    "meaning": "good",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 816,
+    "expression": "いいえ",
+    "reading": "いいえ",
+    "meaning": "no, not at all",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 818,
+    "expression": "いかが",
+    "reading": "いかが",
+    "meaning": "how, in what way",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 820,
+    "expression": "いくつ",
+    "reading": "いくつ",
+    "meaning": "how many, how old",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 821,
+    "expression": "いくら",
+    "reading": "いくら",
+    "meaning": "how much, how many",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 828,
+    "expression": "いつ",
+    "reading": "いつ",
+    "meaning": "when",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 832,
+    "expression": "いつも",
+    "reading": "いつも",
+    "meaning": "always, usually, every time, never (with neg. verb)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 842,
+    "expression": "うち",
+    "reading": "うち",
+    "meaning": "home; house; my place",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 845,
+    "expression": "うるさい",
+    "reading": "うるさい",
+    "meaning": "noisy; annoying",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 850,
+    "expression": "ええ",
+    "reading": "ええ",
+    "meaning": "yes",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 854,
+    "expression": "お",
+    "reading": "お～",
+    "meaning": "honorable ~ (honorific)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 869,
+    "expression": "おじいさん",
+    "reading": "おじいさん",
+    "meaning": "grandfather, male senior citizen",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 878,
+    "expression": "おととし",
+    "reading": "おととし",
+    "meaning": "year before last",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 885,
+    "expression": "おばあさん",
+    "reading": "おばあさん",
+    "meaning": "grandmother, female senior-citizen",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 889,
+    "expression": "おまわりさん",
+    "reading": "おまわりさん",
+    "meaning": "policeman (friendly term)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 882,
+    "expression": "お兄さん",
+    "reading": "おにいさん",
+    "meaning": "(someone else's) older brother (formal)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 883,
+    "expression": "お姉さん",
+    "reading": "おねえさん",
+    "meaning": "older sister (formal)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 887,
+    "expression": "お弁当",
+    "reading": "おべんとう",
+    "meaning": "a boxed lunch",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 874,
+    "expression": "お手洗い",
+    "reading": "おてあらい",
+    "meaning": "toilet, restroom, bathroom (lit., a place to wash one's hands)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 860,
+    "expression": "お母さん",
+    "reading": "おかあさん",
+    "meaning": "mother (formal)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 875,
+    "expression": "お父さん",
+    "reading": "おとうさん",
+    "meaning": "father (formal)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 867,
+    "expression": "お皿",
+    "reading": "おさら",
+    "meaning": "plate, dish",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 880,
+    "expression": "お腹",
+    "reading": "おなか",
+    "meaning": "stomach",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 873,
+    "expression": "お茶",
+    "reading": "おちゃ",
+    "meaning": "(green) tea",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 861,
+    "expression": "お菓子",
+    "reading": "おかし",
+    "meaning": "confections, sweets, snack",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 866,
+    "expression": "お酒",
+    "reading": "おさけ",
+    "meaning": "sake; alcohol",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 862,
+    "expression": "お金",
+    "reading": "おかね",
+    "meaning": "money",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 886,
+    "expression": "お風呂",
+    "reading": "おふろ",
+    "meaning": "a bath",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 907,
+    "expression": "かかる",
+    "reading": "かかる",
+    "meaning": "it takes (amount of time, money) (v.i.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 912,
+    "expression": "かける",
+    "reading": "かける",
+    "meaning": "to dial/call (e.g., phone); to sit down",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 921,
+    "expression": "かばん",
+    "reading": "かばん",
+    "meaning": "bag, basket",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 923,
+    "expression": "かぶる",
+    "reading": "かぶる",
+    "meaning": "to wear, to put on (e.g., a hat on the head)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 910,
+    "expression": "か月",
+    "reading": "～かげつ",
+    "meaning": "(number of) months",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 928,
+    "expression": "がる",
+    "reading": "～がる",
+    "meaning": "feel",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 964,
+    "expression": "くらい",
+    "reading": "～くらい",
+    "meaning": "approximate (quantity)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 985,
+    "expression": "ここ",
+    "reading": "ここ",
+    "meaning": "here, this place",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 991,
+    "expression": "こちら",
+    "reading": "こちら",
+    "meaning": "this person (polite); this way (polite)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 992,
+    "expression": "こっち",
+    "reading": "こっち",
+    "meaning": "this person; this direction; this side",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 997,
+    "expression": "この",
+    "reading": "この",
+    "meaning": "this",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1001,
+    "expression": "これ",
+    "reading": "これ",
+    "meaning": "this one",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1002,
+    "expression": "ころ",
+    "reading": "～ころ",
+    "meaning": "about, toward, approximately (time)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1005,
+    "expression": "こんな",
+    "reading": "こんな",
+    "meaning": "such, like this",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1007,
+    "expression": "さあ",
+    "reading": "さあ",
+    "meaning": "come now, well",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1018,
+    "expression": "さん",
+    "reading": "～さん",
+    "meaning": "Mr. ~, Ms. ~",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1017,
+    "expression": "さ来年",
+    "reading": "さらいねん",
+    "meaning": "year after next",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1021,
+    "expression": "しかし",
+    "reading": "しかし",
+    "meaning": "however; but",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1035,
+    "expression": "じゃ",
+    "reading": "じゃ",
+    "meaning": "well, well then",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1055,
+    "expression": "すぎ",
+    "reading": "～すぎ",
+    "meaning": "past; to exceed, ~ too much",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1057,
+    "expression": "すぐに",
+    "reading": "すぐに",
+    "meaning": "immediately, soon",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1066,
+    "expression": "する",
+    "reading": "する",
+    "meaning": "to do, to try; to wear small items (e.g., necktie, watch, etc.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1060,
+    "expression": "ずつ",
+    "reading": "～ずつ",
+    "meaning": "at a time",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1079,
+    "expression": "そう",
+    "reading": "そう",
+    "meaning": "yes; appears, to be the case",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1081,
+    "expression": "そうして",
+    "reading": "そうして",
+    "meaning": "and, like that",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1082,
+    "expression": "そこ",
+    "reading": "そこ",
+    "meaning": "that place, there; bottom, sole",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1083,
+    "expression": "そちら",
+    "reading": "そちら",
+    "meaning": "over there",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1084,
+    "expression": "そっち",
+    "reading": "そっち",
+    "meaning": "over there",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1085,
+    "expression": "その",
+    "reading": "その",
+    "meaning": "that",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1086,
+    "expression": "そば",
+    "reading": "そば",
+    "meaning": "near, close, beside; Japanese traditional buckwheat noodle",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1087,
+    "expression": "それ",
+    "reading": "それ",
+    "meaning": "that one",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1088,
+    "expression": "それから",
+    "reading": "それから",
+    "meaning": "and then, after that",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1089,
+    "expression": "それでは",
+    "reading": "それでは",
+    "meaning": "in that situation, well then...",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1103,
+    "expression": "たち",
+    "reading": "～たち",
+    "meaning": "plural suffix",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1105,
+    "expression": "たて",
+    "reading": "たて",
+    "meaning": "length, height",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1109,
+    "expression": "たばこ",
+    "reading": "たばこ",
+    "meaning": "tobacco, cigarettes",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1099,
+    "expression": "だけ",
+    "reading": "～だけ",
+    "meaning": "only ~, just ~, as ~",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1126,
+    "expression": "ちょっと",
+    "reading": "ちょっと",
+    "meaning": "a little, somewhat; just a little, somewhat",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1131,
+    "expression": "つける",
+    "reading": "つける",
+    "meaning": "to turn on (e.g., a light); to take",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1133,
+    "expression": "つまらない",
+    "reading": "つまらない",
+    "meaning": "boring, dull; insignificant",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1141,
+    "expression": "できる",
+    "reading": "できる",
+    "meaning": "to be able to (to accomplish)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1144,
+    "expression": "では",
+    "reading": "では",
+    "meaning": "then, well, so",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1146,
+    "expression": "でも",
+    "reading": "でも",
+    "meaning": "but, however",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1169,
+    "expression": "とても",
+    "reading": "とても",
+    "meaning": "very (much), greatly, exceedingly",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1156,
+    "expression": "どう",
+    "reading": "どう",
+    "meaning": "how, in what way",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1157,
+    "expression": "どうして",
+    "reading": "どうして",
+    "meaning": "why, for what reason",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1158,
+    "expression": "どうぞ",
+    "reading": "どうぞ",
+    "meaning": "please, kindly, by all means",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1160,
+    "expression": "どうも",
+    "reading": "どうも",
+    "meaning": "Thank you; somehow; no matter how hard one may try",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1165,
+    "expression": "どこ",
+    "reading": "どこ",
+    "meaning": "where, what place",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1167,
+    "expression": "どちら",
+    "reading": "どちら",
+    "meaning": "which (one) (way); where (polite)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1168,
+    "expression": "どっち",
+    "reading": "どっち",
+    "meaning": "which one, which way",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1170,
+    "expression": "どなた",
+    "reading": "どなた",
+    "meaning": "who",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1171,
+    "expression": "どの",
+    "reading": "どの",
+    "meaning": "which",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1179,
+    "expression": "どれ",
+    "reading": "どれ",
+    "meaning": "which one",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1180,
+    "expression": "どんな",
+    "reading": "どんな",
+    "meaning": "what, what kind of",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1181,
+    "expression": "ない",
+    "reading": "ない",
+    "meaning": "there isn't, doesn't have",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1186,
+    "expression": "なぜ",
+    "reading": "なぜ",
+    "meaning": "why (same as どうして)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1188,
+    "expression": "など",
+    "reading": "～など",
+    "meaning": "et cetera",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1195,
+    "expression": "なる",
+    "reading": "なる",
+    "meaning": "to become",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1196,
+    "expression": "にぎやか",
+    "reading": "にぎやか",
+    "meaning": "bustling, busy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1211,
+    "expression": "はい",
+    "reading": "はい",
+    "meaning": "yes",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1216,
+    "expression": "はく",
+    "reading": "はく",
+    "meaning": "to put on (items below your waist)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1291,
+    "expression": "まずい",
+    "reading": "まずい",
+    "meaning": "terrible (in reference to food), unappetizing, unpleasant (taste)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1292,
+    "expression": "また",
+    "reading": "また",
+    "meaning": "and; furthermore",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1293,
+    "expression": "まだ",
+    "reading": "まだ",
+    "meaning": "yet, still, besides",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1295,
+    "expression": "まっすぐ",
+    "reading": "まっすぐ",
+    "meaning": "straight (ahead), direct",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1306,
+    "expression": "みんな",
+    "reading": "みんな",
+    "meaning": "all, everyone, everybody",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1313,
+    "expression": "もう",
+    "reading": "もう",
+    "meaning": "already; again; more",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1315,
+    "expression": "もしもし",
+    "reading": "もしもし",
+    "meaning": "Hello? (used on the phone)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1317,
+    "expression": "もっと",
+    "reading": "もっと",
+    "meaning": "more",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1327,
+    "expression": "やる",
+    "reading": "やる",
+    "meaning": "to do; to give (to pets, parents, siblings, etc.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1333,
+    "expression": "ゆっくりと",
+    "reading": "ゆっくりと",
+    "meaning": "slowly, at ease",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1336,
+    "expression": "よく",
+    "reading": "よく",
+    "meaning": "frequently, often (much); well, skillfully",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1347,
+    "expression": "りっぱ",
+    "reading": "りっぱ",
+    "meaning": "splendid, fine",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 804,
+    "expression": "アパート",
+    "reading": "アパート",
+    "meaning": "apartment (abbr.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 851,
+    "expression": "エレベーター",
+    "reading": "エレベーター",
+    "meaning": "elevator",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 919,
+    "expression": "カップ",
+    "reading": "カップ",
+    "meaning": "cup",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 924,
+    "expression": "カメラ",
+    "reading": "カメラ",
+    "meaning": "camera",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 931,
+    "expression": "カレンダー",
+    "reading": "カレンダー",
+    "meaning": "calendar",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 930,
+    "expression": "カレー",
+    "reading": "カレー",
+    "meaning": "curry (abbr. for curry and rice)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 955,
+    "expression": "キロ",
+    "reading": "キロ",
+    "meaning": "(abbr.) kilo (kilometer)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 939,
+    "expression": "ギター",
+    "reading": "ギター",
+    "meaning": "guitar",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 965,
+    "expression": "クラス",
+    "reading": "クラス",
+    "meaning": "a class",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 966,
+    "expression": "グラム",
+    "reading": "グラム",
+    "meaning": "gram",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 993,
+    "expression": "コップ",
+    "reading": "コップ",
+    "meaning": "a tumbler; a glass",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 999,
+    "expression": "コピーする",
+    "reading": "コピーする",
+    "meaning": "to copy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 983,
+    "expression": "コート",
+    "reading": "コート",
+    "meaning": "coat; court (e.g., tennis)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 984,
+    "expression": "コーヒー",
+    "reading": "コーヒー",
+    "meaning": "coffee",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1037,
+    "expression": "シャツ",
+    "reading": "シャツ",
+    "meaning": "shirt",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1038,
+    "expression": "シャワー",
+    "reading": "シャワー",
+    "meaning": "shower",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1053,
+    "expression": "スカート",
+    "reading": "スカート",
+    "meaning": "skirt",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1061,
+    "expression": "ストーブ",
+    "reading": "ストーブ",
+    "meaning": "heater (lit: stove)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1062,
+    "expression": "スプーン",
+    "reading": "スプーン",
+    "meaning": "spoon",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1063,
+    "expression": "スポーツ",
+    "reading": "スポーツ",
+    "meaning": "sport(s)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1064,
+    "expression": "ズボン",
+    "reading": "ズボン",
+    "meaning": "trousers",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1069,
+    "expression": "セーター",
+    "reading": "セーター",
+    "meaning": "sweater",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1073,
+    "expression": "ゼロ",
+    "reading": "ゼロ",
+    "meaning": "zero",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1101,
+    "expression": "タクシー",
+    "reading": "タクシー",
+    "meaning": "taxi",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1143,
+    "expression": "テスト",
+    "reading": "テスト",
+    "meaning": "test",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1148,
+    "expression": "テレビ",
+    "reading": "テレビ",
+    "meaning": "television, TV",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1138,
+    "expression": "テーブル",
+    "reading": "テーブル",
+    "meaning": "table",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1136,
+    "expression": "テープ",
+    "reading": "テープ",
+    "meaning": "tape",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1137,
+    "expression": "テープレコーダー",
+    "reading": "テープレコーダー",
+    "meaning": "tape recorder",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1145,
+    "expression": "デパート",
+    "reading": "デパート",
+    "meaning": "(abbr.) department store",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1155,
+    "expression": "トイレ",
+    "reading": "トイレ",
+    "meaning": "bathroom; toilet",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1154,
+    "expression": "ドア",
+    "reading": "ドア",
+    "meaning": "door (Western style)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1182,
+    "expression": "ナイフ",
+    "reading": "ナイフ",
+    "meaning": "knife",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1200,
+    "expression": "ニュース",
+    "reading": "ニュース",
+    "meaning": "news",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1203,
+    "expression": "ネクタイ",
+    "reading": "ネクタイ",
+    "meaning": "tie, necktie",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1205,
+    "expression": "ノート",
+    "reading": "ノート",
+    "meaning": "notebook",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1234,
+    "expression": "ハンカチ",
+    "reading": "ハンカチ",
+    "meaning": "handkerchief",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1221,
+    "expression": "バス",
+    "reading": "バス",
+    "meaning": "bus; bath; bass",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1222,
+    "expression": "バター",
+    "reading": "バター",
+    "meaning": "butter",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1233,
+    "expression": "パン",
+    "reading": "パン",
+    "meaning": "bread",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1210,
+    "expression": "パーティー",
+    "reading": "パーティー",
+    "meaning": "a party",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1251,
+    "expression": "フィルム",
+    "reading": "フィルム",
+    "meaning": "film (roll of)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1254,
+    "expression": "フォーク",
+    "reading": "フォーク",
+    "meaning": "fork",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1253,
+    "expression": "プール",
+    "reading": "プール",
+    "meaning": "swimming pool",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1267,
+    "expression": "ベッド",
+    "reading": "ベッド",
+    "meaning": "bed",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1268,
+    "expression": "ペット",
+    "reading": "ペット",
+    "meaning": "pet",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1270,
+    "expression": "ペン",
+    "reading": "ペン",
+    "meaning": "pen",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1265,
+    "expression": "ページ",
+    "reading": "ページ",
+    "meaning": "a page",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1280,
+    "expression": "ホテル",
+    "reading": "ホテル",
+    "meaning": "hotel",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1279,
+    "expression": "ボタン",
+    "reading": "ボタン",
+    "meaning": "button",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1274,
+    "expression": "ボールペン",
+    "reading": "ボールペン",
+    "meaning": "ball-point pen",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1275,
+    "expression": "ポケット",
+    "reading": "ポケット",
+    "meaning": "pocket",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1277,
+    "expression": "ポスト",
+    "reading": "ポスト",
+    "meaning": "mailbox; post, position",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1296,
+    "expression": "マッチ",
+    "reading": "マッチ",
+    "meaning": "match",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1311,
+    "expression": "メートル",
+    "reading": "メートル",
+    "meaning": "meter",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1345,
+    "expression": "ラジオ",
+    "reading": "ラジオ",
+    "meaning": "radio",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1346,
+    "expression": "ラジオカセ",
+    "reading": "ラジオカセ",
+    "meaning": "radio cassette player",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1353,
+    "expression": "レコード",
+    "reading": "レコード",
+    "meaning": "record",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1354,
+    "expression": "レストラン",
+    "reading": "レストラン",
+    "meaning": "restaurant",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1357,
+    "expression": "ワイシャツ",
+    "reading": "ワイシャツ",
+    "meaning": "shirt (lit: white shirt), business shirt",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1243,
+    "expression": "一つ",
+    "reading": "ひとつ",
+    "meaning": "one thing",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1245,
+    "expression": "一人",
+    "reading": "ひとり",
+    "meaning": "one person",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 826,
+    "expression": "一日",
+    "reading": "いちにち",
+    "meaning": "one day; first day of the month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 877,
+    "expression": "一昨日",
+    "reading": "おととい",
+    "meaning": "the day before yesterday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1244,
+    "expression": "一月",
+    "reading": "ひとつき",
+    "meaning": "one month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 827,
+    "expression": "一番",
+    "reading": "いちばん",
+    "meaning": "best (most), first, number one",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 830,
+    "expression": "一緒",
+    "reading": "いっしょ",
+    "meaning": "together",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1125,
+    "expression": "丁度",
+    "reading": "ちょうど",
+    "meaning": "just, right, exactly",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1189,
+    "expression": "七つ",
+    "reading": "ななつ",
+    "meaning": "seven things",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1190,
+    "expression": "七日",
+    "reading": "なのか",
+    "meaning": "seven days; seventh day (of the month)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1298,
+    "expression": "万年筆",
+    "reading": "まんねんひつ",
+    "meaning": "fountain pen",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1044,
+    "expression": "丈夫",
+    "reading": "じょうぶ",
+    "meaning": "strong, solid, durable",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1303,
+    "expression": "三つ",
+    "reading": "みっつ",
+    "meaning": "three things",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1302,
+    "expression": "三日",
+    "reading": "みっか",
+    "meaning": "three days, third day of the month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 790,
+    "expression": "上げる",
+    "reading": "あげる",
+    "meaning": "to raise, to lift",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1043,
+    "expression": "上手",
+    "reading": "じょうず",
+    "meaning": "be good at, skillful",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 846,
+    "expression": "上着",
+    "reading": "うわぎ",
+    "meaning": "coat, jacket",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 958,
+    "expression": "下さい",
+    "reading": "ください",
+    "meaning": "(with te-form verb) please do for me",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1266,
+    "expression": "下手",
+    "reading": "へた",
+    "meaning": "unskillful, poor",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1349,
+    "expression": "両親",
+    "reading": "りょうしん",
+    "meaning": "parents (lit., both parents)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1193,
+    "expression": "並ぶ",
+    "reading": "ならぶ",
+    "meaning": "to line up, to stand in a line (v.i.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1194,
+    "expression": "並べる",
+    "reading": "ならべる",
+    "meaning": "to put (things) side by side; to line up",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1039,
+    "expression": "中",
+    "reading": "～じゅう",
+    "meaning": "inside, middle, among",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1297,
+    "expression": "丸い",
+    "reading": "まるい",
+    "meaning": "round, circular",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1209,
+    "expression": "乗る",
+    "reading": "のる",
+    "meaning": "to get on, to ride in, to board",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 988,
+    "expression": "九つ",
+    "reading": "ここのつ",
+    "meaning": "nine things",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 987,
+    "expression": "九日",
+    "reading": "ここのか",
+    "meaning": "nine days; ninth day of the month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1256,
+    "expression": "二つ",
+    "reading": "ふたつ",
+    "meaning": "two things",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1258,
+    "expression": "二人",
+    "reading": "ふたり",
+    "meaning": "two people",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1225,
+    "expression": "二十日",
+    "reading": "はつか",
+    "meaning": "twenty days, twentieth (day of the month)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1223,
+    "expression": "二十歳",
+    "reading": "はたち",
+    "meaning": "20 years old",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1259,
+    "expression": "二日",
+    "reading": "ふつか",
+    "meaning": "two days; second day of the month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 831,
+    "expression": "五つ",
+    "reading": "いつつ",
+    "meaning": "five things",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 829,
+    "expression": "五日",
+    "reading": "いつか",
+    "meaning": "five days; fifth day of the month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 980,
+    "expression": "交差点",
+    "reading": "こうさてん",
+    "meaning": "intersection",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 982,
+    "expression": "交番",
+    "reading": "こうばん",
+    "meaning": "police box",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1049,
+    "expression": "人",
+    "reading": "～じん",
+    "meaning": "counter for people",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 994,
+    "expression": "今年",
+    "reading": "ことし",
+    "meaning": "this year",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 947,
+    "expression": "今日",
+    "reading": "きょう",
+    "meaning": "today, this day",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1006,
+    "expression": "今晩",
+    "reading": "こんばん",
+    "meaning": "tonight, this evening",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1003,
+    "expression": "今月",
+    "reading": "こんげつ",
+    "meaning": "this month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 970,
+    "expression": "今朝",
+    "reading": "けさ",
+    "meaning": "this morning",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1004,
+    "expression": "今週",
+    "reading": "こんしゅう",
+    "meaning": "this week",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1023,
+    "expression": "仕事",
+    "reading": "しごと",
+    "meaning": "work, job, occupation, employment",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1324,
+    "expression": "休み",
+    "reading": "やすみ",
+    "meaning": "holiday; day off; absence",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1325,
+    "expression": "休む",
+    "reading": "やすむ",
+    "meaning": "to rest, to have a break, to get time off",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 784,
+    "expression": "会う",
+    "reading": "あう",
+    "meaning": "to meet, to see",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 901,
+    "expression": "会社",
+    "reading": "かいしゃ",
+    "meaning": "company, corporation",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 884,
+    "expression": "伯母さん",
+    "reading": "おばさん",
+    "meaning": "aunt",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 868,
+    "expression": "伯父",
+    "reading": "おじさん",
+    "meaning": "uncle, middle-aged man",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1241,
+    "expression": "低い",
+    "reading": "ひくい",
+    "meaning": "short, low",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1065,
+    "expression": "住む",
+    "reading": "すむ",
+    "meaning": "to reside, to live in",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 809,
+    "expression": "余り",
+    "reading": "あまり",
+    "meaning": "not very; surplus",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1130,
+    "expression": "作る",
+    "reading": "つくる",
+    "meaning": "to make, to create",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1011,
+    "expression": "作文",
+    "reading": "さくぶん",
+    "meaning": "essay; composition",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1127,
+    "expression": "使う",
+    "reading": "つかう",
+    "meaning": "to use",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1272,
+    "expression": "便利",
+    "reading": "べんり",
+    "meaning": "convenient, handy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 977,
+    "expression": "個",
+    "reading": "～こ",
+    "meaning": "counter for small items (e.g., fruits, cups)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 927,
+    "expression": "借りる",
+    "reading": "かりる",
+    "meaning": "to borrow, to owe",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 932,
+    "expression": "側",
+    "reading": "～がわ",
+    "meaning": "~ side",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1224,
+    "expression": "働く",
+    "reading": "はたらく",
+    "meaning": "to work",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 976,
+    "expression": "元気",
+    "reading": "げんき",
+    "meaning": "health(y), energetic",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 949,
+    "expression": "兄弟",
+    "reading": "きょうだい",
+    "meaning": "siblings (humble), brothers and sisters",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1074,
+    "expression": "先月",
+    "reading": "せんげつ",
+    "meaning": "last month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1076,
+    "expression": "先生",
+    "reading": "せんせい",
+    "meaning": "teacher, professor; master; doctor",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1075,
+    "expression": "先週",
+    "reading": "せんしゅう",
+    "meaning": "last week",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1214,
+    "expression": "入る",
+    "reading": "はいる",
+    "meaning": "to enter, to contain, to hold",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 837,
+    "expression": "入れる",
+    "reading": "いれる",
+    "meaning": "to put in",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 834,
+    "expression": "入口",
+    "reading": "いりぐち",
+    "meaning": "entrance",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1078,
+    "expression": "全部",
+    "reading": "ぜんぶ",
+    "meaning": "all, entire, whole",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1326,
+    "expression": "八つ",
+    "reading": "やっつ",
+    "meaning": "eight things",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1334,
+    "expression": "八日",
+    "reading": "ようか",
+    "meaning": "eight days; eighth day of the month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1320,
+    "expression": "八百屋",
+    "reading": "やおや",
+    "meaning": "greengrocer",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 979,
+    "expression": "公園",
+    "reading": "こうえん",
+    "meaning": "a park",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1310,
+    "expression": "六つ",
+    "reading": "むっつ",
+    "meaning": "six things",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1307,
+    "expression": "六日",
+    "reading": "むいか",
+    "meaning": "six days; sixth day of month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 852,
+    "expression": "円",
+    "reading": "～えん",
+    "meaning": "Yen",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1013,
+    "expression": "冊",
+    "reading": "～さつ",
+    "meaning": "counter for books",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1036,
+    "expression": "写真",
+    "reading": "しゃしん",
+    "meaning": "a picture; a photograph",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1134,
+    "expression": "冷たい",
+    "reading": "つめたい",
+    "meaning": "cold (things, people)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1352,
+    "expression": "冷蔵庫",
+    "reading": "れいぞうこ",
+    "meaning": "refrigerator",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1139,
+    "expression": "出かける",
+    "reading": "でかける",
+    "meaning": "to go out; to depart",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1102,
+    "expression": "出す",
+    "reading": "だす",
+    "meaning": "to take (something) out; to hand in (something)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1147,
+    "expression": "出る",
+    "reading": "でる",
+    "meaning": "to appear, to leave",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1142,
+    "expression": "出口",
+    "reading": "でぐち",
+    "meaning": "an exit",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1263,
+    "expression": "分",
+    "reading": "～ふん",
+    "meaning": "~ minutes",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1359,
+    "expression": "分かる",
+    "reading": "わかる",
+    "meaning": "to understand",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 952,
+    "expression": "切る",
+    "reading": "きる",
+    "meaning": "to cut; to hang up (a phone)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 942,
+    "expression": "切手",
+    "reading": "きって",
+    "meaning": "postal (postage) stamps",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 943,
+    "expression": "切符",
+    "reading": "きっぷ",
+    "meaning": "a ticket",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1218,
+    "expression": "初め",
+    "reading": "はじめ",
+    "meaning": "beginning, start",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1219,
+    "expression": "初めて",
+    "reading": "はじめて",
+    "meaning": "for the first time",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1271,
+    "expression": "勉強",
+    "reading": "べんきょう (する)",
+    "meaning": "study",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1159,
+    "expression": "動物",
+    "reading": "どうぶつ",
+    "meaning": "animal",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1132,
+    "expression": "勤める",
+    "reading": "つとめる",
+    "meaning": "to work (for)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1238,
+    "expression": "匹",
+    "reading": "～ひき",
+    "meaning": "counter for small animals",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 822,
+    "expression": "医者",
+    "reading": "いしゃ",
+    "meaning": "doctor; physician",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1162,
+    "expression": "十日",
+    "reading": "とおか",
+    "meaning": "ten days; tenth day of the month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 989,
+    "expression": "午前",
+    "reading": "ごぜん",
+    "meaning": "morning, A.M.",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 986,
+    "expression": "午後",
+    "reading": "ごご",
+    "meaning": "afternoon, P.M.",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1237,
+    "expression": "半分",
+    "reading": "はんぶん",
+    "meaning": "half",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 807,
+    "expression": "危ない",
+    "reading": "あぶない",
+    "meaning": "dangerous, critical",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 801,
+    "expression": "厚い",
+    "reading": "あつい",
+    "meaning": "kind, warm(hearted), thick, deep",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 950,
+    "expression": "去年",
+    "reading": "きょねん",
+    "meaning": "last year",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1174,
+    "expression": "友達",
+    "reading": "ともだち",
+    "meaning": "friend",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1177,
+    "expression": "取る",
+    "reading": "とる",
+    "meaning": "to take (a class); to get (a grade)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1262,
+    "expression": "古い",
+    "reading": "ふるい",
+    "meaning": "old (in reference to objects, not people), aged, ancient",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 933,
+    "expression": "可愛い",
+    "reading": "かわいい",
+    "meaning": "cute, adorable",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1090,
+    "expression": "台",
+    "reading": "～だい",
+    "meaning": "counter for vehicles; machines",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1096,
+    "expression": "台所",
+    "reading": "だいどころ",
+    "meaning": "kitchen",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 881,
+    "expression": "同じ",
+    "reading": "おなじ",
+    "meaning": "same, identical",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1191,
+    "expression": "名前",
+    "reading": "なまえ",
+    "meaning": "name",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1308,
+    "expression": "向こう",
+    "reading": "むこう",
+    "meaning": "beyond, over there",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1052,
+    "expression": "吸う",
+    "reading": "すう",
+    "meaning": "to breathe in, to suck",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1255,
+    "expression": "吹く",
+    "reading": "ふく",
+    "meaning": "to blow (wind, etc.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1339,
+    "expression": "呼ぶ",
+    "reading": "よぶ",
+    "meaning": "to call (one's name); to invite",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1010,
+    "expression": "咲く",
+    "reading": "さく",
+    "meaning": "to bloom",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1318,
+    "expression": "問題",
+    "reading": "もんだい",
+    "meaning": "a problem",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 941,
+    "expression": "喫茶店",
+    "reading": "きっさてん",
+    "meaning": "café",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1338,
+    "expression": "四つ",
+    "reading": "よっつ",
+    "meaning": "four things",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1337,
+    "expression": "四日",
+    "reading": "よっか",
+    "meaning": "four days; fourth day of the month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 897,
+    "expression": "回",
+    "reading": "～かい",
+    "meaning": "counter for occurrences (~ times)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1000,
+    "expression": "困る",
+    "reading": "こまる",
+    "meaning": "to be bothered, to have difficulty",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1166,
+    "expression": "図書館",
+    "reading": "としょかん",
+    "meaning": "library",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1175,
+    "expression": "土曜日",
+    "reading": "どようび",
+    "meaning": "Saturday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 811,
+    "expression": "在る",
+    "reading": "ある",
+    "meaning": "to be, to have",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1121,
+    "expression": "地下鉄",
+    "reading": "ちかてつ",
+    "meaning": "underground train, subway",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1122,
+    "expression": "地図",
+    "reading": "ちず",
+    "meaning": "a map",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 844,
+    "expression": "売る",
+    "reading": "うる",
+    "meaning": "to sell (v.t.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1187,
+    "expression": "夏休み",
+    "reading": "なつやすみ",
+    "meaning": "summer vacation",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1328,
+    "expression": "夕方",
+    "reading": "ゆうがた",
+    "meaning": "late afternoon (typically just before dinner time), evening",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1329,
+    "expression": "夕飯",
+    "reading": "ゆうはん",
+    "meaning": "dinner, supper, evening meal",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 899,
+    "expression": "外国",
+    "reading": "がいこく",
+    "meaning": "foreign country; abroad",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 900,
+    "expression": "外国人",
+    "reading": "がいこくじん",
+    "meaning": "foreigner",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 856,
+    "expression": "多い",
+    "reading": "おおい",
+    "meaning": "many; there are a lot",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1110,
+    "expression": "多分",
+    "reading": "たぶん",
+    "meaning": "perhaps, probably, maybe",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 857,
+    "expression": "大きい",
+    "reading": "おおきい",
+    "meaning": "big, large",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 858,
+    "expression": "大きな",
+    "reading": "おおきな",
+    "meaning": "big",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1093,
+    "expression": "大丈夫",
+    "reading": "だいじょうぶ",
+    "meaning": "It's ok (all right); No need to worry; Everything is under control",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 879,
+    "expression": "大人",
+    "reading": "おとな",
+    "meaning": "adult",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1092,
+    "expression": "大使館",
+    "reading": "たいしかん",
+    "meaning": "embassy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1095,
+    "expression": "大切",
+    "reading": "たいせつ",
+    "meaning": "important",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 859,
+    "expression": "大勢",
+    "reading": "おおぜい",
+    "meaning": "great number of people",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1097,
+    "expression": "大変",
+    "reading": "たいへん",
+    "meaning": "very; difficult, hard",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1094,
+    "expression": "大好き",
+    "reading": "だいすき",
+    "meaning": "very like-able, like very much",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1091,
+    "expression": "大学",
+    "reading": "だいがく",
+    "meaning": "college; university",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1149,
+    "expression": "天気",
+    "reading": "てんき",
+    "meaning": "weather",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1260,
+    "expression": "太い",
+    "reading": "ふとい",
+    "meaning": "fat, thick",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 865,
+    "expression": "奥さん",
+    "reading": "おくさん",
+    "meaning": "(someone else's) wife (hon.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 896,
+    "expression": "女の子",
+    "reading": "おんなのこ",
+    "meaning": "girl",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1054,
+    "expression": "好き",
+    "reading": "すき",
+    "meaning": "liking, fondness, love",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1217,
+    "expression": "始まる",
+    "reading": "はじまる",
+    "meaning": "(something) begins",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 951,
+    "expression": "嫌い",
+    "reading": "きらい",
+    "meaning": "dislike",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 996,
+    "expression": "子供",
+    "reading": "こども",
+    "meaning": "child(ren)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1030,
+    "expression": "字引",
+    "reading": "じびき",
+    "meaning": "dictionary",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 918,
+    "expression": "学校",
+    "reading": "がっこう",
+    "meaning": "a school",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 909,
+    "expression": "学生",
+    "reading": "がくせい",
+    "meaning": "student",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1323,
+    "expression": "安い",
+    "reading": "やすい",
+    "meaning": "inexpensive; cheap (things)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 920,
+    "expression": "家庭",
+    "reading": "かてい",
+    "meaning": "home; family",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 915,
+    "expression": "家族",
+    "reading": "かぞく",
+    "meaning": "family, members of a family",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1042,
+    "expression": "宿題",
+    "reading": "しゅくだい",
+    "meaning": "homework",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1016,
+    "expression": "寒い",
+    "reading": "さむい",
+    "meaning": "cold (in reference to weather)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1204,
+    "expression": "寝る",
+    "reading": "ねる",
+    "meaning": "to sleep; to go to sleep; to go to bed",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1252,
+    "expression": "封筒",
+    "reading": "ふうとう",
+    "meaning": "envelope",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1116,
+    "expression": "小さい",
+    "reading": "ちいさい",
+    "meaning": "small, little",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1117,
+    "expression": "小さな",
+    "reading": "ちいさな",
+    "meaning": "small, little",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1058,
+    "expression": "少し",
+    "reading": "すこし",
+    "meaning": "little, few",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1056,
+    "expression": "少ない",
+    "reading": "すくない",
+    "meaning": "a little; a few",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 835,
+    "expression": "居る",
+    "reading": "いる",
+    "meaning": "(humble) to be (animate), to exist",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1319,
+    "expression": "屋",
+    "reading": "～や",
+    "meaning": "~ shop",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1012,
+    "expression": "差す",
+    "reading": "さす",
+    "meaning": "to raise (stretch out) hands, to raise (e.g., umbrella)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 906,
+    "expression": "帰る",
+    "reading": "かえる",
+    "meaning": "to go back, to go home, to return",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1273,
+    "expression": "帽子",
+    "reading": "ぼうし",
+    "meaning": "hat; cap",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1248,
+    "expression": "平仮名",
+    "reading": "ひらがな",
+    "meaning": "hiragana",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1250,
+    "expression": "広い",
+    "reading": "ひろい",
+    "meaning": "spacious; wide; broad",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1153,
+    "expression": "度",
+    "reading": "～ど",
+    "meaning": "counter for occurrences; ~ degree; ~ point",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1067,
+    "expression": "座る",
+    "reading": "すわる",
+    "meaning": "to sit",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1356,
+    "expression": "廊下",
+    "reading": "ろうか",
+    "meaning": "corridor",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1106,
+    "expression": "建物",
+    "reading": "たてもの",
+    "meaning": "building",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1239,
+    "expression": "引く",
+    "reading": "ひく",
+    "meaning": "to pull, to draw; subtract",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1341,
+    "expression": "弱い",
+    "reading": "よわい",
+    "meaning": "weak",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1135,
+    "expression": "強い",
+    "reading": "つよい",
+    "meaning": "strong, powerful",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1240,
+    "expression": "弾く",
+    "reading": "ひく",
+    "meaning": "to play (a string instrument or piano)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1294,
+    "expression": "待つ",
+    "reading": "まつ",
+    "meaning": "to wait",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 839,
+    "expression": "後ろ",
+    "reading": "うしろ",
+    "meaning": "back, behind, rear",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 998,
+    "expression": "御飯",
+    "reading": "ごはん",
+    "meaning": "rice (cooked); meal",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1360,
+    "expression": "忘れる",
+    "reading": "わすれる",
+    "meaning": "to forget",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 824,
+    "expression": "忙しい",
+    "reading": "いそがしい",
+    "meaning": "busy (people, days)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1363,
+    "expression": "悪い",
+    "reading": "わるい",
+    "meaning": "bad, sinful; inferior",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 833,
+    "expression": "意味",
+    "reading": "いみ",
+    "meaning": "meaning, significance",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1140,
+    "expression": "手紙",
+    "reading": "てがみ",
+    "meaning": "letter",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 871,
+    "expression": "押す",
+    "reading": "おす",
+    "meaning": "to push, to press, to stamp (e.g., a passport)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1316,
+    "expression": "持つ",
+    "reading": "もつ",
+    "meaning": "to hold, to carry; to possess",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1080,
+    "expression": "掃除",
+    "reading": "そうじ (する)",
+    "meaning": "cleaning, sweeping",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1041,
+    "expression": "授業",
+    "reading": "じゅぎょう",
+    "meaning": "a class (of school)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 911,
+    "expression": "掛ける",
+    "reading": "かける",
+    "meaning": "to put on (e.g., glasses); to hang (e.g., on a wall)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1178,
+    "expression": "撮る",
+    "reading": "とる",
+    "meaning": "to take (a photo), to make (a film)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 870,
+    "expression": "教える",
+    "reading": "おしえる",
+    "meaning": "to teach, to inform, to instruct",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 948,
+    "expression": "教室",
+    "reading": "きょうしつ",
+    "meaning": "classroom",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1019,
+    "expression": "散歩",
+    "reading": "さんぽ (する)",
+    "meaning": "walk, stroll",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1264,
+    "expression": "文章",
+    "reading": "ぶんしょう",
+    "meaning": "sentence, text",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1350,
+    "expression": "料理",
+    "reading": "りょうり",
+    "meaning": "cooking; cuisine",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 797,
+    "expression": "新しい",
+    "reading": "あたらしい",
+    "meaning": "new",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1050,
+    "expression": "新聞",
+    "reading": "しんぶん",
+    "meaning": "newspaper",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1351,
+    "expression": "旅行",
+    "reading": "りょこう",
+    "meaning": "travel, trip",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1197,
+    "expression": "日",
+    "reading": "～にち",
+    "meaning": "~ day of the month, for ~ days",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1198,
+    "expression": "日曜日",
+    "reading": "にちようび",
+    "meaning": "Sunday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1227,
+    "expression": "早い",
+    "reading": "はやい",
+    "meaning": "early",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 787,
+    "expression": "明るい",
+    "reading": "あかるい",
+    "meaning": "bright (in reference to personality or weather); cheerful",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 792,
+    "expression": "明後日",
+    "reading": "あさって",
+    "meaning": "day after tomorrow",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 793,
+    "expression": "明日",
+    "reading": "あした",
+    "meaning": "tomorrow",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1322,
+    "expression": "易しい",
+    "reading": "やさしい",
+    "meaning": "easy, plain, simple",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 847,
+    "expression": "映画",
+    "reading": "えいが",
+    "meaning": "movie, film",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 848,
+    "expression": "映画館",
+    "reading": "えいがかん",
+    "meaning": "movie theater, cinema",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1331,
+    "expression": "昨夜",
+    "reading": "ゆうべ",
+    "meaning": "last night",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 944,
+    "expression": "昨日",
+    "reading": "きのう",
+    "meaning": "yesterday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1249,
+    "expression": "昼御飯",
+    "reading": "ひるごはん",
+    "meaning": "lunch, midday meal",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1020,
+    "expression": "時",
+    "reading": "～じ",
+    "meaning": "~ o'clock (time)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1163,
+    "expression": "時々",
+    "reading": "ときどき",
+    "meaning": "sometimes",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1164,
+    "expression": "時計",
+    "reading": "とけい",
+    "meaning": "a watch; a clock",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1022,
+    "expression": "時間",
+    "reading": "じかん",
+    "meaning": "~ hours",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1236,
+    "expression": "晩御飯",
+    "reading": "ばんごはん",
+    "meaning": "dinner, evening meal",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1230,
+    "expression": "晴れ",
+    "reading": "はれ",
+    "meaning": "clear (sunny) weather",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1231,
+    "expression": "晴れる",
+    "reading": "はれる",
+    "meaning": "to be sunny",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 799,
+    "expression": "暑い",
+    "reading": "あつい",
+    "meaning": "hot (in reference to weather), warm",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 796,
+    "expression": "暖かい",
+    "reading": "あたたかい",
+    "meaning": "warm",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 963,
+    "expression": "暗い",
+    "reading": "くらい",
+    "meaning": "dark, gloomy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 961,
+    "expression": "曇り",
+    "reading": "くもり",
+    "meaning": "cloudiness, cloudy weather",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 962,
+    "expression": "曇る",
+    "reading": "くもる",
+    "meaning": "to become cloudy, to become dim",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1290,
+    "expression": "曲る",
+    "reading": "まがる",
+    "meaning": "to turn, to bend",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 908,
+    "expression": "書く",
+    "reading": "かく",
+    "meaning": "to write",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 917,
+    "expression": "月",
+    "reading": "～がつ",
+    "meaning": "month of year",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 974,
+    "expression": "月曜日",
+    "reading": "げつようび",
+    "meaning": "Monday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 812,
+    "expression": "有る",
+    "reading": "ある",
+    "meaning": "to be, to have",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1332,
+    "expression": "有名",
+    "reading": "ゆうめい",
+    "meaning": "famous",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 791,
+    "expression": "朝御飯",
+    "reading": "あさごはん",
+    "meaning": "breakfast",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1314,
+    "expression": "木曜日",
+    "reading": "もくようび",
+    "meaning": "Thursday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1282,
+    "expression": "本当",
+    "reading": "ほんとう",
+    "meaning": "real, true",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1281,
+    "expression": "本棚",
+    "reading": "ほんだな",
+    "meaning": "bookshelf",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 967,
+    "expression": "来る",
+    "reading": "くる",
+    "meaning": "to come",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1344,
+    "expression": "来年",
+    "reading": "らいねん",
+    "meaning": "next year",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1342,
+    "expression": "来月",
+    "reading": "らいげつ",
+    "meaning": "next month",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1343,
+    "expression": "来週",
+    "reading": "らいしゅう",
+    "meaning": "next week",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1212,
+    "expression": "杯",
+    "reading": "～はい",
+    "meaning": "counter for cupfuls",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1283,
+    "expression": "枚",
+    "reading": "～まい",
+    "meaning": "counter for flat things",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 959,
+    "expression": "果物",
+    "reading": "くだもの",
+    "meaning": "fruit",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 823,
+    "expression": "椅子",
+    "reading": "いす",
+    "meaning": "chair",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1107,
+    "expression": "楽しい",
+    "reading": "たのしい",
+    "meaning": "enjoyable, fun",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1276,
+    "expression": "欲しい",
+    "reading": "ほしい",
+    "meaning": "to want, in need of",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 841,
+    "expression": "歌う",
+    "reading": "うたう",
+    "meaning": "to sing",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1173,
+    "expression": "止まる",
+    "reading": "とまる",
+    "meaning": "to come to a halt",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 813,
+    "expression": "歩く",
+    "reading": "あるく",
+    "meaning": "to walk",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1008,
+    "expression": "歳",
+    "reading": "～さい",
+    "meaning": "~ years old",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1029,
+    "expression": "死ぬ",
+    "reading": "しぬ",
+    "meaning": "to die",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1115,
+    "expression": "段々",
+    "reading": "だんだん",
+    "meaning": "gradually, by degrees",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1288,
+    "expression": "毎年",
+    "reading": "まいねん",
+    "meaning": "every year, yearly, annually",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1287,
+    "expression": "毎日",
+    "reading": "まいにち",
+    "meaning": "every day",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1289,
+    "expression": "毎晩",
+    "reading": "まいばん",
+    "meaning": "every night",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1285,
+    "expression": "毎月",
+    "reading": "まいげつ",
+    "meaning": "every month, monthly",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1284,
+    "expression": "毎朝",
+    "reading": "まいあさ",
+    "meaning": "every morning",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1286,
+    "expression": "毎週",
+    "reading": "まいしゅう",
+    "meaning": "every week",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1051,
+    "expression": "水曜日",
+    "reading": "すいようび",
+    "meaning": "Wednesday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 940,
+    "expression": "汚い",
+    "reading": "きたない",
+    "meaning": "dirty, unclean, filthy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1100,
+    "expression": "沢山",
+    "reading": "たくさん",
+    "meaning": "many, much",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 892,
+    "expression": "泳ぐ",
+    "reading": "およぐ",
+    "meaning": "to swim",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1335,
+    "expression": "洋服",
+    "reading": "ようふく",
+    "meaning": "Western-style clothes",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 810,
+    "expression": "洗う",
+    "reading": "あらう",
+    "meaning": "to wash",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1077,
+    "expression": "洗濯",
+    "reading": "せんたく",
+    "meaning": "washing, laundry",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 806,
+    "expression": "浴びる",
+    "reading": "あびる",
+    "meaning": "to bathe, to shower",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 937,
+    "expression": "消える",
+    "reading": "きえる",
+    "meaning": "to vanish, to disappear",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 971,
+    "expression": "消す",
+    "reading": "けす",
+    "meaning": "to erase, to delete, to turn off power",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1059,
+    "expression": "涼しい",
+    "reading": "すずしい",
+    "meaning": "cool, refreshing (in reference to weather)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1361,
+    "expression": "渡す",
+    "reading": "わたす",
+    "meaning": "to hand (something) over (v.t.); to get across",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1362,
+    "expression": "渡る",
+    "reading": "わたる",
+    "meaning": "to cross over, to go across",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1202,
+    "expression": "温い",
+    "reading": "ぬるい",
+    "meaning": "lukewarm",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 934,
+    "expression": "漢字",
+    "reading": "かんじ",
+    "meaning": "kanji; Chinese character",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 925,
+    "expression": "火曜日",
+    "reading": "かようび",
+    "meaning": "Tuesday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1213,
+    "expression": "灰皿",
+    "reading": "はいざら",
+    "meaning": "ashtray",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1185,
+    "expression": "無くす",
+    "reading": "なくす",
+    "meaning": "to lose something",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 800,
+    "expression": "熱い",
+    "reading": "あつい",
+    "meaning": "hot (objects)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 916,
+    "expression": "片仮名",
+    "reading": "かたかな",
+    "meaning": "katakana",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 946,
+    "expression": "牛乳",
+    "reading": "ぎゅうにゅう",
+    "meaning": "milk",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 945,
+    "expression": "牛肉",
+    "reading": "ぎゅうにく",
+    "meaning": "beef",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1072,
+    "expression": "狭い",
+    "reading": "せまい",
+    "meaning": "narrow; not spacious",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 975,
+    "expression": "玄関",
+    "reading": "げんかん",
+    "meaning": "entrance (to a house or a building)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 808,
+    "expression": "甘い",
+    "reading": "あまい",
+    "meaning": "generous, sweet",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 843,
+    "expression": "生まれる",
+    "reading": "うまれる",
+    "meaning": "to be born",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1068,
+    "expression": "生徒",
+    "reading": "せいと",
+    "meaning": "student; pupil",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 876,
+    "expression": "男の子",
+    "reading": "おとこのこ",
+    "meaning": "boy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1348,
+    "expression": "留学生",
+    "reading": "りゅうがくせい",
+    "meaning": "international student",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1232,
+    "expression": "番",
+    "reading": "～ばん",
+    "meaning": "~st; ~th best",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1235,
+    "expression": "番号",
+    "reading": "ばんごう",
+    "meaning": "number, series of digits",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1128,
+    "expression": "疲れる",
+    "reading": "つかれる",
+    "meaning": "to get (become) tired; to become fatigued",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1247,
+    "expression": "病気",
+    "reading": "びょうき",
+    "meaning": "illness; sickness",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1246,
+    "expression": "病院",
+    "reading": "びょういん",
+    "meaning": "hospital",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 825,
+    "expression": "痛い",
+    "reading": "いたい",
+    "meaning": "hurt; painful; sore",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1206,
+    "expression": "登る",
+    "reading": "のぼる",
+    "meaning": "to climb",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1048,
+    "expression": "白い",
+    "reading": "しろい",
+    "meaning": "white",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1304,
+    "expression": "皆さん",
+    "reading": "みなさん",
+    "meaning": "all of you, everyone",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1312,
+    "expression": "眼鏡",
+    "reading": "めがね",
+    "meaning": "eye glasses",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1129,
+    "expression": "着く",
+    "reading": "つく",
+    "meaning": "to arrive at, to reach",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 953,
+    "expression": "着る",
+    "reading": "きる",
+    "meaning": "to put on (clothes above your waist); to wear",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1047,
+    "expression": "知る",
+    "reading": "しる",
+    "meaning": "to know, to understand",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1300,
+    "expression": "短い",
+    "reading": "みじかい",
+    "meaning": "short (length)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1070,
+    "expression": "石鹸",
+    "reading": "せっけん",
+    "meaning": "soap",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1015,
+    "expression": "砂糖",
+    "reading": "さとう",
+    "meaning": "sugar",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1299,
+    "expression": "磨く",
+    "reading": "みがく",
+    "meaning": "to brush (teeth); to polish",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1104,
+    "expression": "立つ",
+    "reading": "たつ",
+    "meaning": "to stand up",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 990,
+    "expression": "答える",
+    "reading": "こたえる",
+    "meaning": "to answer, to reply",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 981,
+    "expression": "紅茶",
+    "reading": "こうちゃ",
+    "meaning": "black tea",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1278,
+    "expression": "細い",
+    "reading": "ほそい",
+    "meaning": "thin, slender, fine",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 894,
+    "expression": "終る",
+    "reading": "おわる",
+    "meaning": "to finish, to close",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 973,
+    "expression": "結婚",
+    "reading": "けっこん (する)",
+    "meaning": "marriage (get married)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 972,
+    "expression": "結構",
+    "reading": "けっこう",
+    "meaning": "splendid; enough, tolerably",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 954,
+    "expression": "綺麗",
+    "reading": "きれい",
+    "meaning": "pretty, clean, tidy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1034,
+    "expression": "締める",
+    "reading": "しめる",
+    "meaning": "to tie, to fasten, to tighten",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1355,
+    "expression": "練習",
+    "reading": "れんしゅう (する)",
+    "meaning": "(to) practice",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 864,
+    "expression": "置く",
+    "reading": "おく",
+    "meaning": "to put; to lay; to place",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 855,
+    "expression": "美味しい",
+    "reading": "おいしい",
+    "meaning": "delicious, tasty",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1192,
+    "expression": "習う",
+    "reading": "ならう",
+    "meaning": "to learn",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 938,
+    "expression": "聞く",
+    "reading": "きく",
+    "meaning": "to hear, to listen, to ask",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1071,
+    "expression": "背広",
+    "reading": "せびろ",
+    "meaning": "men's suit",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1201,
+    "expression": "脱ぐ",
+    "reading": "ぬぐ",
+    "meaning": "to take off (clothes)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1031,
+    "expression": "自分",
+    "reading": "じぶん",
+    "meaning": "myself, oneself",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1028,
+    "expression": "自動車",
+    "reading": "じどうしゃ",
+    "meaning": "automobile",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1027,
+    "expression": "自転車",
+    "reading": "じてんしゃ",
+    "meaning": "bicycle",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 838,
+    "expression": "色々",
+    "reading": "いろいろ",
+    "meaning": "various",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 922,
+    "expression": "花瓶",
+    "reading": "かびん",
+    "meaning": "(flower) vase",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1358,
+    "expression": "若い",
+    "reading": "わかい",
+    "meaning": "young",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 849,
+    "expression": "英語",
+    "reading": "えいご",
+    "meaning": "English (language)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1124,
+    "expression": "茶碗",
+    "reading": "ちゃわん",
+    "meaning": "rice bowl",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1123,
+    "expression": "茶色",
+    "reading": "ちゃいろ",
+    "meaning": "brown",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1199,
+    "expression": "荷物",
+    "reading": "にもつ",
+    "meaning": "luggage; baggage",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1215,
+    "expression": "葉書",
+    "reading": "はがき",
+    "meaning": "postcard",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 840,
+    "expression": "薄い",
+    "reading": "うすい",
+    "meaning": "thin, weak",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 819,
+    "expression": "行く",
+    "reading": "いく",
+    "meaning": "to go",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 836,
+    "expression": "要る",
+    "reading": "いる",
+    "meaning": "to need",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1301,
+    "expression": "見せる",
+    "reading": "みせる",
+    "meaning": "to show, to display",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1305,
+    "expression": "見る",
+    "reading": "みる",
+    "meaning": "to see, to look",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 888,
+    "expression": "覚える",
+    "reading": "おぼえる",
+    "meaning": "to learn, to commit to memory, to remember, to memorize",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 817,
+    "expression": "言う",
+    "reading": "いう",
+    "meaning": "to say",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 995,
+    "expression": "言葉",
+    "reading": "ことば",
+    "meaning": "language; word(s); expression(s)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1226,
+    "expression": "話す",
+    "reading": "はなす",
+    "meaning": "to speak",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1114,
+    "expression": "誕生日",
+    "reading": "たんじょうび",
+    "meaning": "birthday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 978,
+    "expression": "語",
+    "reading": "～ご",
+    "meaning": "word, language",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1340,
+    "expression": "読む",
+    "reading": "よむ",
+    "meaning": "to read",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1113,
+    "expression": "誰か",
+    "reading": "だれか",
+    "meaning": "someone",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 969,
+    "expression": "警官",
+    "reading": "けいかん",
+    "meaning": "police officer",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1257,
+    "expression": "豚肉",
+    "reading": "ぶたにく",
+    "meaning": "pork",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1009,
+    "expression": "財布",
+    "reading": "さいふ",
+    "meaning": "wallet",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 903,
+    "expression": "買い物",
+    "reading": "かいもの",
+    "meaning": "shopping",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 904,
+    "expression": "買う",
+    "reading": "かう",
+    "meaning": "to buy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 913,
+    "expression": "貸す",
+    "reading": "かす",
+    "meaning": "to lend",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1229,
+    "expression": "貼る",
+    "reading": "はる",
+    "meaning": "to post; to paste; to attach",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1026,
+    "expression": "質問",
+    "reading": "しつもん",
+    "meaning": "question, inquiry",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 786,
+    "expression": "赤い",
+    "reading": "あかい",
+    "meaning": "red",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1220,
+    "expression": "走る",
+    "reading": "はしる",
+    "meaning": "to run",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 863,
+    "expression": "起きる",
+    "reading": "おきる",
+    "meaning": "to get up (e.g., from sleeping); to happen",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 929,
+    "expression": "軽い",
+    "reading": "かるい",
+    "meaning": "light, non-serious, minor",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 926,
+    "expression": "辛い",
+    "reading": "からい",
+    "meaning": "hot and spicy; salty",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1024,
+    "expression": "辞書",
+    "reading": "じしょ",
+    "meaning": "dictionary",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1118,
+    "expression": "近い",
+    "reading": "ちかい",
+    "meaning": "near, close by, short",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1120,
+    "expression": "近く",
+    "reading": "ちかく",
+    "meaning": "nearby; in the neighborhood",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 905,
+    "expression": "返す",
+    "reading": "かえす",
+    "meaning": "to return something",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1228,
+    "expression": "速い",
+    "reading": "はやい",
+    "meaning": "fast, quick",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1040,
+    "expression": "週間",
+    "reading": "～しゅうかん",
+    "meaning": "~ weeks",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 872,
+    "expression": "遅い",
+    "reading": "おそい",
+    "meaning": "slow; (to be) late",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 795,
+    "expression": "遊ぶ",
+    "reading": "あそぶ",
+    "meaning": "to play; to spend time pleasantly; to hang out",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1119,
+    "expression": "違う",
+    "reading": "ちがう",
+    "meaning": "to be different; to differ; wrong",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1161,
+    "expression": "遠い",
+    "reading": "とおい",
+    "meaning": "far (away), distant",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1269,
+    "expression": "部屋",
+    "reading": "へや",
+    "meaning": "a room",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1330,
+    "expression": "郵便局",
+    "reading": "ゆうびんきょく",
+    "meaning": "post office",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1045,
+    "expression": "醤油",
+    "reading": "しょうゆ",
+    "meaning": "soy sauce",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 890,
+    "expression": "重い",
+    "reading": "おもい",
+    "meaning": "heavy; serious",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1321,
+    "expression": "野菜",
+    "reading": "やさい",
+    "meaning": "vegetable",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 957,
+    "expression": "金曜日",
+    "reading": "きんようび",
+    "meaning": "Friday",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 853,
+    "expression": "鉛筆",
+    "reading": "えんぴつ",
+    "meaning": "pencil",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 956,
+    "expression": "銀行",
+    "reading": "ぎんこう",
+    "meaning": "bank",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1183,
+    "expression": "長い",
+    "reading": "ながい",
+    "meaning": "long, lengthy",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1032,
+    "expression": "閉まる",
+    "reading": "しまる",
+    "meaning": "to close, to be closed",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1033,
+    "expression": "閉める",
+    "reading": "しめる",
+    "meaning": "to close, to shut",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 788,
+    "expression": "開く",
+    "reading": "あく",
+    "meaning": "to open, to become open",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 789,
+    "expression": "開ける",
+    "reading": "あける",
+    "meaning": "to open (v.t.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 893,
+    "expression": "降りる",
+    "reading": "おりる",
+    "meaning": "to get off",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1261,
+    "expression": "降る",
+    "reading": "ふる",
+    "meaning": "to precipitate, to fall (e.g., rain, snow, etc.)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 898,
+    "expression": "階",
+    "reading": "～かい",
+    "meaning": "counter for stories (floors) of a building",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 902,
+    "expression": "階段",
+    "reading": "かいだん",
+    "meaning": "stairs",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1014,
+    "expression": "雑誌",
+    "reading": "ざっし",
+    "meaning": "magazine, journal",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1309,
+    "expression": "難しい",
+    "reading": "むずかしい",
+    "meaning": "difficult",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1150,
+    "expression": "電気",
+    "reading": "でんき",
+    "meaning": "electricity, (electric) light",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1152,
+    "expression": "電話",
+    "reading": "でんわ",
+    "meaning": "a telephone",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1151,
+    "expression": "電車",
+    "reading": "でんしゃ",
+    "meaning": "electric train",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 785,
+    "expression": "青い",
+    "reading": "あおい",
+    "meaning": "blue",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1025,
+    "expression": "静か",
+    "reading": "しずか",
+    "meaning": "quiet, calm",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 891,
+    "expression": "面白い",
+    "reading": "おもしろい",
+    "meaning": "interesting, amusing",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 960,
+    "expression": "靴下",
+    "reading": "くつした",
+    "meaning": "socks",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 895,
+    "expression": "音楽",
+    "reading": "おんがく",
+    "meaning": "Music",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1108,
+    "expression": "頼む",
+    "reading": "たのむ",
+    "meaning": "to request, to ask (a favor)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 914,
+    "expression": "風邪",
+    "reading": "かぜ",
+    "meaning": "cold, flu",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1172,
+    "expression": "飛ぶ",
+    "reading": "とぶ",
+    "meaning": "to fly, to hop",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1242,
+    "expression": "飛行機",
+    "reading": "ひこうき",
+    "meaning": "airplane",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1112,
+    "expression": "食べる",
+    "reading": "たべる",
+    "meaning": "to eat",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1111,
+    "expression": "食べ物",
+    "reading": "たべもの",
+    "meaning": "food",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1046,
+    "expression": "食堂",
+    "reading": "しょくどう",
+    "meaning": "cafeteria, dining hall",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1207,
+    "expression": "飲み物",
+    "reading": "のみもの",
+    "meaning": "drink, beverage",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1208,
+    "expression": "飲む",
+    "reading": "のむ",
+    "meaning": "to drink",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1098,
+    "expression": "高い",
+    "reading": "たかい",
+    "meaning": "tall, high; expensive",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1184,
+    "expression": "鳴く",
+    "reading": "なく",
+    "meaning": "to make sound (animal)",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 1176,
+    "expression": "鶏肉",
+    "reading": "とりにく",
+    "meaning": "chicken meat",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 935,
+    "expression": "黄色",
+    "reading": "きいろ",
+    "meaning": "yellow",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 936,
+    "expression": "黄色い",
+    "reading": "きいろい",
+    "meaning": "yellow",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 968,
+    "expression": "黒い",
+    "reading": "くろい",
+    "meaning": "black; dark",
+    "type": "vocab",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  }
+]

@@ -1,0 +1,1091 @@
+[
+  {
+    "id": 91,
+    "expression": "一",
+    "reading": "いち",
+    "meaning": "one",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 131,
+    "expression": "七",
+    "reading": "しち",
+    "meaning": "seven",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 180,
+    "expression": "万",
+    "reading": "まん",
+    "meaning": "ten thousand",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 127,
+    "expression": "三",
+    "reading": "さん",
+    "meaning": "three",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 97,
+    "expression": "上",
+    "reading": "うえ",
+    "meaning": "above (up, top, etc.), over, on top of",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 130,
+    "expression": "下",
+    "reading": "した",
+    "meaning": "under, below, beneath",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 116,
+    "expression": "九",
+    "reading": "きゅう",
+    "meaning": "nine",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 151,
+    "expression": "二",
+    "reading": "に",
+    "meaning": "two",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 123,
+    "expression": "五",
+    "reading": "ご",
+    "meaning": "five",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 93,
+    "expression": "今",
+    "reading": "いま",
+    "meaning": "now",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 112,
+    "expression": "体",
+    "reading": "からだ",
+    "meaning": "body; health",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 150,
+    "expression": "何",
+    "reading": "なん",
+    "meaning": "what sort of ~",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 107,
+    "expression": "傘",
+    "reading": "かさ",
+    "meaning": "umbrella, parasol",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 85,
+    "expression": "兄",
+    "reading": "あに",
+    "meaning": "(my) older brother (humble)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 126,
+    "expression": "先",
+    "reading": "さき",
+    "meaning": "future; recent, previous",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 160,
+    "expression": "八",
+    "reading": "はち",
+    "meaning": "eight",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 197,
+    "expression": "六",
+    "reading": "ろく",
+    "meaning": "six",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 174,
+    "expression": "冬",
+    "reading": "ふゆ",
+    "meaning": "winter",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 177,
+    "expression": "前",
+    "reading": "まえ",
+    "meaning": "before, in front",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 115,
+    "expression": "北",
+    "reading": "きた",
+    "meaning": "north",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 132,
+    "expression": "十",
+    "reading": "じゅう",
+    "meaning": "ten (~)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 135,
+    "expression": "千",
+    "reading": "せん",
+    "meaning": "thousand",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 166,
+    "expression": "半",
+    "reading": "はん",
+    "meaning": "half (e.g., にじはん | half-past two)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 186,
+    "expression": "南",
+    "reading": "みなみ",
+    "meaning": "South",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 138,
+    "expression": "卵",
+    "reading": "たまご",
+    "meaning": "egg",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 118,
+    "expression": "口",
+    "reading": "くち",
+    "meaning": "job opening; mouth",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 181,
+    "expression": "右",
+    "reading": "みぎ",
+    "meaning": "right hand side",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 128,
+    "expression": "四",
+    "reading": "し",
+    "meaning": "four",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 120,
+    "expression": "国",
+    "reading": "くに",
+    "meaning": "country; place of origin",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 129,
+    "expression": "塩",
+    "reading": "しお",
+    "meaning": "salt",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 124,
+    "expression": "声",
+    "reading": "こえ",
+    "meaning": "voice",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 149,
+    "expression": "夏",
+    "reading": "なつ",
+    "meaning": "summer",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 136,
+    "expression": "外",
+    "reading": "そと",
+    "meaning": "outside, exterior",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 195,
+    "expression": "夜",
+    "reading": "よる",
+    "meaning": "evening, night",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 104,
+    "expression": "女",
+    "reading": "おんな",
+    "meaning": "woman, female",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 94,
+    "expression": "妹",
+    "reading": "いもうと",
+    "meaning": "younger sister (humble)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 86,
+    "expression": "姉",
+    "reading": "あね",
+    "meaning": "(my) older sister (humble)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 95,
+    "expression": "嫌",
+    "reading": "いや",
+    "meaning": "disagreeable, detestable, unpleasant",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 89,
+    "expression": "家",
+    "reading": "いえ",
+    "meaning": "house, home",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 192,
+    "expression": "山",
+    "reading": "やま",
+    "meaning": "mountain",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 113,
+    "expression": "川",
+    "reading": "かわ",
+    "meaning": "river",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 169,
+    "expression": "左",
+    "reading": "ひだり",
+    "meaning": "left hand side",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 146,
+    "expression": "年",
+    "reading": "とし",
+    "meaning": "year, age",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 183,
+    "expression": "店",
+    "reading": "みせ",
+    "meaning": "store, shop",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 154,
+    "expression": "庭",
+    "reading": "にわ",
+    "meaning": "garden",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 102,
+    "expression": "弟",
+    "reading": "おとうと",
+    "meaning": "younger brother",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 84,
+    "expression": "後",
+    "reading": "あと",
+    "meaning": "afterwards (later); in the future; the rest; since then",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 144,
+    "expression": "戸",
+    "reading": "と",
+    "meaning": "door (Japanese style)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 145,
+    "expression": "所",
+    "reading": "ところ",
+    "meaning": "place",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 143,
+    "expression": "手",
+    "reading": "て",
+    "meaning": "hand",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 109,
+    "expression": "方",
+    "reading": "かた",
+    "meaning": "-- honorific form for 人 (ひと) --; way of doing",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 165,
+    "expression": "春",
+    "reading": "はる",
+    "meaning": "spring",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 172,
+    "expression": "昼",
+    "reading": "ひる",
+    "meaning": "noon, daytime",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 167,
+    "expression": "晩",
+    "reading": "ばん",
+    "meaning": "evening",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 170,
+    "expression": "暇",
+    "reading": "ひま",
+    "meaning": "free time, leisure",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 173,
+    "expression": "服",
+    "reading": "ふく",
+    "meaning": "clothes",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 81,
+    "expression": "朝",
+    "reading": "あさ",
+    "meaning": "morning",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 114,
+    "expression": "木",
+    "reading": "き",
+    "meaning": "tree, wood, timber",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 176,
+    "expression": "本",
+    "reading": "ほん",
+    "meaning": "counter for long cylindrical things",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 142,
+    "expression": "机",
+    "reading": "つくえ",
+    "meaning": "desk",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 188,
+    "expression": "村",
+    "reading": "むら",
+    "meaning": "village",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 168,
+    "expression": "東",
+    "reading": "ひがし",
+    "meaning": "east",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 194,
+    "expression": "横",
+    "reading": "よこ",
+    "meaning": "beside; side; width",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 158,
+    "expression": "橋",
+    "reading": "はし",
+    "meaning": "bridge",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 141,
+    "expression": "次",
+    "reading": "つぎ",
+    "meaning": "next",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 98,
+    "expression": "歌",
+    "reading": "うた",
+    "meaning": "a song",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 156,
+    "expression": "歯",
+    "reading": "は",
+    "meaning": "tooth",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 164,
+    "expression": "母",
+    "reading": "はは",
+    "meaning": "(my) mother",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 182,
+    "expression": "水",
+    "reading": "みず",
+    "meaning": "water",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 90,
+    "expression": "池",
+    "reading": "いけ",
+    "meaning": "pond",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 99,
+    "expression": "海",
+    "reading": "うみ",
+    "meaning": "sea, beach",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 140,
+    "expression": "父",
+    "reading": "ちち",
+    "meaning": "(my) father",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 190,
+    "expression": "物",
+    "reading": "もの",
+    "meaning": "thing (concrete object)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 92,
+    "expression": "犬",
+    "reading": "いぬ",
+    "meaning": "dog",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 155,
+    "expression": "猫",
+    "reading": "ねこ",
+    "meaning": "cat",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 103,
+    "expression": "男",
+    "reading": "おとこ",
+    "meaning": "man, male",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 178,
+    "expression": "町",
+    "reading": "まち",
+    "meaning": "town; city",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 133,
+    "expression": "白",
+    "reading": "しろ",
+    "meaning": "white",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 171,
+    "expression": "百",
+    "reading": "ひゃく",
+    "meaning": "hundred",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 189,
+    "expression": "目",
+    "reading": "め",
+    "meaning": "eye(s)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 198,
+    "expression": "私",
+    "reading": "わたし",
+    "meaning": "I (formal), myself, private affairs",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 80,
+    "expression": "秋",
+    "reading": "あき",
+    "meaning": "fall (season)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 137,
+    "expression": "空",
+    "reading": "そら",
+    "meaning": "sky",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 179,
+    "expression": "窓",
+    "reading": "まど",
+    "meaning": "window",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 157,
+    "expression": "箱",
+    "reading": "はこ",
+    "meaning": "box",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 159,
+    "expression": "箸",
+    "reading": "はし",
+    "meaning": "chopsticks",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 111,
+    "expression": "紙",
+    "reading": "かみ",
+    "meaning": "paper",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 100,
+    "expression": "絵",
+    "reading": "え",
+    "meaning": "a painting; a picture; a drawing",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 185,
+    "expression": "緑",
+    "reading": "みどり",
+    "meaning": "green",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 187,
+    "expression": "耳",
+    "reading": "みみ",
+    "meaning": "ear",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 152,
+    "expression": "肉",
+    "reading": "にく",
+    "meaning": "meat",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 134,
+    "expression": "背",
+    "reading": "せい",
+    "meaning": "(one's) height, stature",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 96,
+    "expression": "色",
+    "reading": "いろ",
+    "meaning": "color",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 161,
+    "expression": "花",
+    "reading": "はな",
+    "meaning": "flower",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 117,
+    "expression": "薬",
+    "reading": "くすり",
+    "meaning": "medicine",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 153,
+    "expression": "西",
+    "reading": "にし",
+    "meaning": "west",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 110,
+    "expression": "角",
+    "reading": "かど",
+    "meaning": "corner (e.g., desk, pavement)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 163,
+    "expression": "話",
+    "reading": "はなし",
+    "meaning": "talk (chat), story",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 139,
+    "expression": "誰",
+    "reading": "だれ",
+    "meaning": "who",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 79,
+    "expression": "赤",
+    "reading": "あか",
+    "meaning": "red",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 82,
+    "expression": "足",
+    "reading": "あし",
+    "meaning": "foot; leg",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 121,
+    "expression": "車",
+    "reading": "くるま",
+    "meaning": "car, vehicle",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 175,
+    "expression": "辺",
+    "reading": "へん",
+    "meaning": "area, vicinity",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 184,
+    "expression": "道",
+    "reading": "みち",
+    "meaning": "road, street; way, directions",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 106,
+    "expression": "鍵",
+    "reading": "かぎ",
+    "meaning": "a lock; a key",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 191,
+    "expression": "門",
+    "reading": "もん",
+    "meaning": "gate",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 147,
+    "expression": "隣",
+    "reading": "となり",
+    "meaning": "next to, next door to",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 87,
+    "expression": "雨",
+    "reading": "あめ",
+    "meaning": "rain",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 193,
+    "expression": "雪",
+    "reading": "ゆき",
+    "meaning": "snow",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 196,
+    "expression": "零",
+    "reading": "れい",
+    "meaning": "zero, nought",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 78,
+    "expression": "青",
+    "reading": "あお",
+    "meaning": "blue",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 119,
+    "expression": "靴",
+    "reading": "くつ",
+    "meaning": "shoes, footwear",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 83,
+    "expression": "頭",
+    "reading": "あたま",
+    "meaning": "head",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 105,
+    "expression": "顔",
+    "reading": "かお",
+    "meaning": "face (body part)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 108,
+    "expression": "風",
+    "reading": "かぜ",
+    "meaning": "wind, breeze",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 88,
+    "expression": "飴",
+    "reading": "あめ",
+    "meaning": "(hard) candy",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 101,
+    "expression": "駅",
+    "reading": "えき",
+    "meaning": "station",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 125,
+    "expression": "魚",
+    "reading": "さかな",
+    "meaning": "fish",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 148,
+    "expression": "鳥",
+    "reading": "とり",
+    "meaning": "chicken (lit., bird)",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 122,
+    "expression": "黒",
+    "reading": "くろ",
+    "meaning": "black",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  },
+  {
+    "id": 162,
+    "expression": "鼻",
+    "reading": "はな",
+    "meaning": "nose",
+    "type": "kanji",
+    "jlpt_level": "N5",
+    "sources": "[\"anki-jlpt\"]"
+  }
+]

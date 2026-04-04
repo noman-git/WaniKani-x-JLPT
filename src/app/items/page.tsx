@@ -1,0 +1,241 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+
+interface Item {
+  id: number;
+  expression: string;
+  reading: string;
+  meaning: string;
+  type: string;
+  jlptLevel: string;
+  status: string;
+  wkSubjectId: number | null;
+  wkLevel: number | null;
+}
+
+interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export default function ItemsPage() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 30, total: 0, totalPages: 0 });
+  const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type: string } | null>(null);
+
+  // Filters
+  const [level, setLevel] = useState<string>("");
+  const [type, setType] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
+  const [onWanikani, setOnWanikani] = useState<string>("");
+  const [page, setPage] = useState(1);
+
+  const loadItems = useCallback(async () => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (level) params.set("level", level);
+    if (type) params.set("type", type);
+    if (status) params.set("status", status);
+    if (search) params.set("search", search);
+    if (onWanikani) params.set("onWanikani", onWanikani);
+    params.set("page", page.toString());
+    params.set("limit", "30");
+
+    try {
+      const res = await fetch(`/api/items?${params}`);
+      const data = await res.json();
+      setItems(data.items || []);
+      setPagination(data.pagination || { page: 1, limit: 30, total: 0, totalPages: 0 });
+    } catch { /* */ }
+    setLoading(false);
+  }, [level, type, status, search, onWanikani, page]);
+
+  useEffect(() => { loadItems(); }, [loadItems]);
+
+  // Reset page when filters change
+  useEffect(() => { setPage(1); }, [level, type, status, search, onWanikani]);
+
+  const toggleStatus = async (itemId: number, currentStatus: string) => {
+    const nextStatus = currentStatus === "unknown" ? "learning" : currentStatus === "learning" ? "known" : "unknown";
+    try {
+      const res = await fetch("/api/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemId, status: nextStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setItems((prev) => prev.map((i) => i.id === itemId ? { ...i, status: nextStatus } : i));
+        showToast(`Marked as ${nextStatus}`, "success");
+      }
+    } catch {
+      showToast("Failed to update", "error");
+    }
+  };
+
+  const setStatusDirect = async (itemId: number, newStatus: string) => {
+    try {
+      const res = await fetch("/api/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemId, status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setItems((prev) => prev.map((i) => i.id === itemId ? { ...i, status: newStatus } : i));
+        showToast(`Marked as ${newStatus}`, "success");
+      }
+    } catch {
+      showToast("Failed to update", "error");
+    }
+  };
+
+  const showToast = (message: string, type: string) => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  const getItemUrl = (item: Item) => {
+    if (item.wkSubjectId) {
+      // WaniKani URL: kanji → /kanji/X, vocabulary → /vocabulary/X
+      const wkType = item.type === "kanji" ? "kanji" : "vocabulary";
+      return `https://www.wanikani.com/${wkType}/${encodeURIComponent(item.expression)}`;
+    }
+    // Fallback to Jisho.org for items not on WaniKani
+    return `https://jisho.org/search/${encodeURIComponent(item.expression)}`;
+  };
+
+  const openItem = (item: Item) => {
+    window.open(getItemUrl(item), "_blank", "noopener,noreferrer");
+  };
+
+  const FilterBtn = ({ label, value, current, setter }: { label: string; value: string; current: string; setter: (v: string) => void }) => (
+    <button
+      className={`filter-btn ${current === value ? "active" : ""}`}
+      onClick={() => setter(current === value ? "" : value)}
+    >
+      {label}
+    </button>
+  );
+
+  return (
+    <>
+      <div className="page-header">
+        <h1 className="page-title">Browse Items</h1>
+        <p className="page-subtitle">{pagination.total} items found</p>
+      </div>
+
+      {/* Filters */}
+      <div className="filters-bar">
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search kanji, reading, or meaning..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ maxWidth: 300 }}
+        />
+        <FilterBtn label="N5" value="N5" current={level} setter={setLevel} />
+        <FilterBtn label="N4" value="N4" current={level} setter={setLevel} />
+        <span style={{ color: "var(--text-muted)", fontSize: 12 }}>|</span>
+        <FilterBtn label="漢字 Kanji" value="kanji" current={type} setter={setType} />
+        <FilterBtn label="語彙 Vocab" value="vocab" current={type} setter={setType} />
+        <span style={{ color: "var(--text-muted)", fontSize: 12 }}>|</span>
+        <FilterBtn label="✅ Known" value="known" current={status} setter={setStatus} />
+        <FilterBtn label="📖 Learning" value="learning" current={status} setter={setStatus} />
+        <FilterBtn label="❓ Unknown" value="unknown" current={status} setter={setStatus} />
+        <span style={{ color: "var(--text-muted)", fontSize: 12 }}>|</span>
+        <FilterBtn label="On WK" value="true" current={onWanikani} setter={setOnWanikani} />
+        <FilterBtn label="Not on WK" value="false" current={onWanikani} setter={setOnWanikani} />
+      </div>
+
+      {/* Items Grid */}
+      {loading ? (
+        <div className="loading-container">
+          <div className="loading-spinner" />
+          <span>Loading items...</span>
+        </div>
+      ) : items.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-state-icon">🔍</div>
+          <div className="empty-state-text">No items found</div>
+          <p style={{ color: "var(--text-muted)" }}>Try adjusting your filters</p>
+        </div>
+      ) : (
+        <div className="items-grid">
+          {items.map((item) => (
+            <div key={item.id} className="item-card" onClick={() => openItem(item)} style={{ cursor: "pointer" }}>
+              <div className="item-card-header">
+                <div className="item-expression">{item.expression}</div>
+                <a
+                  href={getItemUrl(item)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="item-link-icon"
+                  onClick={(e) => e.stopPropagation()}
+                  title={item.wkSubjectId ? "Open on WaniKani" : "Open on Jisho.org"}
+                >
+                  {item.wkSubjectId ? "🐊" : "📖"}
+                </a>
+              </div>
+              <div className="item-reading">{item.reading}</div>
+              <div className="item-meaning">{item.meaning}</div>
+              <div className="item-meta">
+                <span className={`badge badge-${item.jlptLevel.toLowerCase()}`}>{item.jlptLevel}</span>
+                <span className={`badge badge-${item.type}`}>{item.type === "kanji" ? "漢字" : "語彙"}</span>
+                {item.wkSubjectId && (
+                  <span className="badge badge-wk">WK Lv.{item.wkLevel}</span>
+                )}
+              </div>
+              <div className="status-toggle" onClick={(e) => e.stopPropagation()}>
+                <button
+                  className={`status-toggle-btn ${item.status === "unknown" ? "active-unknown" : ""}`}
+                  onClick={() => setStatusDirect(item.id, "unknown")}
+                >
+                  Unknown
+                </button>
+                <button
+                  className={`status-toggle-btn ${item.status === "learning" ? "active-learning" : ""}`}
+                  onClick={() => setStatusDirect(item.id, "learning")}
+                >
+                  Learning
+                </button>
+                <button
+                  className={`status-toggle-btn ${item.status === "known" ? "active-known" : ""}`}
+                  onClick={() => setStatusDirect(item.id, "known")}
+                >
+                  Known
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <div className="pagination">
+          <button className="btn btn-outline btn-sm" onClick={() => setPage(Math.max(1, page - 1))} disabled={page <= 1}>
+            ← Prev
+          </button>
+          <span className="pagination-info">
+            Page {pagination.page} of {pagination.totalPages}
+          </span>
+          <button className="btn btn-outline btn-sm" onClick={() => setPage(Math.min(pagination.totalPages, page + 1))} disabled={page >= pagination.totalPages}>
+            Next →
+          </button>
+        </div>
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <div className={`toast toast-${toast.type}`}>{toast.message}</div>
+      )}
+    </>
+  );
+}
