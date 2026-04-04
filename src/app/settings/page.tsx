@@ -1,104 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useAuth } from "@/app/components/AuthProvider";
 
 export default function SettingsPage() {
-  const [syncing, setSyncing] = useState(false);
-  const [syncResult, setSyncResult] = useState<string | null>(null);
-
-  const handleSync = async () => {
-    setSyncing(true);
-    setSyncResult(null);
-    try {
-      const res = await fetch("/api/wanikani/sync", { method: "POST" });
-      const data = await res.json();
-      if (data.error) {
-        setSyncResult(`❌ Error: ${data.error}`);
-      } else {
-        setSyncResult(
-          `✅ Synced successfully!\n` +
-          `Total subjects fetched: ${data.stats.totalFetched}\n` +
-          `Matched to JLPT items: ${data.stats.matchedToJLPT}\n` +
-          `Not in JLPT lists: ${data.stats.notInJLPT}`
-        );
-      }
-    } catch {
-      setSyncResult("❌ Sync failed. Check your network and API token.");
-    }
-    setSyncing(false);
-  };
+  const { user } = useAuth();
 
   return (
     <>
       <div className="page-header">
         <h1 className="page-title">Settings</h1>
-        <p className="page-subtitle">Configure your WaniKani integration</p>
+        <p className="page-subtitle">Your account and app info</p>
       </div>
 
       <div className="card settings-card" style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>WaniKani API Token</h3>
-        <div className="form-group">
-          <label className="form-label">API Token</label>
-          <div className="form-input" style={{ color: "var(--text-muted)", userSelect: "none" }}>
-            ••••••••••••••••••••••••••• (stored in .env)
-          </div>
-          <div className="form-hint">
-            Your token is stored in the <code>.env</code> file at the project root.
-            Get your token from{" "}
-            <a
-              href="https://www.wanikani.com/settings/personal_access_tokens"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "var(--accent-n5)" }}
-            >
-              WaniKani Settings → API Tokens
-            </a>
+        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Account</h3>
+        <div style={{ display: "grid", gap: 12 }}>
+          <div className="form-group">
+            <label className="form-label">Username</label>
+            <div className="form-input" style={{ color: "var(--text-secondary)" }}>
+              {user?.username}
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="card settings-card" style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Sync with WaniKani</h3>
-        <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 16 }}>
-          Fetch your WaniKani subjects and match them against JLPT N4/N5 items.
-          This will identify which items you&apos;re already studying on WaniKani.
-        </p>
-        <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>
-          ⚠️ This may take 15-30 seconds due to WaniKani API rate limits (60 req/min).
-        </p>
-        <button className="btn btn-primary" onClick={handleSync} disabled={syncing}>
-          {syncing ? (
-            <>
-              <span className="loading-spinner" /> Syncing... (this takes a moment)
-            </>
-          ) : (
-            "🔄 Sync Now"
-          )}
-        </button>
-        {syncResult && (
-          <pre
-            style={{
-              marginTop: 16,
-              padding: 16,
-              borderRadius: "var(--radius-sm)",
-              background: "var(--bg-glass)",
-              border: "1px solid var(--border-subtle)",
-              fontSize: 13,
-              color: "var(--text-secondary)",
-              whiteSpace: "pre-wrap",
-              lineHeight: 1.6,
-            }}
-          >
-            {syncResult}
-          </pre>
-        )}
       </div>
 
       <div className="card settings-card">
         <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>About</h3>
         <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>
           This dashboard tracks JLPT N4 and N5 kanji and vocabulary from community-curated lists.
-          It integrates with WaniKani to show which items you&apos;re already studying there.
+          It includes WaniKani data for meanings, readings, mnemonics, and radicals.
         </p>
         <div style={{ marginTop: 16, fontSize: 13, color: "var(--text-muted)" }}>
           <strong>Data Sources:</strong>
@@ -113,7 +43,7 @@ export default function SettingsPage() {
               <a href="https://docs.api.wanikani.com/" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-n5)" }}>
                 WaniKani API v2
               </a>{" "}
-              — Subject matching
+              — Meanings, readings, mnemonics &amp; radicals
             </li>
           </ul>
         </div>

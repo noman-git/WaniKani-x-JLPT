@@ -1,9 +1,20 @@
 import { db } from "@/lib/db";
 import { jlptItems, userProgress } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
+import { requireAuth, AuthError } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
+  let session;
+  try {
+    session = await requireAuth(request);
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return NextResponse.json({ error: e.message }, { status: 401 });
+    }
+    throw e;
+  }
+
   try {
     const { itemId, status } = await request.json();
 
@@ -25,21 +36,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    // Upsert progress
+    // Upsert progress for this user
     const existing = db
       .select()
       .from(userProgress)
-      .where(eq(userProgress.jlptItemId, itemId))
+      .where(
+        and(
+          eq(userProgress.userId, session.userId),
+          eq(userProgress.jlptItemId, itemId)
+        )
+      )
       .get();
 
     if (existing) {
       db.update(userProgress)
         .set({ status, updatedAt: new Date().toISOString() })
-        .where(eq(userProgress.jlptItemId, itemId))
+        .where(eq(userProgress.id, existing.id))
         .run();
     } else {
       db.insert(userProgress)
         .values({
+          userId: session.userId,
           jlptItemId: itemId,
           status,
           updatedAt: new Date().toISOString(),

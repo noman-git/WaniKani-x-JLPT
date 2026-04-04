@@ -38,8 +38,6 @@ function ProgressRing({ percent, size = 100, stroke = 8, color }: { percent: num
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats[]>([]);
-  const [syncing, setSyncing] = useState(false);
-  const [syncResult, setSyncResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadStats = useCallback(async () => {
@@ -52,24 +50,6 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => { loadStats(); }, [loadStats]);
-
-  const handleSync = async () => {
-    setSyncing(true);
-    setSyncResult(null);
-    try {
-      const res = await fetch("/api/wanikani/sync", { method: "POST" });
-      const data = await res.json();
-      if (data.error) {
-        setSyncResult(`Error: ${data.error}`);
-      } else {
-        setSyncResult(`Synced ${data.stats.totalFetched} items — ${data.stats.matchedToJLPT} matched to JLPT`);
-        loadStats();
-      }
-    } catch (error) {
-      setSyncResult("Sync failed. Check your API token.");
-    }
-    setSyncing(false);
-  };
 
   const getStats = (level: string, type: string) => {
     return stats.find((s) => s.level === level && s.type === type) || { total: 0, known: 0, learning: 0, onWanikani: 0 };
@@ -100,17 +80,6 @@ export default function DashboardPage() {
       <div className="page-header">
         <h1 className="page-title">JLPT Study Dashboard</h1>
         <p className="page-subtitle">Track your N4 & N5 kanji and vocabulary mastery</p>
-      </div>
-
-      {/* Sync Banner */}
-      <div className="sync-banner">
-        <div className="sync-banner-text">
-          <strong>WaniKani Sync</strong> — Connect your WaniKani account to see which JLPT items you&apos;re already studying.
-          {syncResult && <div style={{ marginTop: 8 }}>{syncResult}</div>}
-        </div>
-        <button className="btn btn-primary" onClick={handleSync} disabled={syncing}>
-          {syncing ? <><span className="loading-spinner" /> Syncing...</> : "🔄 Sync Now"}
-        </button>
       </div>
 
       {/* Overview Stats */}

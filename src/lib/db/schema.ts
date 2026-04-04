@@ -1,5 +1,26 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  username: text("username").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  displayName: text("display_name").notNull(),
+  isAdmin: integer("is_admin", { mode: "boolean" }).notNull().default(false),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+});
+
+export const inviteCodes = sqliteTable("invite_codes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  code: text("code").notNull().unique(),
+  usedBy: integer("used_by").references(() => users.id),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  usedAt: text("used_at"),
+});
+
 export const jlptItems = sqliteTable("jlpt_items", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   expression: text("expression").notNull(),
@@ -7,53 +28,54 @@ export const jlptItems = sqliteTable("jlpt_items", {
   meaning: text("meaning").notNull(),
   type: text("type", { enum: ["kanji", "vocab"] }).notNull(),
   jlptLevel: text("jlpt_level", { enum: ["N4", "N5"] }).notNull(),
-  sources: text("sources").notNull().default("[]"), // JSON array of source names
+  sources: text("sources").notNull().default("[]"),
 });
 
 export const wanikaniSubjects = sqliteTable("wanikani_subjects", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   wkSubjectId: integer("wk_subject_id").notNull(),
   characters: text("characters"),
-  meanings: text("meanings").notNull(), // JSON: [{meaning, primary, accepted_answer}]
-  readings: text("readings").notNull(), // JSON: [{reading, type, primary}]
+  meanings: text("meanings").notNull(),
+  readings: text("readings").notNull(),
   wkLevel: integer("wk_level").notNull(),
-  objectType: text("object_type").notNull(), // "radical", "kanji", "vocabulary", "kana_vocabulary"
+  objectType: text("object_type").notNull(),
   matchedJlptItemId: integer("matched_jlpt_item_id").references(() => jlptItems.id),
-  matchType: text("match_type"), // "exact" | "reading" | "prefix_strip" | null
-  // Rich data fields
-  componentSubjectIds: text("component_subject_ids"), // JSON array of radical IDs (for kanji)
-  amalgamationSubjectIds: text("amalgamation_subject_ids"), // JSON array of vocab IDs (for kanji)
-  meaningMnemonic: text("meaning_mnemonic"), // HTML mnemonic for meanings
-  readingMnemonic: text("reading_mnemonic"), // HTML mnemonic for readings
-  meaningHint: text("meaning_hint"), // Hint text
-  readingHint: text("reading_hint"), // Hint text
+  matchType: text("match_type"),
+  componentSubjectIds: text("component_subject_ids"),
+  amalgamationSubjectIds: text("amalgamation_subject_ids"),
+  meaningMnemonic: text("meaning_mnemonic"),
+  readingMnemonic: text("reading_mnemonic"),
+  meaningHint: text("meaning_hint"),
+  readingHint: text("reading_hint"),
 });
 
 export const wanikaniRadicals = sqliteTable("wanikani_radicals", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   wkSubjectId: integer("wk_subject_id").notNull().unique(),
-  characters: text("characters"), // null for image-only radicals
-  meanings: text("meanings").notNull(), // JSON array
+  characters: text("characters"),
+  meanings: text("meanings").notNull(),
   wkLevel: integer("wk_level").notNull(),
-  characterImageUrl: text("character_image_url"), // SVG URL for image-only radicals
+  characterImageUrl: text("character_image_url"),
   meaningMnemonic: text("meaning_mnemonic"),
   meaningHint: text("meaning_hint"),
-  amalgamationSubjectIds: text("amalgamation_subject_ids"), // JSON array of kanji IDs that use this radical
+  amalgamationSubjectIds: text("amalgamation_subject_ids"),
 });
 
 export const kanjiCache = sqliteTable("kanji_cache", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  queryKey: text("query_key").notNull().unique(), // "kanjiapi:日" or "jisho:食べる"
+  queryKey: text("query_key").notNull().unique(),
   responseJson: text("response_json").notNull(),
   cachedAt: text("cached_at").notNull(),
 });
 
 export const userProgress = sqliteTable("user_progress", {
   id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
   jlptItemId: integer("jlpt_item_id")
     .notNull()
-    .references(() => jlptItems.id)
-    .unique(),
+    .references(() => jlptItems.id),
   status: text("status", { enum: ["known", "learning", "unknown"] })
     .notNull()
     .default("unknown"),
@@ -63,6 +85,8 @@ export const userProgress = sqliteTable("user_progress", {
 });
 
 // Types
+export type User = typeof users.$inferSelect;
+export type InviteCode = typeof inviteCodes.$inferSelect;
 export type JlptItem = typeof jlptItems.$inferSelect;
 export type WanikaniSubject = typeof wanikaniSubjects.$inferSelect;
 export type WanikaniRadical = typeof wanikaniRadicals.$inferSelect;

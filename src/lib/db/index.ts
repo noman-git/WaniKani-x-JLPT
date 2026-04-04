@@ -5,11 +5,18 @@ import path from "path";
 import fs from "fs";
 
 const DB_PATH = path.join(process.cwd(), "data", "jlpt.db");
+const SEED_DB_PATH = path.join(process.cwd(), "data", "jlpt-seed.db");
 
 // Ensure data directory exists
 const dataDir = path.dirname(DB_PATH);
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// If no DB exists, copy from seed
+if (!fs.existsSync(DB_PATH) && fs.existsSync(SEED_DB_PATH)) {
+  fs.copyFileSync(SEED_DB_PATH, DB_PATH);
+  console.log("Initialized database from seed");
 }
 
 const sqlite = new Database(DB_PATH);
@@ -18,9 +25,26 @@ sqlite.pragma("foreign_keys = ON");
 
 export const db = drizzle(sqlite, { schema });
 
-// Initialize tables
+// Ensure all tables exist (handles schema additions since seed was created)
 export function initializeDatabase() {
   sqlite.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      display_name TEXT NOT NULL,
+      is_admin INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS invite_codes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT NOT NULL UNIQUE,
+      used_by INTEGER REFERENCES users(id),
+      created_at TEXT NOT NULL,
+      used_at TEXT
+    );
+
     CREATE TABLE IF NOT EXISTS jlpt_items (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       expression TEXT NOT NULL,
@@ -70,62 +94,23 @@ export function initializeDatabase() {
 
     CREATE TABLE IF NOT EXISTS user_progress (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      jlpt_item_id INTEGER NOT NULL UNIQUE REFERENCES jlpt_items(id),
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      jlpt_item_id INTEGER NOT NULL REFERENCES jlpt_items(id),
       status TEXT NOT NULL DEFAULT 'unknown' CHECK(status IN ('known', 'learning', 'unknown')),
-      updated_at TEXT NOT NULL
+      updated_at TEXT NOT NULL,
+      UNIQUE(user_id, jlpt_item_id)
     );
 
     CREATE INDEX IF NOT EXISTS idx_jlpt_items_expression ON jlpt_items(expression);
     CREATE INDEX IF NOT EXISTS idx_jlpt_items_type_level ON jlpt_items(type, jlpt_level);
     CREATE INDEX IF NOT EXISTS idx_wanikani_characters ON wanikani_subjects(characters);
     CREATE INDEX IF NOT EXISTS idx_wanikani_matched ON wanikani_subjects(matched_jlpt_item_id);
-    CREATE INDEX IF NOT EXISTS idx_user_progress_status ON user_progress(status);
+    CREATE INDEX IF NOT EXISTS idx_user_progress_user ON user_progress(user_id);
+    CREATE INDEX IF NOT EXISTS idx_user_progress_compound ON user_progress(user_id, jlpt_item_id);
     CREATE INDEX IF NOT EXISTS idx_kanji_cache_key ON kanji_cache(query_key);
+    CREATE INDEX IF NOT EXISTS idx_invite_codes_code ON invite_codes(code);
   `);
-}
-
-// Seed database from JSON (flat array format)
-export function seedDatabase(seedPath: string) {
-  const count = sqlite
-    .prepare("SELECT COUNT(*) as count FROM jlpt_items")
-    .get() as { count: number };
-  if (count.count > 0) return; // Already seeded
-
-  const items = JSON.parse(fs.readFileSync(seedPath, "utf-8")) as Array<{
-    expression: string;
-    reading: string;
-    meaning: string;
-    type: string;
-    jlpt_level: string;
-    sources: string;
-  }>;
-
-  const insert = sqlite.prepare(`
-    INSERT INTO jlpt_items (expression, reading, meaning, type, jlpt_level, sources)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `);
-
-  const insertMany = sqlite.transaction(
-    (rows: typeof items) => {
-      for (const item of rows) {
-        insert.run(
-          item.expression,
-          item.reading,
-          item.meaning,
-          item.type,
-          item.jlpt_level,
-          item.sources
-        );
-      }
-    }
-  );
-
-  insertMany(items);
 }
 
 // Auto-initialize on import
 initializeDatabase();
-const seedPath = path.join(process.cwd(), "data", "jlpt-seed.json");
-if (fs.existsSync(seedPath)) {
-  seedDatabase(seedPath);
-}

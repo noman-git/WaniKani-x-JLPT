@@ -1,17 +1,21 @@
+import { getSession } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const level = searchParams.get("level"); // N4, N5
-  const type = searchParams.get("type"); // kanji, vocab
-  const status = searchParams.get("status"); // known, learning, unknown
+  const level = searchParams.get("level");
+  const type = searchParams.get("type");
+  const status = searchParams.get("status");
   const search = searchParams.get("search");
-  const onWanikani = searchParams.get("onWanikani"); // true, false
+  const onWanikani = searchParams.get("onWanikani");
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "50");
 
+  // Get userId from session (optional — unauthenticated users see no progress)
+  const session = await getSession(request);
+  const userId = session?.userId ?? null;
+
   try {
-    // Build WHERE clauses
     const whereClauses: string[] = [];
     const params: Record<string, unknown> = {};
 
@@ -46,7 +50,6 @@ export async function GET(request: NextRequest) {
     const whereSQL =
       whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
 
-    // Use a subquery to pick only one WK match per JLPT item (the lowest WK level)
     const wkSubquery = `
       LEFT JOIN (
         SELECT matched_jlpt_item_id,
@@ -60,10 +63,17 @@ export async function GET(request: NextRequest) {
       ) w_agg ON w_agg.matched_jlpt_item_id = j.id
     `;
 
+    // Progress join is scoped by userId
+    const progressJoin = userId
+      ? `LEFT JOIN user_progress p ON p.jlpt_item_id = j.id AND p.user_id = @userId`
+      : `LEFT JOIN user_progress p ON 0 = 1`; // Never matches when not logged in
+
+    params.userId = userId;
+
     const countQuery = `
       SELECT COUNT(*) as total
       FROM jlpt_items j
-      LEFT JOIN user_progress p ON p.jlpt_item_id = j.id
+      ${progressJoin}
       ${wkSubquery}
       ${whereSQL}
     `;
@@ -77,7 +87,7 @@ export async function GET(request: NextRequest) {
         w_agg.wk_characters as wkCharacters,
         w_agg.match_type as matchType
       FROM jlpt_items j
-      LEFT JOIN user_progress p ON p.jlpt_item_id = j.id
+      ${progressJoin}
       ${wkSubquery}
       ${whereSQL}
       ORDER BY j.jlpt_level ASC, j.type ASC, j.expression ASC
@@ -94,11 +104,13 @@ export async function GET(request: NextRequest) {
 
     const countResult = rawDb.prepare(countQuery).get(params) as { total: number };
     const items = rawDb.prepare(dataQuery).all(params);
-    rawDb.close();
 
-    // Summary stats (also deduplicated)
-    const statsDb = new Database(dbPath, { readonly: true });
-    const stats = statsDb
+    // Summary stats scoped to this user
+    const statsProgressJoin = userId
+      ? `LEFT JOIN user_progress p ON p.jlpt_item_id = j.id AND p.user_id = ${userId}`
+      : `LEFT JOIN user_progress p ON 0 = 1`;
+
+    const stats = rawDb
       .prepare(
         `
         SELECT
@@ -109,7 +121,7 @@ export async function GET(request: NextRequest) {
           SUM(CASE WHEN p.status = 'learning' THEN 1 ELSE 0 END) as learning,
           SUM(CASE WHEN w_agg.wk_subject_id IS NOT NULL THEN 1 ELSE 0 END) as onWanikani
         FROM jlpt_items j
-        LEFT JOIN user_progress p ON p.jlpt_item_id = j.id
+        ${statsProgressJoin}
         LEFT JOIN (
           SELECT matched_jlpt_item_id, MIN(wk_subject_id) as wk_subject_id
           FROM wanikani_subjects
@@ -120,7 +132,7 @@ export async function GET(request: NextRequest) {
       `
       )
       .all();
-    statsDb.close();
+    rawDb.close();
 
     return NextResponse.json({
       items,

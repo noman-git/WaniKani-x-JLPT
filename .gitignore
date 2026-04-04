@@ -30,13 +30,22 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+!.env.example
 
 # data
 /data/*.db
 /data/*.db-wal
 /data/*.db-shm
+!/data/jlpt-seed.db
+/data/debug/
+/data/*.json
+
+# scripts (debug/utility — only export-seed.ts is needed)
+/scripts/analyze-data.ts
+/scripts/build-seed.ts
+/scripts/dump-data.ts
 
 # vercel
 .vercel
