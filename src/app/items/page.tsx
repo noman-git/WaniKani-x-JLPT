@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import ItemDetailModal from "@/app/components/ItemDetailModal";
 
 interface Item {
   id: number;
@@ -26,6 +27,7 @@ export default function ItemsPage() {
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 30, total: 0, totalPages: 0 });
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: string } | null>(null);
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
   // Filters
   const [level, setLevel] = useState<string>("");
@@ -102,16 +104,14 @@ export default function ItemsPage() {
 
   const getItemUrl = (item: Item) => {
     if (item.wkSubjectId) {
-      // WaniKani URL: kanji → /kanji/X, vocabulary → /vocabulary/X
       const wkType = item.type === "kanji" ? "kanji" : "vocabulary";
       return `https://www.wanikani.com/${wkType}/${encodeURIComponent(item.expression)}`;
     }
-    // Fallback to Jisho.org for items not on WaniKani
     return `https://jisho.org/search/${encodeURIComponent(item.expression)}`;
   };
 
   const openItem = (item: Item) => {
-    window.open(getItemUrl(item), "_blank", "noopener,noreferrer");
+    setSelectedItemId(item.id);
   };
 
   const FilterBtn = ({ label, value, current, setter }: { label: string; value: string; current: string; setter: (v: string) => void }) => (
@@ -235,6 +235,18 @@ export default function ItemsPage() {
       {/* Toast */}
       {toast && (
         <div className={`toast toast-${toast.type}`}>{toast.message}</div>
+      )}
+
+      {/* Detail Modal */}
+      {selectedItemId && (
+        <ItemDetailModal
+          itemId={selectedItemId}
+          onClose={() => {
+            setSelectedItemId(null);
+            loadItems(); // Refresh to pick up any status changes
+          }}
+          onNavigate={(id) => setSelectedItemId(id)}
+        />
       )}
     </>
   );

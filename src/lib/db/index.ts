@@ -39,7 +39,29 @@ export function initializeDatabase() {
       readings TEXT NOT NULL,
       wk_level INTEGER NOT NULL,
       object_type TEXT NOT NULL,
-      matched_jlpt_item_id INTEGER REFERENCES jlpt_items(id)
+      matched_jlpt_item_id INTEGER REFERENCES jlpt_items(id),
+      component_subject_ids TEXT,
+      amalgamation_subject_ids TEXT,
+      meaning_mnemonic TEXT,
+      reading_mnemonic TEXT,
+      meaning_hint TEXT,
+      reading_hint TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS wanikani_radicals (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      wk_subject_id INTEGER NOT NULL UNIQUE,
+      characters TEXT,
+      meanings TEXT NOT NULL,
+      wk_level INTEGER NOT NULL,
+      character_image_url TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS kanji_cache (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      query_key TEXT NOT NULL UNIQUE,
+      response_json TEXT NOT NULL,
+      cached_at TEXT NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS user_progress (
@@ -52,7 +74,9 @@ export function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_jlpt_items_expression ON jlpt_items(expression);
     CREATE INDEX IF NOT EXISTS idx_jlpt_items_type_level ON jlpt_items(type, jlpt_level);
     CREATE INDEX IF NOT EXISTS idx_wanikani_characters ON wanikani_subjects(characters);
+    CREATE INDEX IF NOT EXISTS idx_wanikani_matched ON wanikani_subjects(matched_jlpt_item_id);
     CREATE INDEX IF NOT EXISTS idx_user_progress_status ON user_progress(status);
+    CREATE INDEX IF NOT EXISTS idx_kanji_cache_key ON kanji_cache(query_key);
   `);
 }
 
