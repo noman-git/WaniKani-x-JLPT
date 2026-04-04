@@ -73,7 +73,8 @@ export async function GET(
       .prepare(
         `SELECT wk_subject_id, characters, meanings, readings, wk_level,
                 object_type, match_type, component_subject_ids, amalgamation_subject_ids,
-                meaning_mnemonic, reading_mnemonic, meaning_hint, reading_hint
+                meaning_mnemonic, reading_mnemonic, meaning_hint, reading_hint,
+                context_sentences, patterns_of_use, parts_of_speech
          FROM wanikani_subjects WHERE matched_jlpt_item_id = ?`
       )
       .all(itemId) as Array<{
@@ -90,6 +91,9 @@ export async function GET(
       reading_mnemonic: string | null;
       meaning_hint: string | null;
       reading_hint: string | null;
+      context_sentences: string | null;
+      patterns_of_use: string | null;
+      parts_of_speech: string | null;
     }>;
 
     // Pick the best WK match: prefer kanji type for kanji items, vocab for vocab items
@@ -162,13 +166,14 @@ export async function GET(
         .all(`%${item.expression}%`, item.expression) as typeof relatedVocab;
     }
 
-    // For vocab items, find component kanji in our JLPT lists
+    // For vocab items, find component kanji (from JLPT list + WK subjects)
     let componentKanji: Array<{
-      id: number;
+      id: number | null;
       expression: string;
       reading: string;
       meaning: string;
-      jlptLevel: string;
+      jlptLevel: string | null;
+      wkLevel: number | null;
     }> = [];
 
     if (item.type === "vocab") {
@@ -183,15 +188,76 @@ export async function GET(
 
       if (kanjiChars.length > 0) {
         const placeholders = kanjiChars.map(() => "?").join(",");
-        componentKanji = rawDb
+        
+        // First: get JLPT kanji (deduplicate by expression, prefer lowest level)
+        const jlptRaw = rawDb
           .prepare(
             `SELECT id, expression, reading, meaning, jlpt_level as jlptLevel
              FROM jlpt_items
              WHERE type = 'kanji'
                AND expression IN (${placeholders})
-             ORDER BY jlpt_level ASC, expression ASC`
+             ORDER BY jlpt_level ASC`
           )
-          .all(...kanjiChars) as typeof componentKanji;
+          .all(...kanjiChars) as Array<{
+            id: number; expression: string; reading: string; meaning: string; jlptLevel: string;
+          }>;
+
+        // Dedupe: keep first occurrence (lowest level due to ORDER BY)
+        const jlptSeen = new Set<string>();
+        const jlptKanji = jlptRaw.filter(k => {
+          if (jlptSeen.has(k.expression)) return false;
+          jlptSeen.add(k.expression);
+          return true;
+        });
+
+        const foundJlpt = new Set(jlptKanji.map(k => k.expression));
+
+        // Second: get WK kanji for chars NOT in JLPT list (deduplicate by characters)
+        const missingChars = kanjiChars.filter(c => !foundJlpt.has(c));
+        let wkKanji: Array<{
+          id: null; expression: string; reading: string; meaning: string;
+          jlptLevel: null; wkLevel: number;
+        }> = [];
+
+        if (missingChars.length > 0) {
+          const missingPlaceholders = missingChars.map(() => "?").join(",");
+          const wkRows = rawDb
+            .prepare(
+              `SELECT characters, meanings, readings, wk_level
+               FROM wanikani_subjects
+               WHERE object_type = 'kanji'
+                 AND characters IN (${missingPlaceholders})
+               GROUP BY characters
+               ORDER BY wk_level ASC`
+            )
+            .all(...missingChars) as Array<{
+              characters: string; meanings: string; readings: string; wk_level: number;
+            }>;
+
+          wkKanji = wkRows.map(r => {
+            const meanings = JSON.parse(r.meanings);
+            const readings = JSON.parse(r.readings);
+            const primaryMeaning = meanings.find((m: any) => m.primary)?.meaning || meanings[0]?.meaning || "";
+            const primaryReading = readings.find((rd: any) => rd.primary)?.reading || readings[0]?.reading || "";
+            return {
+              id: null,
+              expression: r.characters,
+              reading: primaryReading,
+              meaning: primaryMeaning,
+              jlptLevel: null,
+              wkLevel: r.wk_level,
+            };
+          });
+        }
+
+        // Merge and order by position in the original expression
+        const allKanji = [
+          ...jlptKanji.map(k => ({ ...k, wkLevel: null as number | null })),
+          ...wkKanji,
+        ];
+        componentKanji = kanjiChars
+          .map(ch => allKanji.find(k => k.expression === ch))
+          .filter((k): k is typeof allKanji[number] => k !== undefined);
       }
     }
 
@@ -214,6 +280,9 @@ export async function GET(
         readingMnemonic: primaryWk.reading_mnemonic,
         meaningHint: primaryWk.meaning_hint,
         readingHint: primaryWk.reading_hint,
+        contextSentences: primaryWk.context_sentences ? JSON.parse(primaryWk.context_sentences) : null,
+        patternsOfUse: primaryWk.patterns_of_use ? JSON.parse(primaryWk.patterns_of_use) : null,
+        partsOfSpeech: primaryWk.parts_of_speech ? JSON.parse(primaryWk.parts_of_speech) : null,
       };
     }
 

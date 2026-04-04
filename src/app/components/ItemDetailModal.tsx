@@ -49,6 +49,9 @@ interface ItemDetail {
     readingMnemonic: string | null;
     meaningHint: string | null;
     readingHint: string | null;
+    contextSentences: Array<{ en: string; ja: string }> | null;
+    patternsOfUse: Array<{ en: string; ja: string }> | null;
+    partsOfSpeech: string[] | null;
   } | null;
   relatedVocab: Array<{
     id: number;
@@ -59,11 +62,12 @@ interface ItemDetail {
     jlptLevel: string;
   }>;
   componentKanji: Array<{
-    id: number;
+    id: number | null;
     expression: string;
     reading: string;
     meaning: string;
-    jlptLevel: string;
+    jlptLevel: string | null;
+    wkLevel: number | null;
   }>;
 }
 
@@ -429,17 +433,57 @@ function ItemView({
           <div className="modal-section">
             <h3 className="modal-section-title">Kanji Composition</h3>
             <div className="modal-related-vocab">
-              {detail.componentKanji.map((k) => (
-                <button
-                  key={k.id}
-                  className="related-vocab-chip kanji-chip"
-                  onClick={() => navigateToItem(k.id)}
-                  title={`${k.reading} — ${k.meaning}`}
-                >
-                  <span className="vocab-chip-expr">{k.expression}</span>
-                  <span className="vocab-chip-meaning">{k.meaning}</span>
-                  <span className="vocab-chip-level">{k.jlptLevel}</span>
-                </button>
+              {detail.componentKanji.map((k, i) => {
+                const isJlpt = k.id !== null;
+                return isJlpt ? (
+                  <button
+                    key={k.id}
+                    className="related-vocab-chip kanji-chip"
+                    onClick={() => navigateToItem(k.id!)}
+                    title={`${k.reading} — ${k.meaning}`}
+                  >
+                    <span className="vocab-chip-expr">{k.expression}</span>
+                    <span className="vocab-chip-meaning">{k.meaning}</span>
+                    <span className="vocab-chip-level">{k.jlptLevel}</span>
+                  </button>
+                ) : (
+                  <span
+                    key={`wk-${i}`}
+                    className="related-vocab-chip kanji-chip kanji-chip-wk"
+                    title={`${k.reading} — ${k.meaning} (WaniKani Level ${k.wkLevel})`}
+                  >
+                    <span className="vocab-chip-expr">{k.expression}</span>
+                    <span className="vocab-chip-meaning">{k.meaning}</span>
+                    <span className="vocab-chip-level badge-wk">WK Lv.{k.wkLevel}</span>
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── Context Sentences ── */}
+        {detail.wanikani?.contextSentences && detail.wanikani.contextSentences.length > 0 && (
+          <div className="modal-section">
+            <h3 className="modal-section-title">Context Sentences</h3>
+            <div className="context-sentences">
+              {detail.wanikani.contextSentences.map((s, i) => (
+                <div key={i} className="context-sentence">
+                  <div className="context-sentence-ja" lang="ja">{s.ja}</div>
+                  <div className="context-sentence-en">{s.en}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Parts of Speech ── */}
+        {detail.wanikani?.partsOfSpeech && detail.wanikani.partsOfSpeech.length > 0 && (
+          <div className="modal-section">
+            <h3 className="modal-section-title">Parts of Speech</h3>
+            <div className="modal-badges">
+              {detail.wanikani.partsOfSpeech.map((p, i) => (
+                <span key={i} className="badge badge-pos">{p}</span>
               ))}
             </div>
           </div>

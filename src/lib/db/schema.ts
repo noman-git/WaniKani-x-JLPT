@@ -47,6 +47,9 @@ export const wanikaniSubjects = sqliteTable("wanikani_subjects", {
   readingMnemonic: text("reading_mnemonic"),
   meaningHint: text("meaning_hint"),
   readingHint: text("reading_hint"),
+  contextSentences: text("context_sentences"),     // JSON: [{en, ja}]
+  patternsOfUse: text("patterns_of_use"),           // JSON: [{en, ja}]
+  partsOfSpeech: text("parts_of_speech"),           // JSON: ["noun", "verb"]
 });
 
 export const wanikaniRadicals = sqliteTable("wanikani_radicals", {

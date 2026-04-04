@@ -70,7 +70,10 @@ export function initializeDatabase() {
       meaning_mnemonic TEXT,
       reading_mnemonic TEXT,
       meaning_hint TEXT,
-      reading_hint TEXT
+      reading_hint TEXT,
+      context_sentences TEXT,
+      patterns_of_use TEXT,
+      parts_of_speech TEXT
     );
 
     CREATE TABLE IF NOT EXISTS wanikani_radicals (
