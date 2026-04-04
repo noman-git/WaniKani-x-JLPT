@@ -1311,6 +1311,99 @@ body {
   font-size: 14px;
 }
 
+/* ── Back Button ── */
+.modal-back {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.modal-back:hover {
+  background: var(--bg-glass-hover);
+  color: var(--text-primary);
+}
+
+/* ── Clickable Radicals ── */
+.radical-chip.clickable {
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: rgba(168, 85, 247, 0.1);
+  font-family: var(--font-ui);
+}
+
+.radical-chip.clickable:hover {
+  background: rgba(168, 85, 247, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.15);
+}
+
+/* ── Kanji Composition Chips ── */
+.kanji-chip {
+  border-color: rgba(236, 72, 153, 0.2) !important;
+  background: rgba(236, 72, 153, 0.06) !important;
+}
+
+.kanji-chip:hover {
+  background: rgba(236, 72, 153, 0.12) !important;
+  border-color: rgba(236, 72, 153, 0.3) !important;
+}
+
+.kanji-chip .vocab-chip-expr {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.vocab-chip-meaning {
+  font-size: 11px;
+  color: var(--text-muted);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Radical Detail Header ── */
+.radical-header {
+  border-bottom-color: rgba(168, 85, 247, 0.2);
+}
+
+.radical-expression {
+  background: linear-gradient(135deg, #c4b5fd, #a78bfa) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.radical-header-img {
+  width: 48px;
+  height: 48px;
+  filter: invert(0.8) sepia(0.3) saturate(2) hue-rotate(220deg);
+}
+
+.radical-type-label {
+  color: #c4b5fd !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px !important;
+  letter-spacing: 1.2px;
+}
+
+.radical-badge {
+  background: rgba(168, 85, 247, 0.1) !important;
+  color: #c4b5fd !important;
+  border-color: rgba(168, 85, 247, 0.2) !important;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .nav-inner { flex-direction: column; gap: 12px; }

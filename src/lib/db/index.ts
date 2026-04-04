@@ -54,7 +54,10 @@ export function initializeDatabase() {
       characters TEXT,
       meanings TEXT NOT NULL,
       wk_level INTEGER NOT NULL,
-      character_image_url TEXT
+      character_image_url TEXT,
+      meaning_mnemonic TEXT,
+      meaning_hint TEXT,
+      amalgamation_subject_ids TEXT
     );
 
     CREATE TABLE IF NOT EXISTS kanji_cache (

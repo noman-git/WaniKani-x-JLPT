@@ -35,6 +35,9 @@ export const wanikaniRadicals = sqliteTable("wanikani_radicals", {
   meanings: text("meanings").notNull(), // JSON array
   wkLevel: integer("wk_level").notNull(),
   characterImageUrl: text("character_image_url"), // SVG URL for image-only radicals
+  meaningMnemonic: text("meaning_mnemonic"),
+  meaningHint: text("meaning_hint"),
+  amalgamationSubjectIds: text("amalgamation_subject_ids"), // JSON array of kanji IDs that use this radical
 });
 
 export const kanjiCache = sqliteTable("kanji_cache", {

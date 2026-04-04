@@ -56,6 +56,32 @@ interface ItemDetail {
     type: string;
     jlptLevel: string;
   }>;
+  componentKanji: Array<{
+    id: number;
+    expression: string;
+    reading: string;
+    meaning: string;
+    jlptLevel: string;
+  }>;
+}
+
+interface RadicalDetail {
+  radical: {
+    wkSubjectId: number;
+    characters: string | null;
+    meanings: Array<{ meaning: string; primary: boolean }>;
+    level: number;
+    imageUrl: string | null;
+  };
+  meaningMnemonic: string | null;
+  meaningHint: string | null;
+  usedByKanji: Array<{
+    id: number;
+    expression: string;
+    reading: string;
+    meaning: string;
+    jlptLevel: string;
+  }>;
 }
 
 interface KanjiApiData {
@@ -80,16 +106,28 @@ interface JishoWord {
   }>;
 }
 
+// Target can be an item or a radical
+type ModalTarget =
+  | { type: "item"; id: number }
+  | { type: "radical"; wkSubjectId: number };
+
 interface Props {
-  itemId: number | null;
+  target: ModalTarget;
   onClose: () => void;
-  onNavigate?: (itemId: number) => void;
+  onNavigateItem?: (itemId: number) => void;
+  onNavigateRadical?: (wkSubjectId: number) => void;
 }
 
 // ── Component ────────────────────────────────────────────────
 
-export default function ItemDetailModal({ itemId, onClose, onNavigate }: Props) {
+export default function ItemDetailModal({
+  target,
+  onClose,
+  onNavigateItem,
+  onNavigateRadical,
+}: Props) {
   const [detail, setDetail] = useState<ItemDetail | null>(null);
+  const [radicalDetail, setRadicalDetail] = useState<RadicalDetail | null>(null);
   const [dictData, setDictData] = useState<KanjiApiData | null>(null);
   const [jishoData, setJishoData] = useState<JishoWord[] | null>(null);
   const [activeTab, setActiveTab] = useState<"wk" | "dict">("wk");
@@ -97,31 +135,48 @@ export default function ItemDetailModal({ itemId, onClose, onNavigate }: Props) 
   const [dictLoading, setDictLoading] = useState(false);
   const [status, setStatus] = useState("unknown");
 
-  // Fetch main item detail
+  // Fetch based on target type
   useEffect(() => {
-    if (!itemId) return;
-
     setLoading(true);
     setDetail(null);
+    setRadicalDetail(null);
     setDictData(null);
     setJishoData(null);
+    setActiveTab("wk");
 
-    fetch(`/api/items/${itemId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setDetail(data);
-        setStatus(data.item?.status || "unknown");
-        // Default to WK tab if there's WK data, otherwise dict
-        setActiveTab(data.wanikani ? "wk" : "dict");
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [itemId]);
+    if (target.type === "item") {
+      fetch(`/api/items/${target.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) {
+            console.error("Item detail error:", data.error);
+            return;
+          }
+          setDetail(data);
+          setStatus(data.item?.status || "unknown");
+          setActiveTab(data.wanikani ? "wk" : "dict");
+        })
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    } else {
+      fetch(`/api/radicals/${target.wkSubjectId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) {
+            console.error("Radical detail error:", data.error);
+            return;
+          }
+          setRadicalDetail(data);
+        })
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  }, [target]);
 
-  // Fetch dictionary data when dict tab is selected
+  // Fetch dictionary data when dict tab is selected (item mode only)
   useEffect(() => {
     if (activeTab !== "dict" || !detail) return;
-    if (dictData || jishoData) return; // Already loaded
+    if (dictData || jishoData) return;
 
     setDictLoading(true);
     const { expression, type } = detail.item;
@@ -159,6 +214,30 @@ export default function ItemDetailModal({ itemId, onClose, onNavigate }: Props) 
     [detail]
   );
 
+  // Navigation history for back button
+  const [history, setHistory] = useState<ModalTarget[]>([]);
+
+  const navigateToItem = (itemId: number) => {
+    setHistory((prev) => [...prev, target]);
+    onNavigateItem?.(itemId);
+  };
+
+  const navigateToRadical = (wkSubjectId: number) => {
+    setHistory((prev) => [...prev, target]);
+    onNavigateRadical?.(wkSubjectId);
+  };
+
+  const goBack = () => {
+    const prev = history[history.length - 1];
+    if (!prev) return;
+    setHistory((h) => h.slice(0, -1));
+    if (prev.type === "item") {
+      onNavigateItem?.(prev.id);
+    } else {
+      onNavigateRadical?.(prev.wkSubjectId);
+    }
+  };
+
   // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -168,23 +247,15 @@ export default function ItemDetailModal({ itemId, onClose, onNavigate }: Props) 
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  if (!itemId) return null;
-
   // Sanitize HTML for mnemonics
   const sanitize = (html: string) =>
     DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: ["b", "strong", "em", "i", "span", "br", "radical", "kanji", "vocabulary", "reading", "ja"],
+      ALLOWED_TAGS: [
+        "b", "strong", "em", "i", "span", "br",
+        "radical", "kanji", "vocabulary", "reading", "ja",
+      ],
       ALLOWED_ATTR: ["class", "data-*"],
     });
-
-  // Group readings by type
-  const groupReadings = (readings: WKReading[]) => {
-    const onyomi = readings.filter((r) => r.type === "onyomi");
-    const kunyomi = readings.filter((r) => r.type === "kunyomi");
-    const nanori = readings.filter((r) => r.type === "nanori");
-    const other = readings.filter((r) => !r.type);
-    return { onyomi, kunyomi, nanori, other };
-  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -193,102 +264,35 @@ export default function ItemDetailModal({ itemId, onClose, onNavigate }: Props) 
           <div className="modal-loading">
             <div className="modal-spinner" />
           </div>
-        ) : detail ? (
-          <>
-            {/* ── Header ── */}
-            <div className="modal-header">
-              <div className="modal-header-left">
-                <span className="modal-expression">{detail.item.expression}</span>
-                <div className="modal-header-meta">
-                  <span className="modal-reading-label">{detail.item.reading}</span>
-                  <span className="modal-meaning-label">{detail.item.meaning}</span>
-                </div>
-              </div>
-              <button className="modal-close" onClick={onClose}>✕</button>
-            </div>
-
-            {/* ── Tabs ── */}
-            <div className="modal-tabs">
-              <button
-                className={`modal-tab ${activeTab === "wk" ? "active" : ""}`}
-                onClick={() => setActiveTab("wk")}
-                disabled={!detail.wanikani}
-                title={!detail.wanikani ? "No WaniKani data available" : ""}
-              >
-                🐊 WaniKani
-              </button>
-              <button
-                className={`modal-tab ${activeTab === "dict" ? "active" : ""}`}
-                onClick={() => setActiveTab("dict")}
-              >
-                📖 辞書
-              </button>
-            </div>
-
-            {/* ── Tab Content ── */}
-            <div className="modal-body">
-              {activeTab === "wk" && detail.wanikani && (
-                <WKTab wanikani={detail.wanikani} sanitize={sanitize} />
-              )}
-              {activeTab === "wk" && !detail.wanikani && (
-                <div className="modal-empty">
-                  <p>This item is not available on WaniKani.</p>
-                </div>
-              )}
-              {activeTab === "dict" && (
-                <DictTab
-                  isKanji={detail.item.type === "kanji" && detail.item.expression.length === 1}
-                  kanjiData={dictData}
-                  jishoData={jishoData}
-                  loading={dictLoading}
-                />
-              )}
-
-              {/* ── Related Vocab (shown on both tabs for kanji) ── */}
-              {detail.relatedVocab.length > 0 && (
-                <div className="modal-section">
-                  <h3 className="modal-section-title">Related JLPT Vocab</h3>
-                  <div className="modal-related-vocab">
-                    {detail.relatedVocab.map((v) => (
-                      <button
-                        key={v.id}
-                        className="related-vocab-chip"
-                        onClick={() => onNavigate?.(v.id)}
-                        title={`${v.reading} — ${v.meaning}`}
-                      >
-                        <span className="vocab-chip-expr">{v.expression}</span>
-                        <span className="vocab-chip-level">{v.jlptLevel}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* ── Footer: Status + WK Level ── */}
-            <div className="modal-footer">
-              <div className="modal-status-buttons">
-                {(["unknown", "learning", "known"] as const).map((s) => (
-                  <button
-                    key={s}
-                    className={`status-btn ${status === s ? "active" : ""} status-${s}`}
-                    onClick={() => updateStatus(s)}
-                  >
-                    {s === "unknown" ? "❓" : s === "learning" ? "📖" : "✅"}{" "}
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
-                  </button>
-                ))}
-              </div>
-              {detail.wanikani && (
-                <div className="modal-wk-badge">
-                  🐊 WK Level {detail.wanikani.level}
-                </div>
-              )}
-            </div>
-          </>
+        ) : target.type === "item" && detail ? (
+          <ItemView
+            detail={detail}
+            status={status}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            dictData={dictData}
+            jishoData={jishoData}
+            dictLoading={dictLoading}
+            sanitize={sanitize}
+            updateStatus={updateStatus}
+            navigateToItem={navigateToItem}
+            navigateToRadical={navigateToRadical}
+            onClose={onClose}
+            canGoBack={history.length > 0}
+            goBack={goBack}
+          />
+        ) : target.type === "radical" && radicalDetail ? (
+          <RadicalView
+            detail={radicalDetail}
+            sanitize={sanitize}
+            navigateToItem={navigateToItem}
+            onClose={onClose}
+            canGoBack={history.length > 0}
+            goBack={goBack}
+          />
         ) : (
           <div className="modal-empty">
-            <p>Could not load item details.</p>
+            <p>Could not load details.</p>
             <button className="modal-close" onClick={onClose}>Close</button>
           </div>
         )}
@@ -297,14 +301,289 @@ export default function ItemDetailModal({ itemId, onClose, onNavigate }: Props) 
   );
 }
 
+// ── Item View ─────────────────────────────────────────────────
+
+function ItemView({
+  detail,
+  status,
+  activeTab,
+  setActiveTab,
+  dictData,
+  jishoData,
+  dictLoading,
+  sanitize,
+  updateStatus,
+  navigateToItem,
+  navigateToRadical,
+  onClose,
+  canGoBack,
+  goBack,
+}: {
+  detail: ItemDetail;
+  status: string;
+  activeTab: "wk" | "dict";
+  setActiveTab: (t: "wk" | "dict") => void;
+  dictData: KanjiApiData | null;
+  jishoData: JishoWord[] | null;
+  dictLoading: boolean;
+  sanitize: (html: string) => string;
+  updateStatus: (status: string) => void;
+  navigateToItem: (id: number) => void;
+  navigateToRadical: (id: number) => void;
+  onClose: () => void;
+  canGoBack: boolean;
+  goBack: () => void;
+}) {
+  return (
+    <>
+      {/* ── Header ── */}
+      <div className="modal-header">
+        <div className="modal-header-left">
+          {canGoBack && (
+            <button className="modal-back" onClick={goBack} title="Go back">
+              ←
+            </button>
+          )}
+          <span className="modal-expression">{detail.item.expression}</span>
+          <div className="modal-header-meta">
+            <span className="modal-reading-label">{detail.item.reading}</span>
+            <span className="modal-meaning-label">{detail.item.meaning}</span>
+          </div>
+        </div>
+        <button className="modal-close" onClick={onClose}>✕</button>
+      </div>
+
+      {/* ── Tabs ── */}
+      <div className="modal-tabs">
+        <button
+          className={`modal-tab ${activeTab === "wk" ? "active" : ""}`}
+          onClick={() => setActiveTab("wk")}
+          disabled={!detail.wanikani}
+          title={!detail.wanikani ? "No WaniKani data available" : ""}
+        >
+          🐊 WaniKani
+        </button>
+        <button
+          className={`modal-tab ${activeTab === "dict" ? "active" : ""}`}
+          onClick={() => setActiveTab("dict")}
+        >
+          📖 辞書
+        </button>
+      </div>
+
+      {/* ── Tab Content ── */}
+      <div className="modal-body">
+        {activeTab === "wk" && detail.wanikani && (
+          <WKTab
+            wanikani={detail.wanikani}
+            sanitize={sanitize}
+            onRadicalClick={navigateToRadical}
+          />
+        )}
+        {activeTab === "wk" && !detail.wanikani && (
+          <div className="modal-empty">
+            <p>This item is not available on WaniKani.</p>
+          </div>
+        )}
+        {activeTab === "dict" && (
+          <DictTab
+            isKanji={detail.item.type === "kanji" && detail.item.expression.length === 1}
+            kanjiData={dictData}
+            jishoData={jishoData}
+            loading={dictLoading}
+          />
+        )}
+
+        {/* ── Component Kanji (for vocab items) ── */}
+        {detail.componentKanji && detail.componentKanji.length > 0 && (
+          <div className="modal-section">
+            <h3 className="modal-section-title">Kanji Composition</h3>
+            <div className="modal-related-vocab">
+              {detail.componentKanji.map((k) => (
+                <button
+                  key={k.id}
+                  className="related-vocab-chip kanji-chip"
+                  onClick={() => navigateToItem(k.id)}
+                  title={`${k.reading} — ${k.meaning}`}
+                >
+                  <span className="vocab-chip-expr">{k.expression}</span>
+                  <span className="vocab-chip-meaning">{k.meaning}</span>
+                  <span className="vocab-chip-level">{k.jlptLevel}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Related Vocab (for kanji items) ── */}
+        {detail.relatedVocab.length > 0 && (
+          <div className="modal-section">
+            <h3 className="modal-section-title">Related JLPT Vocab</h3>
+            <div className="modal-related-vocab">
+              {detail.relatedVocab.map((v) => (
+                <button
+                  key={v.id}
+                  className="related-vocab-chip"
+                  onClick={() => navigateToItem(v.id)}
+                  title={`${v.reading} — ${v.meaning}`}
+                >
+                  <span className="vocab-chip-expr">{v.expression}</span>
+                  <span className="vocab-chip-level">{v.jlptLevel}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Footer: Status + WK Level ── */}
+      <div className="modal-footer">
+        <div className="modal-status-buttons">
+          {(["unknown", "learning", "known"] as const).map((s) => (
+            <button
+              key={s}
+              className={`status-btn ${status === s ? "active" : ""} status-${s}`}
+              onClick={() => updateStatus(s)}
+            >
+              {s === "unknown" ? "❓" : s === "learning" ? "📖" : "✅"}{" "}
+              {s.charAt(0).toUpperCase() + s.slice(1)}
+            </button>
+          ))}
+        </div>
+        {detail.wanikani && (
+          <div className="modal-wk-badge">🐊 WK Level {detail.wanikani.level}</div>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ── Radical View ─────────────────────────────────────────────
+
+function RadicalView({
+  detail,
+  sanitize,
+  navigateToItem,
+  onClose,
+  canGoBack,
+  goBack,
+}: {
+  detail: RadicalDetail;
+  sanitize: (html: string) => string;
+  navigateToItem: (id: number) => void;
+  onClose: () => void;
+  canGoBack: boolean;
+  goBack: () => void;
+}) {
+  const primaryMeaning =
+    detail.radical.meanings.find((m) => m.primary)?.meaning ||
+    detail.radical.meanings[0]?.meaning ||
+    "Radical";
+
+  return (
+    <>
+      {/* ── Header ── */}
+      <div className="modal-header radical-header">
+        <div className="modal-header-left">
+          {canGoBack && (
+            <button className="modal-back" onClick={goBack} title="Go back">
+              ←
+            </button>
+          )}
+          <span className="modal-expression radical-expression">
+            {detail.radical.characters || (
+              detail.radical.imageUrl ? (
+                <img src={detail.radical.imageUrl} alt={primaryMeaning} className="radical-header-img" />
+              ) : "?"
+            )}
+          </span>
+          <div className="modal-header-meta">
+            <span className="modal-reading-label radical-type-label">Radical</span>
+            <span className="modal-meaning-label">{primaryMeaning}</span>
+          </div>
+        </div>
+        <button className="modal-close" onClick={onClose}>✕</button>
+      </div>
+
+      {/* ── Body ── */}
+      <div className="modal-body">
+        {/* Meanings */}
+        <div className="modal-section">
+          <h3 className="modal-section-title">Meanings</h3>
+          <div className="modal-meanings">
+            {detail.radical.meanings.map((m, i) => (
+              <span
+                key={i}
+                className={`meaning-tag ${m.primary ? "primary" : ""}`}
+              >
+                {m.meaning}
+                {m.primary && <span className="primary-star">★</span>}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Meaning Mnemonic */}
+        {detail.meaningMnemonic && (
+          <div className="modal-section">
+            <h3 className="modal-section-title">Meaning Mnemonic</h3>
+            <div
+              className="modal-mnemonic"
+              dangerouslySetInnerHTML={{ __html: sanitize(detail.meaningMnemonic) }}
+            />
+            {detail.meaningHint && (
+              <div className="modal-hint">
+                <strong>Hint:</strong>{" "}
+                <span dangerouslySetInnerHTML={{ __html: sanitize(detail.meaningHint) }} />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Used by Kanji */}
+        {detail.usedByKanji.length > 0 && (
+          <div className="modal-section">
+            <h3 className="modal-section-title">
+              Found in {detail.usedByKanji.length} JLPT Kanji
+            </h3>
+            <div className="modal-related-vocab">
+              {detail.usedByKanji.map((k) => (
+                <button
+                  key={k.id}
+                  className="related-vocab-chip kanji-chip"
+                  onClick={() => navigateToItem(k.id)}
+                  title={`${k.reading} — ${k.meaning}`}
+                >
+                  <span className="vocab-chip-expr">{k.expression}</span>
+                  <span className="vocab-chip-meaning">{k.meaning}</span>
+                  <span className="vocab-chip-level">{k.jlptLevel}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Footer ── */}
+      <div className="modal-footer">
+        <div className="modal-wk-badge radical-badge">
+          🐊 WK Level {detail.radical.level} · Radical
+        </div>
+      </div>
+    </>
+  );
+}
+
 // ── WK Tab ────────────────────────────────────────────────────
 
 function WKTab({
   wanikani,
   sanitize,
+  onRadicalClick,
 }: {
   wanikani: NonNullable<ItemDetail["wanikani"]>;
   sanitize: (html: string) => string;
+  onRadicalClick: (wkSubjectId: number) => void;
 }) {
   const { onyomi, kunyomi, nanori, other } = groupReadings(wanikani.readings);
 
@@ -347,18 +626,25 @@ function WKTab({
         </div>
       )}
 
-      {/* Radicals */}
+      {/* Radicals — now clickable */}
       {wanikani.radicals.length > 0 && (
         <div className="modal-section">
           <h3 className="modal-section-title">Radicals</h3>
           <div className="modal-radicals">
             {wanikani.radicals.map((r, i) => (
-              <div key={i} className="radical-chip">
+              <button
+                key={i}
+                className="radical-chip clickable"
+                onClick={() => onRadicalClick(r.id)}
+                title={`Click to view radical: ${r.meaning}`}
+              >
                 <span className="radical-char">
-                  {r.characters || (r.imageUrl ? <img src={r.imageUrl} alt={r.meaning} className="radical-img" /> : "?")}
+                  {r.characters || (r.imageUrl ? (
+                    <img src={r.imageUrl} alt={r.meaning} className="radical-img" />
+                  ) : "?")}
                 </span>
                 <span className="radical-meaning">{r.meaning}</span>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -430,7 +716,7 @@ function ReadingGroup({
   );
 }
 
-// Helper for groupReadings used outside component
+// Helper
 function groupReadings(readings: WKReading[]) {
   return {
     onyomi: readings.filter((r) => r.type === "onyomi"),
@@ -465,7 +751,6 @@ function DictTab({
   if (isKanji && kanjiData) {
     return (
       <>
-        {/* Meta info */}
         <div className="modal-section">
           <h3 className="modal-section-title">Kanji Info</h3>
           <div className="dict-meta-grid">
@@ -492,7 +777,6 @@ function DictTab({
           </div>
         </div>
 
-        {/* Meanings */}
         <div className="modal-section">
           <h3 className="modal-section-title">Meanings</h3>
           <div className="modal-meanings">
@@ -504,7 +788,6 @@ function DictTab({
           </div>
         </div>
 
-        {/* Readings */}
         {kanjiData.on_readings.length > 0 && (
           <div className="modal-section">
             <h3 className="modal-section-title">On&apos;yomi</h3>

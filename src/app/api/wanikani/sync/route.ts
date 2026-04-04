@@ -117,6 +117,9 @@ function matchSubjects(subjects: WKSubject[]) {
       meanings: sql.placeholder("meanings"),
       wkLevel: sql.placeholder("wkLevel"),
       characterImageUrl: sql.placeholder("characterImageUrl"),
+      meaningMnemonic: sql.placeholder("meaningMnemonic"),
+      meaningHint: sql.placeholder("meaningHint"),
+      amalgamationSubjectIds: sql.placeholder("amalgamationSubjectIds"),
     })
     .onConflictDoUpdate({
       target: wanikaniRadicals.wkSubjectId,
@@ -125,6 +128,9 @@ function matchSubjects(subjects: WKSubject[]) {
         meanings: sql`excluded.meanings`,
         wkLevel: sql`excluded.wk_level`,
         characterImageUrl: sql`excluded.character_image_url`,
+        meaningMnemonic: sql`excluded.meaning_mnemonic`,
+        meaningHint: sql`excluded.meaning_hint`,
+        amalgamationSubjectIds: sql`excluded.amalgamation_subject_ids`,
       },
     })
     .prepare();
@@ -154,6 +160,11 @@ function matchSubjects(subjects: WKSubject[]) {
         ),
         wkLevel: subject.data.level,
         characterImageUrl: imageUrl,
+        meaningMnemonic: subject.data.meaning_mnemonic || null,
+        meaningHint: subject.data.meaning_hint || null,
+        amalgamationSubjectIds: subject.data.amalgamation_subject_ids
+          ? JSON.stringify(subject.data.amalgamation_subject_ids)
+          : null,
       });
       radicalCount++;
       continue; // Radicals don't go into wanikani_subjects

@@ -27,7 +27,7 @@ export default function ItemsPage() {
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 30, total: 0, totalPages: 0 });
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: string } | null>(null);
-  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+  const [modalTarget, setModalTarget] = useState<{ type: "item"; id: number } | { type: "radical"; wkSubjectId: number } | null>(null);
 
   // Filters
   const [level, setLevel] = useState<string>("");
@@ -111,7 +111,7 @@ export default function ItemsPage() {
   };
 
   const openItem = (item: Item) => {
-    setSelectedItemId(item.id);
+    setModalTarget({ type: "item", id: item.id });
   };
 
   const FilterBtn = ({ label, value, current, setter }: { label: string; value: string; current: string; setter: (v: string) => void }) => (
@@ -238,14 +238,15 @@ export default function ItemsPage() {
       )}
 
       {/* Detail Modal */}
-      {selectedItemId && (
+      {modalTarget && (
         <ItemDetailModal
-          itemId={selectedItemId}
+          target={modalTarget}
           onClose={() => {
-            setSelectedItemId(null);
-            loadItems(); // Refresh to pick up any status changes
+            setModalTarget(null);
+            loadItems();
           }}
-          onNavigate={(id) => setSelectedItemId(id)}
+          onNavigateItem={(id: number) => setModalTarget({ type: "item", id })}
+          onNavigateRadical={(wkSubjectId: number) => setModalTarget({ type: "radical", wkSubjectId })}
         />
       )}
     </>

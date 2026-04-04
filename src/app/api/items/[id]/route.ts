@@ -157,6 +157,39 @@ export async function GET(
         .all(`%${item.expression}%`, item.expression) as typeof relatedVocab;
     }
 
+    // For vocab items, find component kanji in our JLPT lists
+    let componentKanji: Array<{
+      id: number;
+      expression: string;
+      reading: string;
+      meaning: string;
+      jlptLevel: string;
+    }> = [];
+
+    if (item.type === "vocab") {
+      // Extract unique kanji characters from the expression
+      const kanjiChars = [...new Set(
+        item.expression.split("").filter((ch) => {
+          const code = ch.charCodeAt(0);
+          // CJK Unified Ideographs range
+          return code >= 0x4e00 && code <= 0x9fff;
+        })
+      )];
+
+      if (kanjiChars.length > 0) {
+        const placeholders = kanjiChars.map(() => "?").join(",");
+        componentKanji = rawDb
+          .prepare(
+            `SELECT id, expression, reading, meaning, jlpt_level as jlptLevel
+             FROM jlpt_items
+             WHERE type = 'kanji'
+               AND expression IN (${placeholders})
+             ORDER BY jlpt_level ASC, expression ASC`
+          )
+          .all(...kanjiChars) as typeof componentKanji;
+      }
+    }
+
     // Build WK data response
     let wanikani = null;
     if (primaryWk) {
@@ -186,6 +219,7 @@ export async function GET(
       },
       wanikani,
       relatedVocab,
+      componentKanji,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
