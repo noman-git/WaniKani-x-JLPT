@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/components/AuthProvider";
 
 export default function LoginPage() {
   const { login, register } = useAuth();
+  const router = useRouter();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -28,8 +30,9 @@ export default function LoginPage() {
     if (err) {
       setError(err);
       setSubmitting(false);
+    } else {
+      router.push("/");
     }
-    // If no error, AuthProvider will update user state and layout will handle redirect
   };
 
   return (
