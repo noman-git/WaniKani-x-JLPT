@@ -19,6 +19,7 @@ export const wanikaniSubjects = sqliteTable("wanikani_subjects", {
   wkLevel: integer("wk_level").notNull(),
   objectType: text("object_type").notNull(), // "radical", "kanji", "vocabulary", "kana_vocabulary"
   matchedJlptItemId: integer("matched_jlpt_item_id").references(() => jlptItems.id),
+  matchType: text("match_type"), // "exact" | "reading" | "prefix_strip" | null
   // Rich data fields
   componentSubjectIds: text("component_subject_ids"), // JSON array of radical IDs (for kanji)
   amalgamationSubjectIds: text("amalgamation_subject_ids"), // JSON array of vocab IDs (for kanji)

@@ -40,6 +40,8 @@ interface ItemDetail {
     subjectId: number;
     level: number;
     objectType: string;
+    characters: string;
+    matchType: string | null;
     meanings: WKMeaning[];
     readings: WKReading[];
     radicals: Radical[];
@@ -334,6 +336,15 @@ function ItemView({
   canGoBack: boolean;
   goBack: () => void;
 }) {
+  // Build external URLs
+  const wkExpr = detail.wanikani?.characters || detail.item.expression;
+  const wkType = detail.item.type === "kanji" ? "kanji" : "vocabulary";
+  const wkUrl = detail.wanikani
+    ? `https://www.wanikani.com/${wkType}/${encodeURIComponent(wkExpr)}`
+    : null;
+  const jishoUrl = `https://jisho.org/search/${encodeURIComponent(detail.item.expression)}`;
+  const hasAlt = detail.wanikani && detail.wanikani.characters !== detail.item.expression;
+
   return (
     <>
       {/* ── Header ── */}
@@ -344,7 +355,14 @@ function ItemView({
               ←
             </button>
           )}
-          <span className="modal-expression">{detail.item.expression}</span>
+          <div className="modal-expression-group">
+            <span className="modal-expression">{detail.item.expression}</span>
+            {hasAlt && (
+              <span className="modal-wk-alt-expr" title={`WaniKani uses: ${detail.wanikani!.characters}`}>
+                WK: {detail.wanikani!.characters}
+              </span>
+            )}
+          </div>
           <div className="modal-header-meta">
             <span className="modal-reading-label">{detail.item.reading}</span>
             <span className="modal-meaning-label">{detail.item.meaning}</span>
@@ -353,22 +371,34 @@ function ItemView({
         <button className="modal-close" onClick={onClose}>✕</button>
       </div>
 
-      {/* ── Tabs ── */}
+      {/* ── Tabs with external links ── */}
       <div className="modal-tabs">
-        <button
-          className={`modal-tab ${activeTab === "wk" ? "active" : ""}`}
-          onClick={() => setActiveTab("wk")}
-          disabled={!detail.wanikani}
-          title={!detail.wanikani ? "No WaniKani data available" : ""}
-        >
-          🐊 WaniKani
-        </button>
-        <button
-          className={`modal-tab ${activeTab === "dict" ? "active" : ""}`}
-          onClick={() => setActiveTab("dict")}
-        >
-          📖 辞書
-        </button>
+        <div className="modal-tabs-left">
+          <button
+            className={`modal-tab ${activeTab === "wk" ? "active" : ""}`}
+            onClick={() => setActiveTab("wk")}
+            disabled={!detail.wanikani}
+            title={!detail.wanikani ? "No WaniKani data available" : ""}
+          >
+            🐊 WaniKani
+          </button>
+          <button
+            className={`modal-tab ${activeTab === "dict" ? "active" : ""}`}
+            onClick={() => setActiveTab("dict")}
+          >
+            📖 辞書
+          </button>
+        </div>
+        <div className="modal-external-links">
+          {wkUrl && (
+            <a href={wkUrl} target="_blank" rel="noopener noreferrer" className="modal-ext-link wk-link" title="Open on WaniKani">
+              🐊 Open
+            </a>
+          )}
+          <a href={jishoUrl} target="_blank" rel="noopener noreferrer" className="modal-ext-link jisho-link" title="Open on Jisho.org">
+            📖 Open
+          </a>
+        </div>
       </div>
 
       {/* ── Tab Content ── */}

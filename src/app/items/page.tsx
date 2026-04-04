@@ -13,6 +13,8 @@ interface Item {
   status: string;
   wkSubjectId: number | null;
   wkLevel: number | null;
+  wkCharacters: string | null;
+  matchType: string | null; // "exact" | "reading" | "prefix_strip" | null
 }
 
 interface Pagination {
@@ -102,12 +104,21 @@ export default function ItemsPage() {
     setTimeout(() => setToast(null), 2000);
   };
 
-  const getItemUrl = (item: Item) => {
-    if (item.wkSubjectId) {
-      const wkType = item.type === "kanji" ? "kanji" : "vocabulary";
-      return `https://www.wanikani.com/${wkType}/${encodeURIComponent(item.expression)}`;
-    }
+  // Build external URLs
+  const getWkUrl = (item: Item) => {
+    if (!item.wkSubjectId) return null;
+    const wkExpr = item.wkCharacters || item.expression;
+    const wkType = item.type === "kanji" ? "kanji" : "vocabulary";
+    return `https://www.wanikani.com/${wkType}/${encodeURIComponent(wkExpr)}`;
+  };
+
+  const getJishoUrl = (item: Item) => {
     return `https://jisho.org/search/${encodeURIComponent(item.expression)}`;
+  };
+
+  // Does the WK expression differ from the JLPT expression?
+  const hasAltExpression = (item: Item) => {
+    return item.wkCharacters && item.wkCharacters !== item.expression;
   };
 
   const openItem = (item: Item) => {
@@ -171,17 +182,36 @@ export default function ItemsPage() {
           {items.map((item) => (
             <div key={item.id} className="item-card" onClick={() => openItem(item)} style={{ cursor: "pointer" }}>
               <div className="item-card-header">
-                <div className="item-expression">{item.expression}</div>
-                <a
-                  href={getItemUrl(item)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="item-link-icon"
-                  onClick={(e) => e.stopPropagation()}
-                  title={item.wkSubjectId ? "Open on WaniKani" : "Open on Jisho.org"}
-                >
-                  {item.wkSubjectId ? "🐊" : "📖"}
-                </a>
+                <div className="item-expression-col">
+                  <div className="item-expression">{item.expression}</div>
+                  {hasAltExpression(item) && (
+                    <span className="item-wk-alt" title={`WaniKani uses: ${item.wkCharacters}`}>
+                      WK: {item.wkCharacters}
+                    </span>
+                  )}
+                </div>
+                <div className="item-links" onClick={(e) => e.stopPropagation()}>
+                  {getWkUrl(item) && (
+                    <a
+                      href={getWkUrl(item)!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="item-link-icon"
+                      title="Open on WaniKani"
+                    >
+                      🐊
+                    </a>
+                  )}
+                  <a
+                    href={getJishoUrl(item)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="item-link-icon"
+                    title="Open on Jisho.org"
+                  >
+                    📖
+                  </a>
+                </div>
               </div>
               <div className="item-reading">{item.reading}</div>
               <div className="item-meaning">{item.meaning}</div>

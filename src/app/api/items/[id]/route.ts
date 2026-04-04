@@ -68,7 +68,7 @@ export async function GET(
     const wkRows = rawDb
       .prepare(
         `SELECT wk_subject_id, characters, meanings, readings, wk_level,
-                object_type, component_subject_ids, amalgamation_subject_ids,
+                object_type, match_type, component_subject_ids, amalgamation_subject_ids,
                 meaning_mnemonic, reading_mnemonic, meaning_hint, reading_hint
          FROM wanikani_subjects WHERE matched_jlpt_item_id = ?`
       )
@@ -79,6 +79,7 @@ export async function GET(
       readings: string;
       wk_level: number;
       object_type: string;
+      match_type: string | null;
       component_subject_ids: string | null;
       amalgamation_subject_ids: string | null;
       meaning_mnemonic: string | null;
@@ -200,6 +201,8 @@ export async function GET(
         subjectId: primaryWk.wk_subject_id,
         level: primaryWk.wk_level,
         objectType: primaryWk.object_type,
+        characters: primaryWk.characters,
+        matchType: primaryWk.match_type,
         meanings: allMeanings,
         readings: allReadings,
         radicals,

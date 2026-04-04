@@ -40,6 +40,7 @@ export function initializeDatabase() {
       wk_level INTEGER NOT NULL,
       object_type TEXT NOT NULL,
       matched_jlpt_item_id INTEGER REFERENCES jlpt_items(id),
+      match_type TEXT,
       component_subject_ids TEXT,
       amalgamation_subject_ids TEXT,
       meaning_mnemonic TEXT,

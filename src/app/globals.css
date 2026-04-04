@@ -807,7 +807,9 @@ body {
 /* ── Tabs ── */
 .modal-tabs {
   display: flex;
-  gap: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   padding: 0 28px;
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -1404,6 +1406,89 @@ body {
   border-color: rgba(168, 85, 247, 0.2) !important;
 }
 
+/* ── WK Alt Expression (on cards) ── */
+.item-expression-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.item-wk-alt {
+  font-size: 11px;
+  color: #c4b5fd;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.item-links {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ── WK Alt Expression (in modal) ── */
+.modal-expression-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-wk-alt-expr {
+  font-size: 13px;
+  color: #c4b5fd;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* ── Modal Tabs Layout ── */
+.modal-tabs-left {
+  display: flex;
+  gap: 0;
+}
+
+/* ── External Links in Modal Tabs ── */
+.modal-external-links {
+  display: flex;
+  gap: 6px;
+  padding-right: 24px;
+}
+
+.modal-ext-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.modal-ext-link.wk-link {
+  background: rgba(168, 85, 247, 0.1);
+  color: #c4b5fd;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.modal-ext-link.wk-link:hover {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+.modal-ext-link.jisho-link {
+  background: rgba(56, 189, 248, 0.1);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.modal-ext-link.jisho-link:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .nav-inner { flex-direction: column; gap: 12px; }
@@ -1419,5 +1504,6 @@ body {
   .modal-expression { font-size: 40px; }
   .modal-body { padding: 16px 20px; }
   .modal-footer { padding: 12px 20px; flex-direction: column; gap: 12px; }
-  .modal-tabs { padding: 0 20px; }
+  .modal-tabs { padding: 0 20px; flex-wrap: wrap; }
+  .modal-external-links { padding-right: 12px; }
 }

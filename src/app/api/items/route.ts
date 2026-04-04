@@ -52,8 +52,8 @@ export async function GET(request: NextRequest) {
         SELECT matched_jlpt_item_id,
                MIN(wk_subject_id) as wk_subject_id,
                MIN(wk_level) as wk_level,
-               MIN(meanings) as meanings,
-               MIN(readings) as readings
+               MIN(characters) as wk_characters,
+               MIN(match_type) as match_type
         FROM wanikani_subjects
         WHERE matched_jlpt_item_id IS NOT NULL
         GROUP BY matched_jlpt_item_id
@@ -73,7 +73,9 @@ export async function GET(request: NextRequest) {
         j.id, j.expression, j.reading, j.meaning, j.type, j.jlpt_level as jlptLevel, j.sources,
         COALESCE(p.status, 'unknown') as status,
         w_agg.wk_subject_id as wkSubjectId,
-        w_agg.wk_level as wkLevel
+        w_agg.wk_level as wkLevel,
+        w_agg.wk_characters as wkCharacters,
+        w_agg.match_type as matchType
       FROM jlpt_items j
       LEFT JOIN user_progress p ON p.jlpt_item_id = j.id
       ${wkSubquery}
