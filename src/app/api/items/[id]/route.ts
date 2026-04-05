@@ -60,12 +60,17 @@ export async function GET(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    // Get user progress (scoped by userId)
+    // Get user progress and note(scoped by userId)
     const session = await getSession(request);
     const progress = session
       ? (rawDb
           .prepare(`SELECT status FROM user_progress WHERE jlpt_item_id = ? AND user_id = ?`)
           .get(itemId, session.userId) as { status: string } | undefined)
+      : undefined;
+    const noteRow = session
+      ? (rawDb
+          .prepare(`SELECT content FROM user_notes WHERE jlpt_item_id = ? AND user_id = ?`)
+          .get(itemId, session.userId) as { content: string } | undefined)
       : undefined;
 
     // Get ALL WK subjects matched to this item (could be multiple, e.g. kanji + vocab)
@@ -293,6 +298,7 @@ export async function GET(
         ...item,
         status: progress?.status || "unknown",
       },
+      note: noteRow?.content ?? "",
       wanikani,
       relatedVocab,
       componentKanji,

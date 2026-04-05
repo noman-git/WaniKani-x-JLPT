@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, unique } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -87,6 +87,22 @@ export const userProgress = sqliteTable("user_progress", {
     .$defaultFn(() => new Date().toISOString()),
 });
 
+export const userNotes = sqliteTable("user_notes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  jlptItemId: integer("jlpt_item_id")
+    .notNull()
+    .references(() => jlptItems.id),
+  content: text("content").notNull().default(""),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (t) => ({
+  unq: unique().on(t.userId, t.jlptItemId),
+}));
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InviteCode = typeof inviteCodes.$inferSelect;
@@ -94,6 +110,7 @@ export type JlptItem = typeof jlptItems.$inferSelect;
 export type WanikaniSubject = typeof wanikaniSubjects.$inferSelect;
 export type WanikaniRadical = typeof wanikaniRadicals.$inferSelect;
 export type UserProgressRecord = typeof userProgress.$inferSelect;
+export type UserNote = typeof userNotes.$inferSelect;
 export type ItemStatus = "known" | "learning" | "unknown";
 export type JlptLevel = "N4" | "N5";
 export type ItemType = "kanji" | "vocab";

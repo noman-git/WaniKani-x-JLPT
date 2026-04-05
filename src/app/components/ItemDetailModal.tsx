@@ -36,6 +36,7 @@ interface ItemDetail {
     jlptLevel: string;
     status: string;
   };
+  note: string;
   wanikani: {
     subjectId: number;
     level: number;
@@ -140,6 +141,7 @@ export default function ItemDetailModal({
   const [loading, setLoading] = useState(true);
   const [dictLoading, setDictLoading] = useState(false);
   const [status, setStatus] = useState("unknown");
+  const [note, setNote] = useState("");
 
   // Fetch based on target type
   useEffect(() => {
@@ -149,6 +151,7 @@ export default function ItemDetailModal({
     setDictData(null);
     setJishoData(null);
     setActiveTab("wk");
+    setNote("");
 
     if (target.type === "item") {
       fetch(`/api/items/${target.id}`)
@@ -161,6 +164,7 @@ export default function ItemDetailModal({
           setDetail(data);
           setStatus(data.item?.status || "unknown");
           setActiveTab(data.wanikani ? "wk" : "dict");
+          setNote(data.note ?? "");
         })
         .catch(console.error)
         .finally(() => setLoading(false));
@@ -274,6 +278,8 @@ export default function ItemDetailModal({
           <ItemView
             detail={detail}
             status={status}
+            note={note}
+            onNoteChange={setNote}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             dictData={dictData}
@@ -312,6 +318,8 @@ export default function ItemDetailModal({
 function ItemView({
   detail,
   status,
+  note,
+  onNoteChange,
   activeTab,
   setActiveTab,
   dictData,
@@ -327,6 +335,8 @@ function ItemView({
 }: {
   detail: ItemDetail;
   status: string;
+  note: string;
+  onNoteChange: (n: string) => void;
   activeTab: "wk" | "dict";
   setActiveTab: (t: "wk" | "dict") => void;
   dictData: KanjiApiData | null;
@@ -510,6 +520,9 @@ function ItemView({
         )}
       </div>
 
+      {/* ── My Note ── */}
+      <NoteSection itemId={detail.item.id} note={note} onNoteChange={onNoteChange} />
+
       {/* ── Footer: Status + WK Level ── */}
       <div className="modal-footer">
         <div className="modal-status-buttons">
@@ -529,6 +542,72 @@ function ItemView({
         )}
       </div>
     </>
+  );
+}
+
+// ── Note Section ─────────────────────────────────────────────
+
+type NoteSaveState = "idle" | "saving" | "saved" | "error";
+
+function NoteSection({
+  itemId,
+  note,
+  onNoteChange,
+}: {
+  itemId: number;
+  note: string;
+  onNoteChange: (n: string) => void;
+}) {
+  const [saveState, setSaveState] = useState<NoteSaveState>("idle");
+
+  const handleSave = async () => {
+    setSaveState("saving");
+    try {
+      const res = await fetch("/api/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemId, content: note }),
+      });
+      if (!res.ok) throw new Error("Save failed");
+      setSaveState("saved");
+      setTimeout(() => setSaveState("idle"), 2500);
+    } catch {
+      setSaveState("error");
+      setTimeout(() => setSaveState("idle"), 3000);
+    }
+  };
+
+  const btnLabel =
+    saveState === "saving" ? "Saving…" :
+    saveState === "saved"  ? "Saved ✓" :
+    saveState === "error"  ? "Error — retry" :
+    "Save Note";
+
+  return (
+    <div className="note-section">
+      <div className="note-header">
+        <span className="note-title">📝 My Note</span>
+      </div>
+      <textarea
+        className="note-textarea"
+        value={note}
+        onChange={(e) => {
+          onNoteChange(e.target.value);
+          setSaveState("idle");
+        }}
+        placeholder="Add your personal note for this item…"
+        rows={3}
+      />
+      <div className="note-footer">
+        <button
+          className={`note-save-btn note-save-${saveState}`}
+          onClick={handleSave}
+          disabled={saveState === "saving"}
+        >
+          {btnLabel}
+        </button>
+      </div>
+    </div>
   );
 }
 

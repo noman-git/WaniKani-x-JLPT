@@ -104,12 +104,22 @@ export function initializeDatabase() {
       UNIQUE(user_id, jlpt_item_id)
     );
 
+    CREATE TABLE IF NOT EXISTS user_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      jlpt_item_id INTEGER NOT NULL REFERENCES jlpt_items(id),
+      content TEXT NOT NULL DEFAULT '',
+      updated_at TEXT NOT NULL,
+      UNIQUE(user_id, jlpt_item_id)
+    );
+
     CREATE INDEX IF NOT EXISTS idx_jlpt_items_expression ON jlpt_items(expression);
     CREATE INDEX IF NOT EXISTS idx_jlpt_items_type_level ON jlpt_items(type, jlpt_level);
     CREATE INDEX IF NOT EXISTS idx_wanikani_characters ON wanikani_subjects(characters);
     CREATE INDEX IF NOT EXISTS idx_wanikani_matched ON wanikani_subjects(matched_jlpt_item_id);
     CREATE INDEX IF NOT EXISTS idx_user_progress_user ON user_progress(user_id);
     CREATE INDEX IF NOT EXISTS idx_user_progress_compound ON user_progress(user_id, jlpt_item_id);
+    CREATE INDEX IF NOT EXISTS idx_user_notes_compound ON user_notes(user_id, jlpt_item_id);
     CREATE INDEX IF NOT EXISTS idx_kanji_cache_key ON kanji_cache(query_key);
     CREATE INDEX IF NOT EXISTS idx_invite_codes_code ON invite_codes(code);
   `);
