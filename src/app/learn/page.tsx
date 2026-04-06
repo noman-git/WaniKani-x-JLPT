@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import SrsQuiz, { QuizItem } from "../components/SrsQuiz";
 import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
-import QuizItemInfo from "../components/QuizItemInfo";
+import LessonModal, { QuizNoteManager } from "../components/LessonModal";
 
 type LessonPhase = "loading" | "lesson" | "quiz" | "done";
 
@@ -33,12 +33,14 @@ export default function LearnPage() {
            let parsedReadings = [];
            let parsedMeanings = [];
            let advancedReadings: Array<{reading: string; type: string; primary: boolean}> | undefined = undefined;
+           let advancedMeanings: Array<{meaning: string; primary: boolean}> | undefined = undefined;
            try {
               const wkReadings = detail.wanikani?.readings || [];
               const wkMeanings = detail.wanikani?.meanings || [];
               parsedReadings = wkReadings.map((reading: any) => reading.reading);
               parsedMeanings = wkMeanings.map((m: any) => m.meaning);
               advancedReadings = wkReadings.map((r: any) => ({ reading: r.reading, type: r.type || "nanori", primary: !!r.primary }));
+              advancedMeanings = wkMeanings.map((m: any) => ({ meaning: m.meaning, primary: !!m.primary }));
            } catch(e) {}
 
            if (parsedReadings.length === 0 && detail.item.reading) parsedReadings.push(detail.item.reading);
@@ -53,6 +55,7 @@ export default function LearnPage() {
              readings: parsedReadings,
              advancedReadings,
              meanings: parsedMeanings,
+             advancedMeanings,
              note: detail.note,
              meaningMnemonic: detail.wanikani?.meaningMnemonic,
              readingMnemonic: detail.wanikani?.readingMnemonic,
@@ -64,7 +67,7 @@ export default function LearnPage() {
              wkLevel: detail.wanikani?.level,
              radicals: detail.wanikani?.radicals,
              componentKanji: detail.componentKanji,
-             linkedGrammar: detail.linkedGrammar
+             relatedVocab: detail.relatedVocab
            };
         }));
 
@@ -101,6 +104,24 @@ export default function LearnPage() {
     }
   };
 
+  const prevSlide = () => {
+    if (currentIndex > 0) {
+       setCurrentIndex(curr => curr - 1);
+    }
+  };
+
+  useEffect(() => {
+    if (phase === "lesson") {
+       const handleKey = (e: KeyboardEvent) => {
+          if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement) return;
+          if (e.key === "ArrowRight") nextSlide();
+          else if (e.key === "ArrowLeft") prevSlide();
+       };
+       window.addEventListener("keydown", handleKey);
+       return () => window.removeEventListener("keydown", handleKey);
+    }
+  }, [phase, currentIndex, batch.length]);
+
   if (phase === "loading") return <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>Constructing your Queue...</div>;
   if (phase === "done") return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', alignItems: 'center', justifyContent: 'center', gap: '24px' }}>
@@ -114,44 +135,72 @@ export default function LearnPage() {
   if (phase === "lesson") {
     const item = batch[currentIndex];
     return (
-      <div className="srs-learn-container">
-        <div className="srs-learn-header">
-          <h1 className="srs-learn-title">Learning Phase</h1>
-          <div className="srs-learn-progress">
-            {batch.map((_, i) => (
-              <div key={i} className={`srs-learn-progress-tick ${i <= currentIndex ? 'active' : 'inactive'}`} />
-            ))}
-          </div>
-        </div>
+      /* Lock body scroll purely for the container, rely on internal modal scrolling */
+      <div className="srs-learn-container" style={{ padding: '40px 20px', display: 'flex', justifyContent: 'center', height: 'calc(100vh - 65px)', minHeight: '0', boxSizing: 'border-box' }}>
+        
+        {/* Relative Anchor Wrapper: Dead Center of the screen */}
+        <div style={{ position: 'relative', width: '100%', maxWidth: '800px', height: '100%' }}>
+          
+          {/* Main Flashcard Card - Fixed Height App Grid */}
+          <div className="srs-card" style={{ width: '100%', height: '100%', margin: 0, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+            
+            {/* Seamless Header - Now Statically Pinned in the Flex Column */}
+            <div className="srs-learn-header" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, backgroundColor: 'var(--bg-secondary)', padding: '16px 24px', borderBottom: '1px solid var(--border-medium)' }}>
+              <div className="srs-learn-progress">
+                {batch.map((_, i) => (
+                  <div key={i} className={`srs-learn-progress-tick ${i <= currentIndex ? 'active' : 'inactive'}`} />
+                ))}
+              </div>
 
-        <div className="srs-card">
-          <button 
-             onClick={handleMarkKnown}
-             className="srs-deep-check"
-          >
-             <span className="srs-star">★</span>
-             <span>Deep Check-in (Mark Known)</span>
-          </button>
-
-          <div className="srs-display-block">
-            <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-               <span className="srs-type-badge" style={{ position: 'static' }}>{item.type}</span>
-               {item.jlptLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '4px 8px', borderRadius: '4px' }}>{item.jlptLevel.toUpperCase()}</span>}
-               {item.wkLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', padding: '4px 8px', borderRadius: '4px' }}>WK Lv {item.wkLevel}</span>}
+              <div style={{ position: 'absolute', right: '24px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                 <button onClick={prevSlide} disabled={currentIndex === 0} style={{ padding: '6px 12px', backgroundColor: 'var(--bg-glass)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: currentIndex === 0 ? 'var(--border-medium)' : 'var(--text-primary)', cursor: currentIndex === 0 ? 'default' : 'pointer', fontSize: '13px' }}>
+                   ← Prev
+                 </button>
+                 {currentIndex < batch.length - 1 ? (
+                   <button onClick={nextSlide} style={{ padding: '6px 16px', backgroundColor: 'var(--bg-glass)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>
+                     Next ➔
+                   </button>
+                 ) : (
+                   <button onClick={nextSlide} style={{ padding: '6px 16px', backgroundColor: '#6366f1', border: '1px solid #4f46e5', borderRadius: '6px', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>
+                     Start Quiz ➔
+                   </button>
+                 )}
+              </div>
             </div>
-            <h2 className="srs-character-display">{item.characters}</h2>
-          </div>
-          <div className="srs-content-panel">
-            <QuizItemInfo item={item} />
+
+            <button 
+               onClick={handleMarkKnown}
+               className="srs-deep-check"
+               style={{ top: '86px' }} /* Account for the internal sticky header's height */
+            >
+               <span className="srs-star">★</span>
+               <span>Deep Check-in (Mark Known)</span>
+            </button>
+
+            <div className="srs-display-block" style={{ flexShrink: 0 }}>
+              <div style={{ position: 'absolute', top: '86px', left: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                 <span className="srs-type-badge" style={{ position: 'static' }}>{item.type}</span>
+                 {item.jlptLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '4px 8px', borderRadius: '4px' }}>{item.jlptLevel.toUpperCase()}</span>}
+                 {item.wkLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', padding: '4px 8px', borderRadius: '4px' }}>WK Lv {item.wkLevel}</span>}
+              </div>
+              <h2 className="srs-character-display">{item.characters}</h2>
+            </div>
+            
+            {/* Scrollable Content Panel! */}
+            <div className="srs-content-panel" style={{ flex: '1', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+              <LessonModal item={item} />
+            </div>
           </div>
           
-          <div className="srs-action-footer">
-            <button 
-              onClick={nextSlide} 
-              className="srs-next-btn"
-            >
-              {currentIndex + 1 >= batch.length ? "Start Quiz ➔" : "Next Document ➔"}
-            </button>
+          {/* Zero-Width Absolute Anchor Column for Right Sidecar */}
+          <div style={{ position: 'absolute', top: 0, left: '100%', height: '100%', pointerEvents: 'none' }}>
+             <div style={{ marginLeft: '32px', width: '320px', zIndex: 10, pointerEvents: 'auto' }}>
+               <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
+                 <div style={{ padding: '24px' }}>
+                   <QuizNoteManager itemId={item.jlptItemId} initialNote={item.note || ""} />
+                 </div>
+               </div>
+             </div>
           </div>
         </div>
       </div>

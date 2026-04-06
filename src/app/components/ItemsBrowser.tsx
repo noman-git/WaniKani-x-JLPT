@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import ItemDetailModal from "@/app/components/ItemDetailModal";
+import ItemModal from "@/app/components/ItemModal";
 
 interface Item {
   id: number;
@@ -285,7 +285,7 @@ export default function ItemsBrowser({
           }
         }
         return (
-          <ItemDetailModal
+          <ItemModal
             target={modalTarget}
             onClose={() => {
               setModalTarget(null);

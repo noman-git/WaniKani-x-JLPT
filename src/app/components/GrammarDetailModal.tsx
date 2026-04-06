@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import ItemDetailModal from "./ItemDetailModal";
+import ItemModal from "./ItemModal";
 
 interface Example {
   ja: string;
@@ -364,7 +364,7 @@ export default function GrammarDetailModal({
           }
         }
         return (
-          <ItemDetailModal
+          <ItemModal
             target={{ type: "item", id: selectedVocabId }}
             onClose={() => setSelectedVocabId(null)}
             onNavigateItem={(id) => setSelectedVocabId(id)}
