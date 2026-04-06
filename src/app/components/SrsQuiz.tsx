@@ -12,6 +12,7 @@ export type QuizItem = {
   meanings: string[];
   readings: string[];
   advancedReadings?: Array<{ reading: string; type: string; primary: boolean }> | null;
+  note?: string | null;
   meaningMnemonic?: string | null;
   readingMnemonic?: string | null;
   meaningHint?: string | null;

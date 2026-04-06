@@ -48,6 +48,7 @@ export default function ReviewPage() {
              readings: parsedReadings,
              advancedReadings,
              meanings: parsedMeanings,
+             note: detail.note,
              meaningMnemonic: detail.wanikani?.meaningMnemonic,
              readingMnemonic: detail.wanikani?.readingMnemonic,
              meaningHint: detail.wanikani?.meaningHint,

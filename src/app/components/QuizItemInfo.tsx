@@ -1,5 +1,74 @@
+"use client";
+
 import { QuizItem } from "./SrsQuiz";
 import DOMPurify from "dompurify";
+import { useState } from "react";
+
+type NoteSaveState = "idle" | "saving" | "saved" | "error";
+
+function QuizNoteManager({ itemId, initialNote }: { itemId: number, initialNote: string }) {
+  const [note, setNote] = useState(initialNote);
+  const [saveState, setSaveState] = useState<NoteSaveState>("idle");
+
+  const handleSave = async () => {
+    setSaveState("saving");
+    try {
+      const res = await fetch("/api/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemId, content: note }),
+      });
+      if (!res.ok) throw new Error("Save failed");
+      setSaveState("saved");
+      setTimeout(() => setSaveState("idle"), 2500);
+    } catch {
+      setSaveState("error");
+      setTimeout(() => setSaveState("idle"), 3000);
+    }
+  };
+
+  const btnLabel =
+    saveState === "saving" ? "Saving…" :
+    saveState === "saved"  ? "Saved ✓" :
+    saveState === "error"  ? "Error — retry" :
+    "Save Note";
+
+  return (
+    <div className="srs-breakdown-section" style={{ marginTop: '24px' }}>
+      <h4 className="srs-info-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+         <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="srs-info-color-tick" style={{backgroundColor: '#eab308'}}></span> 
+            📝 Personal Note
+         </span>
+         <button
+            onClick={handleSave}
+            disabled={saveState === "saving"}
+            style={{ 
+               backgroundColor: saveState === "saved" ? '#10b981' : saveState === "error" ? '#ef4444' : 'var(--bg-card)', 
+               color: saveState === "saved" || saveState === "error" ? "white" : 'var(--text-primary)',
+               border: saveState === "idle" || saveState === "saving" ? '1px solid var(--border-medium)' : 'none',
+               padding: '4px 12px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s'
+            }}
+         >
+           {btnLabel}
+         </button>
+      </h4>
+      <textarea
+        value={note}
+        onChange={(e) => {
+          setNote(e.target.value);
+          setSaveState("idle");
+        }}
+        placeholder="Add your personal notes, custom hints, or reminders for this item..."
+        style={{
+           width: '100%', minHeight: '100px', backgroundColor: 'var(--bg-document)',
+           border: '1px solid var(--border-light)', borderRadius: '8px', padding: '12px',
+           color: 'var(--text-primary)', resize: 'vertical', fontSize: '14px', lineHeight: '1.5'
+        }}
+      />
+    </div>
+  );
+}
 
 export default function QuizItemInfo({ item }: { item: QuizItem }) {
   return (
@@ -150,6 +219,9 @@ export default function QuizItemInfo({ item }: { item: QuizItem }) {
           </div>
         </div>
       )}
+
+      {/* Note Section */}
+      <QuizNoteManager itemId={item.jlptItemId} initialNote={item.note || ""} />
     </div>
   );
 }
