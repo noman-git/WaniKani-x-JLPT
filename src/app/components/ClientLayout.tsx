@@ -12,6 +12,11 @@ function NavBar() {
   // Don't show nav on login page
   if (pathname === "/login") return null;
 
+  const isActive = (path: string) => {
+    if (path === "/") return pathname === "/";
+    return pathname.startsWith(path);
+  };
+
   return (
     <nav className="nav">
       <div className="nav-inner">
@@ -23,10 +28,11 @@ function NavBar() {
           </span>
         </Link>
         <ul className="nav-links">
-          <li><Link href="/" className="nav-link">Dashboard</Link></li>
-          <li><Link href="/items" className="nav-link">Browse</Link></li>
-          <li><Link href="/grammar" className="nav-link nav-link-grammar">Grammar</Link></li>
-          <li><Link href="/settings" className="nav-link">Settings</Link></li>
+          <li><Link href="/" className={`nav-link ${isActive("/") ? "active" : ""}`}>Dashboard</Link></li>
+          <li><Link href="/kanji" className={`nav-link ${isActive("/kanji") ? "active" : ""}`}>Kanji</Link></li>
+          <li><Link href="/vocab" className={`nav-link ${isActive("/vocab") ? "active" : ""}`}>Vocab</Link></li>
+          <li><Link href="/grammar" className={`nav-link ${isActive("/grammar") ? "active" : ""}`}>Grammar</Link></li>
+          <li><Link href="/settings" className={`nav-link ${isActive("/settings") ? "active" : ""}`}>Settings</Link></li>
           {!loading && user && (
             <li className="nav-user">
               <span className="nav-username">{user.username}</span>

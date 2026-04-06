@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { grammarPoints, grammarProgress, grammarNotes, grammarItemLinks, jlptItems } from "@/lib/db/schema";
+import { grammarPoints, grammarProgress, grammarNotes, grammarItemLinks, jlptItems, wanikaniSubjects } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function GET(
@@ -72,7 +72,7 @@ export async function GET(
     }
 
     // Get linked jlpt items
-    const linkedItems = db
+    const linkedItemsRaw = db
       .select({
         id: jlptItems.id,
         expression: jlptItems.expression,
@@ -80,13 +80,16 @@ export async function GET(
         reading: jlptItems.reading,
         type: jlptItems.type,
         jlptLevel: jlptItems.jlptLevel,
+        wkReadings: wanikaniSubjects.readings,
       })
       .from(grammarItemLinks)
       .innerJoin(jlptItems, eq(grammarItemLinks.jlptItemId, jlptItems.id))
+      .leftJoin(wanikaniSubjects, eq(wanikaniSubjects.matchedJlptItemId, jlptItems.id))
       .where(eq(grammarItemLinks.grammarPointId, point.id))
-      .all()
-      // Remove duplicates just in case the NLP matcher matched the same vocab multiple times
-      .filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+      .all();
+
+    // Remove duplicates if the NLP matcher matched the same vocab multiple times
+    const linkedItems = linkedItemsRaw.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
 
     return NextResponse.json({
       ...point,

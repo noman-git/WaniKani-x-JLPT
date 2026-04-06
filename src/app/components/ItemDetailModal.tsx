@@ -135,6 +135,8 @@ interface Props {
   onNavigateItem?: (itemId: number) => void;
   onNavigateRadical?: (wkSubjectId: number) => void;
   onNavigateGrammar?: (slug: string) => void;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
 // ── Component ────────────────────────────────────────────────
@@ -145,6 +147,8 @@ export default function ItemDetailModal({
   onNavigateItem,
   onNavigateRadical,
   onNavigateGrammar,
+  onNext,
+  onPrev
 }: Props) {
   const [detail, setDetail] = useState<ItemDetail | null>(null);
   const [radicalDetail, setRadicalDetail] = useState<RadicalDetail | null>(null);
@@ -267,14 +271,19 @@ export default function ItemDetailModal({
     }
   };
 
-  // Close on Escape
+  // Keyboard Navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input or textarea
+      if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement) return;
+      
       if (e.key === "Escape" && !selectedGrammarSlug) onClose();
+      if (e.key === "ArrowLeft" && onPrev && !selectedGrammarSlug) onPrev();
+      if (e.key === "ArrowRight" && onNext && !selectedGrammarSlug) onNext();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
+  }, [onClose, onPrev, onNext, selectedGrammarSlug]);
 
   // Sanitize HTML for mnemonics
   const sanitize = (html: string) =>
@@ -315,6 +324,8 @@ export default function ItemDetailModal({
               goBack={goBack}
               isNotesOpen={isNotesOpen}
               setIsNotesOpen={setIsNotesOpen}
+              onNext={onNext}
+              onPrev={onPrev}
             />
           ) : target.type === "radical" && radicalDetail ? (
             <RadicalView
@@ -324,6 +335,8 @@ export default function ItemDetailModal({
               onClose={onClose}
               canGoBack={history.length > 0}
               goBack={goBack}
+              onNext={onNext}
+              onPrev={onPrev}
             />
           ) : (
             <div className="modal-empty">
@@ -372,7 +385,9 @@ function ItemView({
   canGoBack,
   goBack,
   isNotesOpen,
-  setIsNotesOpen
+  setIsNotesOpen,
+  onNext,
+  onPrev
 }: {
   detail: ItemDetail;
   status: string;
@@ -393,6 +408,8 @@ function ItemView({
   goBack: () => void;
   isNotesOpen: boolean;
   setIsNotesOpen: (s: boolean) => void;
+  onNext?: () => void;
+  onPrev?: () => void;
 }) {
   // Build external URLs
   const wkExpr = detail.wanikani?.characters || detail.item.expression;
@@ -427,6 +444,10 @@ function ItemView({
           </div>
         </div>
         <div className="modal-header-actions" style={{display: "flex", gap: "10px", alignItems: "center"}}>
+          <div className="modal-nav-arrows" style={{display: "flex", gap: "4px"}}>
+            {onPrev && <button className="modal-close" onClick={onPrev} title="Previous Item">‹</button>}
+            {onNext && <button className="modal-close" onClick={onNext} title="Next Item">›</button>}
+          </div>
           <button 
             className={`modal-toggle-note-btn ${isNotesOpen ? 'open' : ''} ${note ? 'has-note' : ''}`}
             onClick={() => setIsNotesOpen(!isNotesOpen)}
@@ -434,7 +455,7 @@ function ItemView({
           >
             📝 Notes {note && '(1)'}
           </button>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <button className="modal-close" onClick={onClose} title="Close">✕</button>
         </div>
       </div>
 
@@ -698,13 +719,17 @@ function RadicalView({
   onClose,
   canGoBack,
   goBack,
+  onNext,
+  onPrev
 }: {
   detail: RadicalDetail;
   sanitize: (html: string) => string;
-  navigateToItem: (id: number) => void;
+  navigateToItem: (itemId: number) => void;
   onClose: () => void;
   canGoBack: boolean;
   goBack: () => void;
+  onNext?: () => void;
+  onPrev?: () => void;
 }) {
   const primaryMeaning =
     detail.radical.meanings.find((m) => m.primary)?.meaning ||

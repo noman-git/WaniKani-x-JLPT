@@ -19,9 +19,11 @@ interface RelatedGrammar {
 interface LinkedItem {
   id: number;
   expression: string;
+  reading: string | null;
   meaning: string;
   type: string;
   jlptLevel: string;
+  wkReadings?: string | null;
 }
 
 interface GrammarDetail {
@@ -130,6 +132,74 @@ export default function GrammarDetailModal({
     setCurrentSlug(relatedSlug);
   };
 
+  const handleTooltipPosition = (e: React.MouseEvent<HTMLElement>) => {
+    const parentRect = e.currentTarget.getBoundingClientRect();
+    const tooltip = e.currentTarget.querySelector('.inline-tooltip') as HTMLElement;
+    if (!tooltip) return;
+    
+    // Clear previous dynamic classes
+    e.currentTarget.classList.remove('tooltip-left', 'tooltip-right');
+    // Clear inline styles if any residue exists
+    tooltip.style.left = '';
+    tooltip.style.right = '';
+    tooltip.style.transform = '';
+
+    // Set layout constraining classes dynamically based on active mouse position bounding rules
+    if (parentRect.left < 100) {
+      e.currentTarget.classList.add('tooltip-left');
+    } else if (window.innerWidth - parentRect.right < 100) {
+      e.currentTarget.classList.add('tooltip-right');
+    }
+  };
+
+  const parseSentence = (sentence: string, linkedItems: LinkedItem[]) => {
+    if (!linkedItems || linkedItems.length === 0) return [sentence];
+
+    const sortedItems = [...linkedItems].sort((a, b) => b.expression.length - a.expression.length);
+    const escapedExpressions = sortedItems.map(i => i.expression.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const regex = new RegExp(`(${escapedExpressions.join('|')})`, 'g');
+    const chunks = sentence.split(regex);
+    
+    return chunks.map((chunk, i) => {
+      const match = sortedItems.find(item => item.expression === chunk);
+      if (match) {
+        let displayReading = match.reading;
+        if (match.wkReadings) {
+          try {
+            const wkParsed = JSON.parse(match.wkReadings);
+            if (Array.isArray(wkParsed) && wkParsed.length > 0) {
+              displayReading = wkParsed.map(r => r.reading).join(', ');
+            }
+          } catch (e) {
+            // fallback to default reading
+          }
+        }
+
+        return (
+          <span 
+            key={i} 
+            className="inline-vocab" 
+            onClick={(e) => { e.stopPropagation(); setSelectedVocabId(match.id); }}
+            onMouseEnter={handleTooltipPosition}
+          >
+            {chunk}
+            <span className="inline-tooltip">
+              {displayReading && displayReading !== match.expression && (
+                <span className="inline-tooltip-reading">{displayReading}</span>
+              )}
+              <span className="inline-tooltip-meaning">{match.meaning}</span>
+              <div className="inline-tooltip-meta">
+                <span className={`badge badge-${match.jlptLevel.toLowerCase()}`} style={{fontSize: 9}}>{match.jlptLevel}</span>
+                <span className={`badge badge-${match.type === 'kanji' ? 'kanji' : 'vocab'}`} style={{fontSize: 9}}>{match.type}</span>
+              </div>
+            </span>
+          </span>
+        );
+      }
+      return <span key={i}>{chunk}</span>;
+    });
+  };
+
   return (
     <div className="modal-overlay" ref={overlayRef} onClick={handleOverlayClick}>
       <div className="modal-wrapper">
@@ -208,31 +278,10 @@ export default function GrammarDetailModal({
                 <div className="grammar-examples">
                   {data.examples.map((ex, i) => (
                     <div key={i} className="grammar-example">
-                      <div className="grammar-example-ja">{ex.ja}</div>
+                      <div className="grammar-example-ja">{parseSentence(ex.ja, data.linkedItems)}</div>
                       <div className="grammar-example-romaji">{ex.romaji}</div>
                       <div className="grammar-example-en">{ex.en}</div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Vocabulary & Kanji Used */}
-            {data.linkedItems && data.linkedItems.length > 0 && (
-              <div className="grammar-section">
-                <h3 className="grammar-section-title">📚 Vocabulary & Kanji Used</h3>
-                <div className="grammar-related">
-                  {data.linkedItems.map((item) => (
-                    <button
-                      key={item.id}
-                      className={`grammar-related-chip ${item.type === 'kanji' ? 'kanji-chip' : ''}`}
-                      onClick={() => setSelectedVocabId(item.id)}
-                      title={`${item.type === 'kanji' ? 'Kanji' : 'Vocab'}: ${item.meaning}`}
-                    >
-                      <span className="grammar-related-title">{item.expression}</span>
-                      <span className="grammar-related-meaning">{item.meaning}</span>
-                      <span className={`badge badge-${item.jlptLevel.toLowerCase()}`} style={{fontSize: 10, alignSelf:'center', marginLeft:'auto'}}>{item.jlptLevel}</span>
-                    </button>
                   ))}
                 </div>
               </div>
@@ -305,13 +354,25 @@ export default function GrammarDetailModal({
     </div>
 
     {/* Render stacked Item Modal */}
-      {selectedVocabId !== null && (
-        <ItemDetailModal
-          target={{ type: "item", id: selectedVocabId }}
-          onClose={() => setSelectedVocabId(null)}
-          onNavigateItem={(id) => setSelectedVocabId(id)}
-        />
-      )}
+      {selectedVocabId !== null && (() => {
+        let onNext, onPrev;
+        if (data && data.linkedItems) {
+          const idx = data.linkedItems.findIndex((v: LinkedItem) => v.id === selectedVocabId);
+          if (idx !== -1) {
+            if (idx > 0) onPrev = () => setSelectedVocabId(data.linkedItems[idx - 1].id);
+            if (idx < data.linkedItems.length - 1) onNext = () => setSelectedVocabId(data.linkedItems[idx + 1].id);
+          }
+        }
+        return (
+          <ItemDetailModal
+            target={{ type: "item", id: selectedVocabId }}
+            onClose={() => setSelectedVocabId(null)}
+            onNavigateItem={(id) => setSelectedVocabId(id)}
+            onNext={onNext}
+            onPrev={onPrev}
+          />
+        );
+      })()}
     </div>
   );
 }
