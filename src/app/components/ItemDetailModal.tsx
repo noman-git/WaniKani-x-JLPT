@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import DOMPurify from "dompurify";
+import dynamic from "next/dynamic";
+
+const GrammarDetailModal = dynamic(() => import("./GrammarDetailModal"), { ssr: false });
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -70,6 +73,14 @@ interface ItemDetail {
     jlptLevel: string | null;
     wkLevel: number | null;
   }>;
+  linkedGrammar: Array<{
+    id: number;
+    slug: string;
+    title: string;
+    titleRomaji: string;
+    meaning: string;
+    jlptLevel: string;
+  }>;
 }
 
 interface RadicalDetail {
@@ -123,6 +134,7 @@ interface Props {
   onClose: () => void;
   onNavigateItem?: (itemId: number) => void;
   onNavigateRadical?: (wkSubjectId: number) => void;
+  onNavigateGrammar?: (slug: string) => void;
 }
 
 // ── Component ────────────────────────────────────────────────
@@ -132,16 +144,19 @@ export default function ItemDetailModal({
   onClose,
   onNavigateItem,
   onNavigateRadical,
+  onNavigateGrammar,
 }: Props) {
   const [detail, setDetail] = useState<ItemDetail | null>(null);
   const [radicalDetail, setRadicalDetail] = useState<RadicalDetail | null>(null);
   const [dictData, setDictData] = useState<KanjiApiData | null>(null);
   const [jishoData, setJishoData] = useState<JishoWord[] | null>(null);
-  const [activeTab, setActiveTab] = useState<"wk" | "dict">("wk");
+  const [activeTab, setActiveTab] = useState<"wk" | "pseudo-wk" | "dict">("wk");
   const [loading, setLoading] = useState(true);
   const [dictLoading, setDictLoading] = useState(false);
   const [status, setStatus] = useState("unknown");
   const [note, setNote] = useState("");
+  const [isNotesOpen, setIsNotesOpen] = useState(true);
+  const [selectedGrammarSlug, setSelectedGrammarSlug] = useState<string | null>(null);
 
   // Fetch based on target type
   useEffect(() => {
@@ -163,7 +178,11 @@ export default function ItemDetailModal({
           }
           setDetail(data);
           setStatus(data.item?.status || "unknown");
-          setActiveTab(data.wanikani ? "wk" : "dict");
+          if (data.wanikani) {
+            setActiveTab(data.wanikani.matchType === "pseudo" ? "pseudo-wk" : "wk");
+          } else {
+            setActiveTab("dict");
+          }
           setNote(data.note ?? "");
         })
         .catch(console.error)
@@ -251,7 +270,7 @@ export default function ItemDetailModal({
   // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape" && !selectedGrammarSlug) onClose();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -269,46 +288,65 @@ export default function ItemDetailModal({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {loading ? (
-          <div className="modal-loading">
-            <div className="modal-spinner" />
-          </div>
-        ) : target.type === "item" && detail ? (
-          <ItemView
-            detail={detail}
-            status={status}
-            note={note}
-            onNoteChange={setNote}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            dictData={dictData}
-            jishoData={jishoData}
-            dictLoading={dictLoading}
-            sanitize={sanitize}
-            updateStatus={updateStatus}
-            navigateToItem={navigateToItem}
-            navigateToRadical={navigateToRadical}
-            onClose={onClose}
-            canGoBack={history.length > 0}
-            goBack={goBack}
-          />
-        ) : target.type === "radical" && radicalDetail ? (
-          <RadicalView
-            detail={radicalDetail}
-            sanitize={sanitize}
-            navigateToItem={navigateToItem}
-            onClose={onClose}
-            canGoBack={history.length > 0}
-            goBack={goBack}
-          />
-        ) : (
-          <div className="modal-empty">
-            <p>Could not load details.</p>
-            <button className="modal-close" onClick={onClose}>Close</button>
-          </div>
-        )}
+      <div className="modal-wrapper">
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          {loading ? (
+            <div className="modal-loading">
+              <div className="modal-spinner" />
+            </div>
+          ) : target.type === "item" && detail ? (
+            <ItemView
+              detail={detail}
+              status={status}
+              note={note}
+              onNoteChange={setNote}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              dictData={dictData}
+              jishoData={jishoData}
+              dictLoading={dictLoading}
+              sanitize={sanitize}
+              updateStatus={updateStatus}
+              navigateToItem={navigateToItem}
+              navigateToRadical={navigateToRadical}
+              onNavigateGrammar={onNavigateGrammar || setSelectedGrammarSlug}
+              onClose={onClose}
+              canGoBack={history.length > 0}
+              goBack={goBack}
+              isNotesOpen={isNotesOpen}
+              setIsNotesOpen={setIsNotesOpen}
+            />
+          ) : target.type === "radical" && radicalDetail ? (
+            <RadicalView
+              detail={radicalDetail}
+              sanitize={sanitize}
+              navigateToItem={navigateToItem}
+              onClose={onClose}
+              canGoBack={history.length > 0}
+              goBack={goBack}
+            />
+          ) : (
+            <div className="modal-empty">
+              <p>Could not load details.</p>
+              <button className="modal-close" onClick={onClose}>Close</button>
+            </div>
+          )}
+        </div>
+
+        {/* Sliding Notes Drawer */}
+        <div className={`modal-notes-drawer ${isNotesOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
+          {!loading && detail && target.type === "item" && (
+            <NoteSection itemId={detail.item.id} note={note} onNoteChange={setNote} />
+          )}
+        </div>
       </div>
+
+      {selectedGrammarSlug && (
+        <GrammarDetailModal
+          slug={selectedGrammarSlug}
+          onClose={() => setSelectedGrammarSlug(null)}
+        />
+      )}
     </div>
   );
 }
@@ -329,16 +367,19 @@ function ItemView({
   updateStatus,
   navigateToItem,
   navigateToRadical,
+  onNavigateGrammar,
   onClose,
   canGoBack,
   goBack,
+  isNotesOpen,
+  setIsNotesOpen
 }: {
   detail: ItemDetail;
   status: string;
   note: string;
   onNoteChange: (n: string) => void;
-  activeTab: "wk" | "dict";
-  setActiveTab: (t: "wk" | "dict") => void;
+  activeTab: "wk" | "pseudo-wk" | "dict";
+  setActiveTab: (t: "wk" | "pseudo-wk" | "dict") => void;
   dictData: KanjiApiData | null;
   jishoData: JishoWord[] | null;
   dictLoading: boolean;
@@ -346,9 +387,12 @@ function ItemView({
   updateStatus: (status: string) => void;
   navigateToItem: (id: number) => void;
   navigateToRadical: (id: number) => void;
+  onNavigateGrammar?: (slug: string) => void;
   onClose: () => void;
   canGoBack: boolean;
   goBack: () => void;
+  isNotesOpen: boolean;
+  setIsNotesOpen: (s: boolean) => void;
 }) {
   // Build external URLs
   const wkExpr = detail.wanikani?.characters || detail.item.expression;
@@ -382,19 +426,28 @@ function ItemView({
             <span className="modal-meaning-label">{detail.item.meaning}</span>
           </div>
         </div>
-        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="modal-header-actions" style={{display: "flex", gap: "10px", alignItems: "center"}}>
+          <button 
+            className={`modal-toggle-note-btn ${isNotesOpen ? 'open' : ''} ${note ? 'has-note' : ''}`}
+            onClick={() => setIsNotesOpen(!isNotesOpen)}
+            title="Toggle Notes"
+          >
+            📝 Notes {note && '(1)'}
+          </button>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
       </div>
 
       {/* ── Tabs with external links ── */}
       <div className="modal-tabs">
         <div className="modal-tabs-left">
           <button
-            className={`modal-tab ${activeTab === "wk" ? "active" : ""}`}
-            onClick={() => setActiveTab("wk")}
+            className={`modal-tab ${(activeTab === "wk" || activeTab === "pseudo-wk") ? "active" : ""}`}
+            onClick={() => setActiveTab(detail.wanikani?.matchType === "pseudo" ? "pseudo-wk" : "wk")}
             disabled={!detail.wanikani}
-            title={!detail.wanikani ? "No WaniKani data available" : ""}
+            title={!detail.wanikani ? "No context data available" : ""}
           >
-            🐊 WaniKani
+            {detail.wanikani?.matchType === "pseudo" ? "✨ AI Context" : "🐊 WaniKani"}
           </button>
           <button
             className={`modal-tab ${activeTab === "dict" ? "active" : ""}`}
@@ -417,12 +470,19 @@ function ItemView({
 
       {/* ── Tab Content ── */}
       <div className="modal-body">
-        {activeTab === "wk" && detail.wanikani && (
-          <WKTab
-            wanikani={detail.wanikani}
-            sanitize={sanitize}
-            onRadicalClick={navigateToRadical}
-          />
+        {(activeTab === "wk" || activeTab === "pseudo-wk") && detail.wanikani && (
+          <>
+            {activeTab === "pseudo-wk" && (
+              <div style={{ padding: "12px", backgroundColor: "rgba(99, 102, 241, 0.1)", border: "1px solid rgba(99, 102, 241, 0.3)", borderRadius: "8px", marginBottom: "20px", fontSize: "14px", color: "var(--text-color)" }}>
+                <strong>✨ AI Generated:</strong> This item is not officially on WaniKani. The mnemonics and context sentences below were generated by Gemini to provide an equivalent study experience.
+              </div>
+            )}
+            <WKTab
+              wanikani={detail.wanikani}
+              sanitize={sanitize}
+              onRadicalClick={navigateToRadical}
+            />
+          </>
         )}
         {activeTab === "wk" && !detail.wanikani && (
           <div className="modal-empty">
@@ -518,10 +578,28 @@ function ItemView({
             </div>
           </div>
         )}
-      </div>
 
-      {/* ── My Note ── */}
-      <NoteSection itemId={detail.item.id} note={note} onNoteChange={onNoteChange} />
+        {/* ── Appears in Grammar ── */}
+        {detail.linkedGrammar && detail.linkedGrammar.length > 0 && (
+          <div className="modal-section">
+            <h3 className="modal-section-title">🔗 Appears In Grammar</h3>
+            <div className="modal-related-vocab">
+              {detail.linkedGrammar.map((g) => (
+                <button
+                  key={g.id}
+                  className="related-vocab-chip"
+                  onClick={() => onNavigateGrammar && onNavigateGrammar(g.slug)}
+                  title={`${g.titleRomaji} — ${g.meaning}`}
+                  style={{ borderColor: 'rgba(99, 102, 241, 0.3)', backgroundColor: 'rgba(99, 102, 241, 0.05)' }}
+                >
+                  <span className="vocab-chip-expr">{g.title}</span>
+                  <span className="vocab-chip-level">{g.jlptLevel}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* ── Footer: Status + WK Level ── */}
       <div className="modal-footer">

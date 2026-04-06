@@ -106,7 +106,7 @@ export default function ItemsPage() {
 
   // Build external URLs
   const getWkUrl = (item: Item) => {
-    if (!item.wkSubjectId) return null;
+    if (!item.wkSubjectId || item.matchType === "pseudo") return null;
     const wkExpr = item.wkCharacters || item.expression;
     const wkType = item.type === "kanji" ? "kanji" : "vocabulary";
     return `https://www.wanikani.com/${wkType}/${encodeURIComponent(wkExpr)}`;
@@ -118,6 +118,7 @@ export default function ItemsPage() {
 
   // Does the WK expression differ from the JLPT expression?
   const hasAltExpression = (item: Item) => {
+    if (item.matchType === "pseudo") return false;
     return item.wkCharacters && item.wkCharacters !== item.expression;
   };
 
@@ -218,8 +219,11 @@ export default function ItemsPage() {
               <div className="item-meta">
                 <span className={`badge badge-${item.jlptLevel.toLowerCase()}`}>{item.jlptLevel}</span>
                 <span className={`badge badge-${item.type}`}>{item.type === "kanji" ? "漢字" : "語彙"}</span>
-                {item.wkSubjectId && (
+                {item.wkSubjectId && item.matchType !== "pseudo" && (
                   <span className="badge badge-wk">WK Lv.{item.wkLevel}</span>
+                )}
+                {item.matchType === "pseudo" && (
+                  <span className="badge badge-wk" style={{backgroundColor: "rgba(99, 102, 241, 0.1)", color: "var(--accent-blue)", border: "1px solid rgba(99, 102, 241, 0.3)"}}>✨ AI Context</span>
                 )}
               </div>
               <div className="status-toggle" onClick={(e) => e.stopPropagation()}>

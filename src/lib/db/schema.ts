@@ -161,6 +161,14 @@ export type InviteCode = typeof inviteCodes.$inferSelect;
 export type JlptItem = typeof jlptItems.$inferSelect;
 export type WanikaniSubject = typeof wanikaniSubjects.$inferSelect;
 export type WanikaniRadical = typeof wanikaniRadicals.$inferSelect;
+export const grammarItemLinks = sqliteTable("grammar_item_links", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  grammarPointId: integer("grammar_point_id").notNull().references(() => grammarPoints.id),
+  jlptItemId: integer("jlpt_item_id").notNull().references(() => jlptItems.id),
+}, (t) => ({
+  unq: unique().on(t.grammarPointId, t.jlptItemId),
+}));
+
 export type UserProgressRecord = typeof userProgress.$inferSelect;
 export type UserNote = typeof userNotes.$inferSelect;
 export type GrammarPoint = typeof grammarPoints.$inferSelect;

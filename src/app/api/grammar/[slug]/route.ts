@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { grammarPoints, grammarProgress, grammarNotes } from "@/lib/db/schema";
+import { grammarPoints, grammarProgress, grammarNotes, grammarItemLinks, jlptItems } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function GET(
@@ -71,6 +71,23 @@ export async function GET(
         .filter(p => relatedSlugs.includes(p.slug));
     }
 
+    // Get linked jlpt items
+    const linkedItems = db
+      .select({
+        id: jlptItems.id,
+        expression: jlptItems.expression,
+        meaning: jlptItems.meaning,
+        reading: jlptItems.reading,
+        type: jlptItems.type,
+        jlptLevel: jlptItems.jlptLevel,
+      })
+      .from(grammarItemLinks)
+      .innerJoin(jlptItems, eq(grammarItemLinks.jlptItemId, jlptItems.id))
+      .where(eq(grammarItemLinks.grammarPointId, point.id))
+      .all()
+      // Remove duplicates just in case the NLP matcher matched the same vocab multiple times
+      .filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+
     return NextResponse.json({
       ...point,
       examples: JSON.parse(point.examples as string),
@@ -79,6 +96,7 @@ export async function GET(
       userStatus: progress?.status || "not-started",
       userNote: note?.content || "",
       relatedGrammar: relatedPoints,
+      linkedItems,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

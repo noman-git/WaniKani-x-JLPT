@@ -162,6 +162,16 @@ export function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_grammar_points_level ON grammar_points(jlpt_level);
     CREATE INDEX IF NOT EXISTS idx_grammar_progress_compound ON grammar_progress(user_id, grammar_point_id);
     CREATE INDEX IF NOT EXISTS idx_grammar_notes_compound ON grammar_notes(user_id, grammar_point_id);
+
+    CREATE TABLE IF NOT EXISTS grammar_item_links (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      grammar_point_id INTEGER NOT NULL REFERENCES grammar_points(id),
+      jlpt_item_id INTEGER NOT NULL REFERENCES jlpt_items(id),
+      UNIQUE(grammar_point_id, jlpt_item_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_grammar_item_links_grammar ON grammar_item_links(grammar_point_id);
+    CREATE INDEX IF NOT EXISTS idx_grammar_item_links_item ON grammar_item_links(jlpt_item_id);
   `);
 
   // Auto-seed grammar points if table is empty

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import ItemDetailModal from "./ItemDetailModal";
 
 interface Example {
   ja: string;
@@ -12,6 +13,14 @@ interface RelatedGrammar {
   slug: string;
   title: string;
   meaning: string;
+  jlptLevel: string;
+}
+
+interface LinkedItem {
+  id: number;
+  expression: string;
+  meaning: string;
+  type: string;
   jlptLevel: string;
 }
 
@@ -31,6 +40,7 @@ interface GrammarDetail {
   userStatus: string;
   userNote: string;
   relatedGrammar: RelatedGrammar[];
+  linkedItems: LinkedItem[];
 }
 
 export default function GrammarDetailModal({
@@ -45,7 +55,9 @@ export default function GrammarDetailModal({
   const [noteContent, setNoteContent] = useState("");
   const [noteSaving, setNoteSaving] = useState(false);
   const [noteSaved, setNoteSaved] = useState(false);
+  const [isNotesOpen, setIsNotesOpen] = useState(true);
   const [currentSlug, setCurrentSlug] = useState(slug);
+  const [selectedVocabId, setSelectedVocabId] = useState<number | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,7 +82,8 @@ export default function GrammarDetailModal({
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      // Only close if no other modal is stacked above
+      if (e.key === "Escape" && !selectedVocabId) onClose();
     };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
@@ -119,10 +132,22 @@ export default function GrammarDetailModal({
 
   return (
     <div className="modal-overlay" ref={overlayRef} onClick={handleOverlayClick}>
-      <div className="modal-content grammar-modal">
-        <button className="modal-close" onClick={onClose}>×</button>
-
-        {loading ? (
+      <div className="modal-wrapper">
+        <div className="modal-content grammar-modal">
+          <div className="modal-header" style={{ paddingBottom: '12px', borderBottom: 'none' }}>
+            <div className="modal-header-actions" style={{display: "flex", gap: "10px", alignItems: "center", position: "absolute", top: "16px", right: "16px"}}>
+              <button 
+                className={`modal-toggle-note-btn ${isNotesOpen ? 'open' : ''} ${noteContent ? 'has-note' : ''}`}
+                onClick={() => setIsNotesOpen(!isNotesOpen)}
+                title="Toggle Notes"
+              >
+                📝 Notes {noteContent && '(1)'}
+              </button>
+              <button className="modal-close" onClick={onClose} style={{ position: "relative", top: 0, right: 0 }}>✕</button>
+            </div>
+          </div>
+          
+          {loading ? (
           <div className="loading-container" style={{ minHeight: 300 }}>
             <div className="loading-spinner" />
             <span>Loading grammar point...</span>
@@ -192,6 +217,27 @@ export default function GrammarDetailModal({
               </div>
             )}
 
+            {/* Vocabulary & Kanji Used */}
+            {data.linkedItems && data.linkedItems.length > 0 && (
+              <div className="grammar-section">
+                <h3 className="grammar-section-title">📚 Vocabulary & Kanji Used</h3>
+                <div className="grammar-related">
+                  {data.linkedItems.map((item) => (
+                    <button
+                      key={item.id}
+                      className={`grammar-related-chip ${item.type === 'kanji' ? 'kanji-chip' : ''}`}
+                      onClick={() => setSelectedVocabId(item.id)}
+                      title={`${item.type === 'kanji' ? 'Kanji' : 'Vocab'}: ${item.meaning}`}
+                    >
+                      <span className="grammar-related-title">{item.expression}</span>
+                      <span className="grammar-related-meaning">{item.meaning}</span>
+                      <span className={`badge badge-${item.jlptLevel.toLowerCase()}`} style={{fontSize: 10, alignSelf:'center', marginLeft:'auto'}}>{item.jlptLevel}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Related Grammar */}
             {data.relatedGrammar.length > 0 && (
               <div className="grammar-section">
@@ -211,27 +257,6 @@ export default function GrammarDetailModal({
               </div>
             )}
 
-            {/* Notes */}
-            <div className="grammar-section">
-              <h3 className="grammar-section-title">📝 My Notes</h3>
-              <div className="note-section">
-                <textarea
-                  className="note-textarea"
-                  value={noteContent}
-                  onChange={(e) => { setNoteContent(e.target.value); setNoteSaved(false); }}
-                  placeholder="Add your notes about this grammar point..."
-                  rows={4}
-                />
-                <button
-                  className={`note-save-btn ${noteSaving ? "saving" : ""} ${noteSaved ? "saved" : ""}`}
-                  onClick={saveNote}
-                  disabled={noteSaving}
-                >
-                  {noteSaving ? "Saving..." : noteSaved ? "✓ Saved" : "Save Note"}
-                </button>
-              </div>
-            </div>
-
             {/* Progress Buttons */}
             <div className="modal-footer">
               <div className="modal-status-buttons">
@@ -250,6 +275,43 @@ export default function GrammarDetailModal({
           </div>
         )}
       </div>
+
+      {/* Sliding Notes Drawer */}
+      <div className={`modal-notes-drawer ${isNotesOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
+        {!loading && data && (
+          <div className="note-section">
+            <div className="note-header">
+              <span className="note-title">📝 My Note</span>
+            </div>
+            <textarea
+              className="note-textarea"
+              value={noteContent}
+              onChange={(e) => { setNoteContent(e.target.value); setNoteSaved(false); }}
+              placeholder="Add your personal note for this grammar point..."
+              rows={4}
+            />
+            <div className="note-footer">
+              <button
+                className={`note-save-btn ${noteSaving ? "saving" : ""} ${noteSaved ? "saved" : ""}`}
+                onClick={saveNote}
+                disabled={noteSaving}
+              >
+                {noteSaving ? "Saving..." : noteSaved ? "✓ Saved" : "Save Note"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+
+    {/* Render stacked Item Modal */}
+      {selectedVocabId !== null && (
+        <ItemDetailModal
+          target={{ type: "item", id: selectedVocabId }}
+          onClose={() => setSelectedVocabId(null)}
+          onNavigateItem={(id) => setSelectedVocabId(id)}
+        />
+      )}
     </div>
   );
 }

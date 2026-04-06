@@ -2215,3 +2215,115 @@ body {
     font-size: 26px;
   }
 }
+
+/* ===== Modal Notes Drawer ===== */
+.modal-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transition: max-width var(--transition-smooth);
+}
+.modal-notes-drawer {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 16px);
+  width: 320px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateX(-20px);
+  pointer-events: none;
+  max-height: 85vh;
+  overflow: hidden;
+}
+.modal-notes-drawer.open {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+.modal-toggle-note-btn {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 100px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.modal-toggle-note-btn:hover {
+  background: var(--bg-glass-hover);
+  color: var(--text-primary);
+}
+.modal-toggle-note-btn.has-note {
+  color: var(--accent-n4);
+  border-color: rgba(168, 85, 247, 0.3);
+  background: rgba(168, 85, 247, 0.1);
+}
+.modal-toggle-note-btn.open {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--text-primary);
+}
+
+@media (max-width: 1000px) {
+  .modal-wrapper {
+    flex-direction: column;
+    align-items: center;
+    max-height: 85vh; /* match the original modal-content max height */
+    width: 100%;
+  }
+  
+  .modal-content {
+    max-height: none; /* let the wrapper control the height constraints */
+    flex: 1; /* allow it to shrink dynamically */
+    min-height: 0; /* critical for flex shrinking */
+    width: 100%;
+  }
+
+  .modal-notes-drawer {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    margin-top: 16px;
+    transform: none !important;
+    z-index: 10;
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-xl);
+    flex-shrink: 0;
+    display: none; /* hidden if not open */
+  }
+  
+  .modal-notes-drawer.open {
+    display: flex;
+    opacity: 1;
+  }
+  
+  .note-textarea {
+    min-height: 48px;
+    height: 48px;
+  }
+  
+  .note-textarea:focus {
+    min-height: 120px;
+    height: 120px;
+  }
+}
+

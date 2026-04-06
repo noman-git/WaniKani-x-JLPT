@@ -42,9 +42,9 @@ export async function GET(request: NextRequest) {
       params.search = `%${search}%`;
     }
     if (onWanikani === "true") {
-      whereClauses.push("w_agg.wk_subject_id IS NOT NULL");
+      whereClauses.push("w_agg.wk_subject_id IS NOT NULL AND w_agg.match_type != 'pseudo'");
     } else if (onWanikani === "false") {
-      whereClauses.push("w_agg.wk_subject_id IS NULL");
+      whereClauses.push("(w_agg.wk_subject_id IS NULL OR w_agg.match_type = 'pseudo')");
     }
 
     const whereSQL =
@@ -119,11 +119,11 @@ export async function GET(request: NextRequest) {
           COUNT(*) as total,
           SUM(CASE WHEN p.status = 'known' THEN 1 ELSE 0 END) as known,
           SUM(CASE WHEN p.status = 'learning' THEN 1 ELSE 0 END) as learning,
-          SUM(CASE WHEN w_agg.wk_subject_id IS NOT NULL THEN 1 ELSE 0 END) as onWanikani
+          SUM(CASE WHEN w_agg.wk_subject_id IS NOT NULL AND w_agg.match_type != 'pseudo' THEN 1 ELSE 0 END) as onWanikani
         FROM jlpt_items j
         ${statsProgressJoin}
         LEFT JOIN (
-          SELECT matched_jlpt_item_id, MIN(wk_subject_id) as wk_subject_id
+          SELECT matched_jlpt_item_id, MIN(wk_subject_id) as wk_subject_id, MIN(match_type) as match_type
           FROM wanikani_subjects
           WHERE matched_jlpt_item_id IS NOT NULL
           GROUP BY matched_jlpt_item_id

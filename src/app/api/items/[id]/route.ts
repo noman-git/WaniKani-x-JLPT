@@ -291,6 +291,15 @@ export async function GET(
       };
     }
 
+    // Get linked grammar points
+    const linkedGrammar = rawDb.prepare(
+      `SELECT g.id, g.slug, g.title, g.title_romaji as titleRomaji, g.meaning, g.jlpt_level as jlptLevel
+       FROM grammar_points g
+       INNER JOIN grammar_item_links l ON l.grammar_point_id = g.id
+       WHERE l.jlpt_item_id = ?
+       ORDER BY g.jlpt_level ASC, g.id ASC`
+    ).all(itemId);
+
     rawDb.close();
 
     return NextResponse.json({
@@ -302,6 +311,7 @@ export async function GET(
       wanikani,
       relatedVocab,
       componentKanji,
+      linkedGrammar,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
