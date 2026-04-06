@@ -30,13 +30,10 @@ RUN adduser --system --uid 1001 nextjs
 # Copy standalone build
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/drizzle ./drizzle
 
 # Copy seed database (will be used if no DB exists on the volume)
 COPY --from=builder /app/data/jlpt-seed.db ./data/
-
-# Copy the grammar and wk SQL migration scripts explicitly out of harm's way (bypass /data volume)
-COPY --from=builder /app/scripts/prod-grammar-seed.sql ./prod-grammar-seed.sql
-COPY --from=builder /app/scripts/prod-wk-seed.sql ./prod-wk-seed.sql
 
 # Set ownership for data directory (will be a volume mount)
 RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
