@@ -26,14 +26,14 @@ export async function POST(req: Request) {
       where: and(eq(userProgress.userId, userId), eq(userProgress.jlptItemId, jlptItemId))
     });
 
-    if (!progress) {
-      return NextResponse.json({ error: "Progress not found" }, { status: 404 });
-    }
-
-    const currentState: SrsState = {
+    const currentState: SrsState = progress ? {
       srsStage: progress.srsStage,
       interval: progress.interval,
       easeFactor: progress.easeFactor,
+    } : {
+      srsStage: 0,
+      interval: 0,
+      easeFactor: 2.5,
     };
 
     // Calculate next mathematical interval
@@ -61,17 +61,32 @@ export async function POST(req: Request) {
     const status = nextState.srsStage >= 8 ? "known" : "learning";
 
     // Re-save logic
-    await db.update(userProgress)
-      .set({
-        status,
-        srsStage: nextState.srsStage,
-        interval: nextState.interval,
-        easeFactor: nextState.easeFactor,
-        nextReviewAt: nextDate.toISOString(),
-        lastReviewedAt: now.toISOString(),
-        updatedAt: now.toISOString()
-      })
-      .where(and(eq(userProgress.userId, userId), eq(userProgress.jlptItemId, jlptItemId)));
+    if (progress) {
+      await db.update(userProgress)
+        .set({
+          status,
+          srsStage: nextState.srsStage,
+          interval: nextState.interval,
+          easeFactor: nextState.easeFactor,
+          nextReviewAt: nextDate.toISOString(),
+          lastReviewedAt: now.toISOString(),
+          updatedAt: now.toISOString()
+        })
+        .where(and(eq(userProgress.userId, userId), eq(userProgress.jlptItemId, jlptItemId)));
+    } else {
+      await db.insert(userProgress)
+        .values({
+          userId,
+          jlptItemId,
+          status,
+          srsStage: nextState.srsStage,
+          interval: nextState.interval,
+          easeFactor: nextState.easeFactor,
+          nextReviewAt: nextDate.toISOString(),
+          lastReviewedAt: now.toISOString(),
+          updatedAt: now.toISOString()
+        });
+    }
 
     return NextResponse.json({ success: true, nextState, nextReviewAt: nextDate.toISOString() });
   } catch (error) {
