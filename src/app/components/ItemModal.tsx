@@ -141,7 +141,7 @@ interface Props {
 
 // ── Component ────────────────────────────────────────────────
 
-export default function ItemDetailModal({
+export default function ItemModal({
   target,
   onClose,
   onNavigateItem,
@@ -601,25 +601,6 @@ function ItemView({
         )}
 
         {/* ── Appears in Grammar ── */}
-        {detail.linkedGrammar && detail.linkedGrammar.length > 0 && (
-          <div className="modal-section">
-            <h3 className="modal-section-title">🔗 Appears In Grammar</h3>
-            <div className="modal-related-vocab">
-              {detail.linkedGrammar.map((g) => (
-                <button
-                  key={g.id}
-                  className="related-vocab-chip"
-                  onClick={() => onNavigateGrammar && onNavigateGrammar(g.slug)}
-                  title={`${g.titleRomaji} — ${g.meaning}`}
-                  style={{ borderColor: 'rgba(99, 102, 241, 0.3)', backgroundColor: 'rgba(99, 102, 241, 0.05)' }}
-                >
-                  <span className="vocab-chip-expr">{g.title}</span>
-                  <span className="vocab-chip-level">{g.jlptLevel}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* ── Footer: Status + WK Level ── */}

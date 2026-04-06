@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import * as wanakana from "wanakana";
 import DOMPurify from "dompurify";
-import QuizItemInfo from "./QuizItemInfo";
+import LessonModal, { QuizNoteManager } from "./LessonModal";
 
 export type QuizItem = {
   id: number;
@@ -12,6 +12,7 @@ export type QuizItem = {
   meanings: string[];
   readings: string[];
   advancedReadings?: Array<{ reading: string; type: string; primary: boolean }> | null;
+  advancedMeanings?: Array<{ meaning: string; primary: boolean }> | null;
   note?: string | null;
   meaningMnemonic?: string | null;
   readingMnemonic?: string | null;
@@ -23,7 +24,7 @@ export type QuizItem = {
   wkLevel?: number | null;
   radicals?: Array<{ id: number; characters: string | null; meaning: string; imageUrl: string | null; level: number; }> | null;
   componentKanji?: Array<{ id: number | null; expression: string; reading: string; meaning: string; jlptLevel: string | null; wkLevel: number | null; }> | null;
-  linkedGrammar?: Array<{ id: number; slug: string; title: string; titleRomaji: string; meaning: string; jlptLevel: string; }> | null;
+  relatedVocab?: Array<{ id: number; expression: string; reading: string; meaning: string; jlptLevel: string; }> | null;
   jlptItemId: number;
   jlptLevel?: string | null;
 };
@@ -256,8 +257,29 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
                <span>👁️</span> Show Item Info
              </button>
           ) : (
-             <div className="srs-item-details-box">
-               <QuizItemInfo item={currentTask.item} />
+             <div className="srs-item-details-box" style={{ padding: '0', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', justifyContent: 'center', height: 'calc(100vh - 200px)', minHeight: '0', boxSizing: 'border-box' }}>
+                
+                {/* Relative Anchor Wrapper: Dead Center of the screen */}
+                <div style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto', height: '100%' }}>
+                  
+                   <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', textAlign: 'left', margin: 0, overflow: 'hidden' }}>
+                      <div style={{ flex: '1', overflowY: 'auto', padding: '24px', WebkitOverflowScrolling: 'touch' }}>
+                         <LessonModal item={currentTask.item} />
+                      </div>
+                   </div>
+                   
+                   {/* Zero-Width Absolute Anchor Column for Right Sidecar */}
+                   <div style={{ position: 'absolute', top: 0, left: '100%', height: '100%', pointerEvents: 'none' }}>
+                      <div style={{ marginLeft: '32px', width: '320px', zIndex: 10, pointerEvents: 'auto' }}>
+                         <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'left' }}>
+                            <div style={{ padding: '24px' }}>
+                               <QuizNoteManager itemId={currentTask.item.jlptItemId} initialNote={currentTask.item.note || ""} />
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                   
+                </div>
              </div>
           )}
         </div>

@@ -29,9 +29,9 @@ function NavBar() {
         </Link>
         <ul className="nav-links">
           <li><Link href="/" className={`nav-link ${isActive("/") ? "active" : ""}`}>Dashboard</Link></li>
-          <li><Link href="/kanji" className={`nav-link ${isActive("/kanji") ? "active" : ""}`}>Kanji</Link></li>
-          <li><Link href="/vocab" className={`nav-link ${isActive("/vocab") ? "active" : ""}`}>Vocab</Link></li>
-          <li><Link href="/grammar" className={`nav-link ${isActive("/grammar") ? "active" : ""}`}>Grammar</Link></li>
+          <li><Link href="/kanji" className={`nav-link kanji-nav ${isActive("/kanji") ? "active" : ""}`}>Kanji</Link></li>
+          <li><Link href="/vocab" className={`nav-link vocab-nav ${isActive("/vocab") ? "active" : ""}`}>Vocab</Link></li>
+          <li><Link href="/grammar" className={`nav-link grammar-nav ${isActive("/grammar") ? "active" : ""}`}>Grammar</Link></li>
           <li><Link href="/settings" className={`nav-link ${isActive("/settings") ? "active" : ""}`}>Settings</Link></li>
           {!loading && user && (
             <li className="nav-user">

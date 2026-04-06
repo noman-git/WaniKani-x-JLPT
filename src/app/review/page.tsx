@@ -28,12 +28,14 @@ export default function ReviewPage() {
            let parsedReadings = [];
            let parsedMeanings = [];
            let advancedReadings: Array<{reading: string; type: string; primary: boolean}> | undefined = undefined;
+           let advancedMeanings: Array<{meaning: string; primary: boolean}> | undefined = undefined;
            try {
               const wkReadings = detail.wanikani?.readings || [];
               const wkMeanings = detail.wanikani?.meanings || [];
               parsedReadings = wkReadings.map((reading: any) => reading.reading);
               parsedMeanings = wkMeanings.map((m: any) => m.meaning);
               advancedReadings = wkReadings.map((r: any) => ({ reading: r.reading, type: r.type || "nanori", primary: !!r.primary }));
+              advancedMeanings = wkMeanings.map((m: any) => ({ meaning: m.meaning, primary: !!m.primary }));
            } catch(e) {}
 
            if (parsedReadings.length === 0 && detail.item.reading) parsedReadings.push(detail.item.reading);
@@ -48,6 +50,7 @@ export default function ReviewPage() {
              readings: parsedReadings,
              advancedReadings,
              meanings: parsedMeanings,
+             advancedMeanings,
              note: detail.note,
              meaningMnemonic: detail.wanikani?.meaningMnemonic,
              readingMnemonic: detail.wanikani?.readingMnemonic,
@@ -59,7 +62,7 @@ export default function ReviewPage() {
              wkLevel: detail.wanikani?.level,
              radicals: detail.wanikani?.radicals,
              componentKanji: detail.componentKanji,
-             linkedGrammar: detail.linkedGrammar
+             relatedVocab: detail.relatedVocab
            };
         }));
 

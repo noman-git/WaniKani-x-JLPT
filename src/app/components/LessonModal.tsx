@@ -3,10 +3,11 @@
 import { QuizItem } from "./SrsQuiz";
 import DOMPurify from "dompurify";
 import { useState } from "react";
+import ItemModal from "@/app/components/ItemModal";
 
 type NoteSaveState = "idle" | "saving" | "saved" | "error";
 
-function QuizNoteManager({ itemId, initialNote }: { itemId: number, initialNote: string }) {
+export function QuizNoteManager({ itemId, initialNote }: { itemId: number, initialNote: string }) {
   const [note, setNote] = useState(initialNote);
   const [saveState, setSaveState] = useState<NoteSaveState>("idle");
 
@@ -34,7 +35,7 @@ function QuizNoteManager({ itemId, initialNote }: { itemId: number, initialNote:
     "Save Note";
 
   return (
-    <div className="srs-breakdown-section" style={{ marginTop: '24px' }}>
+    <div className="srs-breakdown-section">
       <h4 className="srs-info-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="srs-info-color-tick" style={{backgroundColor: '#eab308'}}></span> 
@@ -70,9 +71,20 @@ function QuizNoteManager({ itemId, initialNote }: { itemId: number, initialNote:
   );
 }
 
-export default function QuizItemInfo({ item }: { item: QuizItem }) {
+export default function LessonModal({ item }: { item: QuizItem }) {
+  const [modalTarget, setModalTarget] = useState<{ type: "item"; id: number } | { type: "radical"; wkSubjectId: number } | null>(null);
+
   return (
     <div className="srs-info-payload">
+      {modalTarget && (
+         <ItemModal 
+           target={modalTarget} 
+           onClose={() => setModalTarget(null)}
+           onNavigateItem={(id) => setModalTarget({ type: "item", id })}
+           onNavigateRadical={(wkSubjectId) => setModalTarget({ type: "radical", wkSubjectId })}
+         />
+      )}
+
       {/* Parts of Speech */}
       {item.partsOfSpeech && item.partsOfSpeech.length > 0 && (
          <div className="srs-pos-container">
@@ -88,7 +100,19 @@ export default function QuizItemInfo({ item }: { item: QuizItem }) {
            <h4 className="srs-info-label">
               <span className="srs-info-color-tick" style={{backgroundColor: '#6366f1'}}></span> Meaning
            </h4>
-           <div className="srs-info-value">{item.meanings.join(", ")}</div>
+           <div className="srs-info-value">
+             {item.advancedMeanings ? (
+               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                 {item.advancedMeanings.map((m, i) => (
+                   <span key={i} style={m.primary ? { color: '#6366f1', borderBottom: '2px solid rgba(99, 102, 241, 0.3)' } : { color: 'var(--text-primary)' }}>
+                     {m.meaning}{i < item.advancedMeanings!.length - 1 ? ',' : ''}
+                   </span>
+                 ))}
+               </div>
+             ) : (
+               item.meanings.join(", ")
+             )}
+           </div>
            
            {item.meaningMnemonic && (
               <div className="srs-mnemonic-box">
@@ -152,12 +176,17 @@ export default function QuizItemInfo({ item }: { item: QuizItem }) {
       {(item.radicals?.length || 0) > 0 && (
         <div className="srs-breakdown-section">
           <h4 className="srs-info-label">
-             <span className="srs-info-color-tick" style={{backgroundColor: '#a855f7'}}></span> Radicals
+             <span className="srs-info-color-tick" style={{backgroundColor: 'var(--accent-radical)'}}></span> Radicals
           </h4>
           <div className="srs-chip-grid">
             {item.radicals!.map((rad, idx) => (
-              <div key={idx} className="srs-feature-chip">
-                <span className="srs-chip-kanji">
+              <div 
+                key={idx} 
+                className="srs-feature-chip radical-composition-chip"
+                onClick={() => setModalTarget({ type: "radical", wkSubjectId: rad.id })}
+                style={{ cursor: 'pointer' }}
+              >
+                <span className="srs-chip-kanji" style={{ color: 'var(--accent-radical)' }}>
                   {rad.characters || (rad.imageUrl ? <img src={rad.imageUrl} alt={rad.meaning} /> : "?")}
                 </span>
                 <span className="srs-chip-desc">{rad.meaning}</span>
@@ -171,11 +200,16 @@ export default function QuizItemInfo({ item }: { item: QuizItem }) {
       {(item.componentKanji?.length || 0) > 0 && (
         <div className="srs-breakdown-section">
           <h4 className="srs-info-label">
-             <span className="srs-info-color-tick" style={{backgroundColor: '#ec4899'}}></span> Kanji Composition
+             <span className="srs-info-color-tick" style={{backgroundColor: 'var(--accent-kanji)'}}></span> Kanji Composition
           </h4>
           <div className="srs-chip-grid">
             {item.componentKanji!.map((k, idx) => (
-              <div key={idx} className="srs-feature-chip kanji-composition-chip">
+              <div 
+                key={idx} 
+                className="srs-feature-chip kanji-composition-chip"
+                onClick={() => k.id && setModalTarget({ type: "item", id: k.id })}
+                style={{ cursor: k.id ? 'pointer' : 'default' }}
+              >
                 <div className="srs-chip-main">{k.expression}</div>
                 <div className="srs-chip-sub">{k.meaning}</div>
                 <div className="srs-chip-meta">{k.jlptLevel || `WK Lv ${k.wkLevel}`}</div>
@@ -202,26 +236,30 @@ export default function QuizItemInfo({ item }: { item: QuizItem }) {
         </div>
       )}
       
-      {/* Grammar Links */}
-      {(item.linkedGrammar?.length || 0) > 0 && (
+      {/* Used in Vocab (Related Vocab) */}
+      {(item.relatedVocab?.length || 0) > 0 && (
         <div className="srs-breakdown-section">
           <h4 className="srs-info-label">
-             <span className="srs-info-color-tick" style={{backgroundColor: '#10b981'}}></span> Appears in Grammar
+             <span className="srs-info-color-tick" style={{backgroundColor: 'var(--accent-vocab)'}}></span> Found In Vocabulary
           </h4>
           <div className="srs-chip-grid grammar-grid">
-            {item.linkedGrammar!.map((g, idx) => (
-              <div key={idx} className="srs-grammar-chip">
-                <span className="srs-grammar-title">{g.title}</span>
-                <span className="srs-grammar-meaning">{g.meaning}</span>
-                <span className="srs-grammar-level">{g.jlptLevel}</span>
+            {item.relatedVocab!.map((v, idx) => (
+              <div 
+                key={idx} 
+                className="srs-grammar-chip vocab-chip-override"
+                onClick={() => setModalTarget({ type: "item", id: v.id })}
+                style={{ cursor: 'pointer' }}
+              >
+                <span className="srs-grammar-title" style={{ fontSize: '18px', fontWeight: 'bold' }}>{v.expression} <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 'normal' }}>{v.reading}</span></span>
+                <span className="srs-grammar-meaning">{v.meaning}</span>
+                <span className="srs-grammar-level">{v.jlptLevel?.toUpperCase() || ''}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Note Section */}
-      <QuizNoteManager itemId={item.jlptItemId} initialNote={item.note || ""} />
+      {/* Note Section is now handled separately by the parent container! */}
     </div>
   );
 }
