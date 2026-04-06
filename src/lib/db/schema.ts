@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, unique } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, unique, real } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -82,10 +82,17 @@ export const userProgress = sqliteTable("user_progress", {
   status: text("status", { enum: ["known", "learning", "unknown"] })
     .notNull()
     .default("unknown"),
+  srsStage: integer("srs_stage").notNull().default(0),
+  interval: real("interval").notNull().default(0),
+  easeFactor: real("ease_factor").notNull().default(2.5),
+  nextReviewAt: text("next_review_at"),
+  lastReviewedAt: text("last_reviewed_at"),
   updatedAt: text("updated_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (t) => ({
+  unq: unique().on(t.userId, t.jlptItemId),
+}));
 
 export const userNotes = sqliteTable("user_notes", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -132,6 +139,11 @@ export const grammarProgress = sqliteTable("grammar_progress", {
   status: text("status", { enum: ["known", "learning", "unknown"] })
     .notNull()
     .default("unknown"),
+  srsStage: integer("srs_stage").notNull().default(0),
+  interval: real("interval").notNull().default(0),
+  easeFactor: real("ease_factor").notNull().default(2.5),
+  nextReviewAt: text("next_review_at"),
+  lastReviewedAt: text("last_reviewed_at"),
   updatedAt: text("updated_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
