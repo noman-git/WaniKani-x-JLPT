@@ -1,6 +1,9 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
+import { db } from "./db";
+import { users } from "./db/schema";
+import { eq } from "drizzle-orm";
 
 const SESSION_COOKIE = "jlpt_session";
 const SESSION_MAX_AGE = 30 * 24 * 60 * 60; // 30 days in seconds
@@ -72,6 +75,14 @@ export async function requireAuth(request: NextRequest): Promise<SessionPayload>
   if (!session) {
     throw new AuthError("Not authenticated");
   }
+
+  // Cross-reference DB to ensure the user still physically exists (prevents SQL 500s)
+  const existingUser = db.select({ id: users.id }).from(users).where(eq(users.id, session.userId)).get();
+  if (!existingUser) {
+    await clearSession();
+    throw new AuthError("Session invalid: User no longer exists");
+  }
+
   return session;
 }
 

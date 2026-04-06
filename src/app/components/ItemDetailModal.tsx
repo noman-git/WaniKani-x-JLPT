@@ -241,7 +241,7 @@ export default function ItemDetailModal({
       await fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jlptItemId: detail.item.id, status: newStatus }),
+        body: JSON.stringify({ itemId: detail.item.id, status: newStatus }),
       });
     },
     [detail]

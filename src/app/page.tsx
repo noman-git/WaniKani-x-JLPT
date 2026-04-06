@@ -39,12 +39,23 @@ function ProgressRing({ percent, size = 100, stroke = 8, color }: { percent: num
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats[]>([]);
   const [loading, setLoading] = useState(true);
+  const [grammarStats, setGrammarStats] = useState<Record<string, any>>({
+    N5: { total: 0, known: 0, learning: 0 },
+    N4: { total: 0, known: 0, learning: 0 }
+  });
 
   const loadStats = useCallback(async () => {
     try {
-      const res = await fetch("/api/items?limit=1");
-      const data = await res.json();
-      setStats(data.stats || []);
+      const [resItems, resN5, resN4] = await Promise.all([
+        fetch("/api/items?limit=1").then(r => r.json()),
+        fetch("/api/grammar?level=N5&limit=1").then(r => r.json()),
+        fetch("/api/grammar?level=N4&limit=1").then(r => r.json()),
+      ]);
+      setStats(resItems.stats || []);
+      setGrammarStats({
+        N5: resN5.stats || { total: 0, known: 0, learning: 0 },
+        N4: resN4.stats || { total: 0, known: 0, learning: 0 }
+      });
     } catch { /* */ }
     setLoading(false);
   }, []);
@@ -55,9 +66,9 @@ export default function DashboardPage() {
     return stats.find((s) => s.level === level && s.type === type) || { total: 0, known: 0, learning: 0, onWanikani: 0 };
   };
 
-  const totalItems = stats.reduce((sum, s) => sum + s.total, 0);
-  const totalKnown = stats.reduce((sum, s) => sum + s.known, 0);
-  const totalLearning = stats.reduce((sum, s) => sum + s.learning, 0);
+  const totalItems = stats.reduce((sum, s) => sum + s.total, 0) + (grammarStats.N5?.total || 0) + (grammarStats.N4?.total || 0);
+  const totalKnown = stats.reduce((sum, s) => sum + s.known, 0) + (grammarStats.N5?.known || 0) + (grammarStats.N4?.known || 0);
+  const totalLearning = stats.reduce((sum, s) => sum + s.learning, 0) + (grammarStats.N5?.learning || 0) + (grammarStats.N4?.learning || 0);
   const totalOnWk = stats.reduce((sum, s) => sum + s.onWanikani, 0);
   const overallPercent = totalItems > 0 ? ((totalKnown / totalItems) * 100) : 0;
 
@@ -110,11 +121,13 @@ export default function DashboardPage() {
       <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24, letterSpacing: "-0.5px" }}>Progress by Category</h2>
       <div className="stats-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}>
         {[
-          { label: "N5 Kanji", stats: n5k, color: "var(--accent-n5)", badgeClass: "badge-n5" },
-          { label: "N5 Vocabulary", stats: n5v, color: "var(--accent-n5)", badgeClass: "badge-n5" },
-          { label: "N4 Kanji", stats: n4k, color: "var(--accent-n4)", badgeClass: "badge-n4" },
-          { label: "N4 Vocabulary", stats: n4v, color: "var(--accent-n4)", badgeClass: "badge-n4" },
-        ].map(({ label, stats: s, color, badgeClass }) => {
+          { label: "N5 Grammar", stats: grammarStats.N5, color: "var(--accent-grammar)", isGrammar: true },
+          { label: "N5 Kanji", stats: n5k, color: "var(--accent-n5)" },
+          { label: "N5 Vocabulary", stats: n5v, color: "var(--accent-n5)" },
+          { label: "N4 Grammar", stats: grammarStats.N4, color: "var(--accent-grammar)", isGrammar: true },
+          { label: "N4 Kanji", stats: n4k, color: "var(--accent-n4)" },
+          { label: "N4 Vocabulary", stats: n4v, color: "var(--accent-n4)" },
+        ].map(({ label, stats: s, color, isGrammar }) => {
           const pct = s.total > 0 ? (s.known / s.total) * 100 : 0;
           return (
             <div key={label} className="card" style={{ display: "flex", alignItems: "center", gap: 24 }}>
@@ -126,7 +139,7 @@ export default function DashboardPage() {
                   <span className="badge badge-learning">{s.learning} learning</span>
                 </div>
                 <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>
-                  {s.total} total · {s.onWanikani} on WK
+                  {s.total} total {isGrammar ? '' : `· ${s.onWanikani} on WK`}
                 </div>
               </div>
             </div>

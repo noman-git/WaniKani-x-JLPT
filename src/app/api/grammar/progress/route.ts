@@ -16,7 +16,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { grammarPointId, status } = await request.json();
+    let { grammarPointId, status } = await request.json();
+    
+    if (status === "not-started") status = "unknown";
 
     if (!grammarPointId || !["known", "learning", "unknown"].includes(status)) {
       return NextResponse.json(
