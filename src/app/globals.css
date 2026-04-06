@@ -37,6 +37,10 @@
   --accent-danger: #ef4444;
   --accent-blue: #3b82f6;
 
+  --accent-grammar: #10b981;
+  --accent-grammar-soft: rgba(16, 185, 129, 0.15);
+  --accent-grammar-glow: rgba(16, 185, 129, 0.3);
+
   /* Typography */
   --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-jp: 'Noto Sans JP', 'Hiragino Kaku Gothic Pro', sans-serif;
@@ -1813,3 +1817,401 @@ body {
   background: rgba(239, 68, 68, 0.2);
 }
 
+
+/* ==============================
+   GRAMMAR SYSTEM
+   ============================== */
+
+/* Grammar Nav Link */
+.nav-link-grammar {
+  color: var(--accent-grammar) !important;
+}
+
+/* Grammar Icon */
+.grammar-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--accent-grammar-soft);
+  color: var(--accent-grammar);
+  font-family: var(--font-jp);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Grammar Stats Bar */
+.grammar-stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.grammar-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.grammar-stat-number {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.grammar-stat-known { color: var(--accent-known); }
+.grammar-stat-learning { color: var(--accent-learning); }
+.grammar-stat-new { color: var(--text-muted); }
+
+.grammar-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.grammar-progress-bar-container {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.grammar-progress-bar {
+  height: 8px;
+  background: var(--bg-glass);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.grammar-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-grammar), #34d399);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.grammar-progress-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+/* Grammar Grid */
+.grammar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* Grammar Card */
+.grammar-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.grammar-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-grammar);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px var(--accent-grammar-soft);
+}
+
+.grammar-card-known {
+  border-left: 3px solid var(--accent-known);
+}
+
+.grammar-card-learning {
+  border-left: 3px solid var(--accent-learning);
+}
+
+.grammar-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grammar-card-title {
+  font-family: var(--font-jp);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.grammar-card-romaji {
+  font-size: 13px;
+  color: var(--accent-grammar);
+  font-weight: 500;
+}
+
+.grammar-card-meaning {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.grammar-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.grammar-card-lesson {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-glass);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.status-toggle-sm {
+  padding: 2px 8px !important;
+  font-size: 12px !important;
+  min-width: auto !important;
+}
+
+/* Grammar Detail Modal */
+.grammar-modal {
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px;
+}
+
+.grammar-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.grammar-detail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grammar-detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.grammar-detail-title {
+  font-family: var(--font-jp);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.grammar-detail-romaji {
+  font-size: 16px;
+  color: var(--accent-grammar);
+  font-weight: 500;
+}
+
+.grammar-detail-meaning {
+  font-size: 18px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.grammar-detail-lesson {
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--bg-glass);
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  width: fit-content;
+}
+
+/* Grammar Sections */
+.grammar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.grammar-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* Structure Box */
+.grammar-structure-box {
+  background: var(--accent-grammar-soft);
+  border: 1px solid var(--accent-grammar-glow);
+  border-radius: 10px;
+  padding: 16px;
+  font-family: var(--font-jp);
+}
+
+.grammar-structure-line {
+  font-size: 16px;
+  color: var(--text-primary);
+  line-height: 1.8;
+  font-weight: 500;
+}
+
+/* Explanation */
+.grammar-explanation p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 0 0 12px 0;
+}
+
+.grammar-explanation p:last-child {
+  margin-bottom: 0;
+}
+
+/* Examples */
+.grammar-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.grammar-example {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.grammar-example-ja {
+  font-family: var(--font-jp);
+  font-size: 18px;
+  color: var(--text-primary);
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.grammar-example-romaji {
+  font-size: 13px;
+  color: var(--accent-grammar);
+  font-style: italic;
+}
+
+.grammar-example-en {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Tags */
+.grammar-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.grammar-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--accent-grammar-soft);
+  color: var(--accent-grammar);
+  font-weight: 500;
+  border: 1px solid var(--accent-grammar-glow);
+}
+
+/* Related Grammar */
+.grammar-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.grammar-related-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 14px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+
+.grammar-related-chip:hover {
+  background: var(--accent-grammar-soft);
+  border-color: var(--accent-grammar);
+}
+
+.grammar-related-title {
+  font-family: var(--font-jp);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.grammar-related-meaning {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Grammar Status Toggle */
+.grammar-status-toggle {
+  justify-content: center;
+}
+
+.grammar-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 600px) {
+  .grammar-grid {
+    grid-template-columns: 1fr;
+  }
+  .grammar-stats-bar {
+    gap: 16px;
+  }
+  .grammar-modal {
+    max-width: 100%;
+    margin: 10px;
+  }
+  .grammar-detail-title {
+    font-size: 26px;
+  }
+}

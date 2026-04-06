@@ -103,6 +103,58 @@ export const userNotes = sqliteTable("user_notes", {
   unq: unique().on(t.userId, t.jlptItemId),
 }));
 
+// Grammar tables
+export const grammarPoints = sqliteTable("grammar_points", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  titleRomaji: text("title_romaji").notNull(),
+  meaning: text("meaning").notNull(),
+  structure: text("structure").notNull(),
+  explanation: text("explanation").notNull(),
+  jlptLevel: text("jlpt_level").notNull(),
+  lessonNumber: integer("lesson_number").notNull().default(0),
+  lessonTitle: text("lesson_title").notNull().default(""),
+  examples: text("examples").notNull().default("[]"),
+  relatedGrammarSlugs: text("related_grammar_slugs").notNull().default("[]"),
+  tags: text("tags").notNull().default("[]"),
+  order: integer("order").notNull().default(0),
+});
+
+export const grammarProgress = sqliteTable("grammar_progress", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  grammarPointId: integer("grammar_point_id")
+    .notNull()
+    .references(() => grammarPoints.id),
+  status: text("status", { enum: ["known", "learning", "unknown"] })
+    .notNull()
+    .default("unknown"),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (t) => ({
+  unq: unique().on(t.userId, t.grammarPointId),
+}));
+
+export const grammarNotes = sqliteTable("grammar_notes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  grammarPointId: integer("grammar_point_id")
+    .notNull()
+    .references(() => grammarPoints.id),
+  content: text("content").notNull().default(""),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (t) => ({
+  unq: unique().on(t.userId, t.grammarPointId),
+}));
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InviteCode = typeof inviteCodes.$inferSelect;
@@ -111,6 +163,9 @@ export type WanikaniSubject = typeof wanikaniSubjects.$inferSelect;
 export type WanikaniRadical = typeof wanikaniRadicals.$inferSelect;
 export type UserProgressRecord = typeof userProgress.$inferSelect;
 export type UserNote = typeof userNotes.$inferSelect;
+export type GrammarPoint = typeof grammarPoints.$inferSelect;
+export type GrammarProgressRecord = typeof grammarProgress.$inferSelect;
+export type GrammarNote = typeof grammarNotes.$inferSelect;
 export type ItemStatus = "known" | "learning" | "unknown";
 export type JlptLevel = "N4" | "N5";
 export type ItemType = "kanji" | "vocab";

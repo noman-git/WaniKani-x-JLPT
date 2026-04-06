@@ -25,6 +25,7 @@ function NavBar() {
         <ul className="nav-links">
           <li><Link href="/" className="nav-link">Dashboard</Link></li>
           <li><Link href="/items" className="nav-link">Browse</Link></li>
+          <li><Link href="/grammar" className="nav-link nav-link-grammar">Grammar</Link></li>
           <li><Link href="/settings" className="nav-link">Settings</Link></li>
           {!loading && user && (
             <li className="nav-user">

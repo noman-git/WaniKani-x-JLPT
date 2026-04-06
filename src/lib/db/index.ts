@@ -122,7 +122,93 @@ export function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_user_notes_compound ON user_notes(user_id, jlpt_item_id);
     CREATE INDEX IF NOT EXISTS idx_kanji_cache_key ON kanji_cache(query_key);
     CREATE INDEX IF NOT EXISTS idx_invite_codes_code ON invite_codes(code);
+
+    CREATE TABLE IF NOT EXISTS grammar_points (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      slug TEXT NOT NULL UNIQUE,
+      title TEXT NOT NULL,
+      title_romaji TEXT NOT NULL,
+      meaning TEXT NOT NULL,
+      structure TEXT NOT NULL,
+      explanation TEXT NOT NULL,
+      jlpt_level TEXT NOT NULL,
+      lesson_number INTEGER NOT NULL DEFAULT 0,
+      lesson_title TEXT NOT NULL DEFAULT '',
+      examples TEXT NOT NULL DEFAULT '[]',
+      related_grammar_slugs TEXT NOT NULL DEFAULT '[]',
+      tags TEXT NOT NULL DEFAULT '[]',
+      "order" INTEGER NOT NULL DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS grammar_progress (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      grammar_point_id INTEGER NOT NULL REFERENCES grammar_points(id),
+      status TEXT NOT NULL DEFAULT 'unknown' CHECK(status IN ('known', 'learning', 'unknown')),
+      updated_at TEXT NOT NULL,
+      UNIQUE(user_id, grammar_point_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS grammar_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      grammar_point_id INTEGER NOT NULL REFERENCES grammar_points(id),
+      content TEXT NOT NULL DEFAULT '',
+      updated_at TEXT NOT NULL,
+      UNIQUE(user_id, grammar_point_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_grammar_points_slug ON grammar_points(slug);
+    CREATE INDEX IF NOT EXISTS idx_grammar_points_level ON grammar_points(jlpt_level);
+    CREATE INDEX IF NOT EXISTS idx_grammar_progress_compound ON grammar_progress(user_id, grammar_point_id);
+    CREATE INDEX IF NOT EXISTS idx_grammar_notes_compound ON grammar_notes(user_id, grammar_point_id);
   `);
+
+  // Auto-seed grammar points if table is empty
+  seedGrammarPoints();
+}
+
+function seedGrammarPoints() {
+  const count = sqlite.prepare("SELECT COUNT(*) as c FROM grammar_points").get() as { c: number };
+  if (count.c > 0) return;
+
+  const seedPath = path.join(process.cwd(), "data", "grammar-seed.json");
+  if (!fs.existsSync(seedPath)) return;
+
+  try {
+    const raw = fs.readFileSync(seedPath, "utf-8");
+    const points = JSON.parse(raw) as Array<Record<string, unknown>>;
+
+    const insert = sqlite.prepare(`
+      INSERT INTO grammar_points (slug, title, title_romaji, meaning, structure, explanation, jlpt_level, lesson_number, lesson_title, examples, related_grammar_slugs, tags, "order")
+      VALUES (@slug, @title, @titleRomaji, @meaning, @structure, @explanation, @jlptLevel, @lessonNumber, @lessonTitle, @examples, @relatedGrammarSlugs, @tags, @order)
+    `);
+
+    const insertMany = sqlite.transaction((items: Array<Record<string, unknown>>) => {
+      for (const p of items) {
+        insert.run({
+          slug: p.slug,
+          title: p.title,
+          titleRomaji: p.titleRomaji,
+          meaning: p.meaning,
+          structure: p.structure,
+          explanation: p.explanation,
+          jlptLevel: p.jlptLevel,
+          lessonNumber: p.lessonNumber,
+          lessonTitle: p.lessonTitle,
+          examples: JSON.stringify(p.examples),
+          relatedGrammarSlugs: JSON.stringify(p.relatedGrammarSlugs),
+          tags: JSON.stringify(p.tags),
+          order: p.order,
+        });
+      }
+    });
+
+    insertMany(points);
+    console.log(`Seeded ${points.length} grammar points`);
+  } catch (e) {
+    console.error("Failed to seed grammar points:", e);
+  }
 }
 
 // Auto-initialize on import
