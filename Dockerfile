@@ -34,6 +34,9 @@ COPY --from=builder /app/.next/static ./.next/static
 # Copy seed database (will be used if no DB exists on the volume)
 COPY --from=builder /app/data/jlpt-seed.db ./data/
 
+# Copy the grammar SQL migration script explicitly out of harm's way (bypass /data volume)
+COPY --from=builder /app/scripts/prod-grammar-seed.sql ./prod-grammar-seed.sql
+
 # Set ownership for data directory (will be a volume mount)
 RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
 
