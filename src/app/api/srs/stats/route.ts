@@ -1,11 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { userProgress, jlptItems } from "@/lib/db/schema";
+import { userProgress, jlptItems, grammarPoints, grammarProgress } from "@/lib/db/schema";
 import { eq, and, isNotNull, lte, sql } from "drizzle-orm";
+import { requireAuth, AuthError } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  let session;
   try {
-    const userId = 1; // standard override
+    session = await requireAuth(req);
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return NextResponse.json({ error: e.message }, { status: 401 });
+    }
+    throw e;
+  }
+
+  try {
+    const userId = session.userId;
 
     // 1. Total JLPT Items
     const totalItemsRes = await db
@@ -65,10 +76,43 @@ export async function GET() {
 
     const upcomingLessons = totalItems - mastered - inProgress;
 
+    // --- Grammar Stats ---
+    const totalGrammarRes = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(grammarPoints);
+    const totalGrammar = totalGrammarRes[0].count;
+
+    const dueGrammarReviewsRes = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(grammarProgress)
+      .where(
+        and(
+          eq(grammarProgress.userId, userId),
+          isNotNull(grammarProgress.nextReviewAt),
+          lte(grammarProgress.nextReviewAt, now)
+        )
+      );
+    const grammarReviews = dueGrammarReviewsRes[0].count;
+
+    const grammarInProgressRes = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(grammarProgress)
+      .where(
+        and(
+          eq(grammarProgress.userId, userId),
+          sql`${grammarProgress.srsStage} > 0`
+        )
+      );
+    const grammarInProgress = grammarInProgressRes[0].count;
+    
+    const grammarLessons = totalGrammar - grammarInProgress;
+
     return NextResponse.json({
        upcomingLessons,
        dueReviews,
-       levels
+       levels,
+       grammarLessons,
+       grammarReviews
     });
 
   } catch (error) {

@@ -1989,6 +1989,20 @@ body {
   padding: 28px;
 }
 
+.grammar-modal.inline-mode {
+  max-width: none;
+  max-height: none;
+  overflow-y: visible;
+  overflow: visible;
+  padding: 0;
+  background: none;
+  animation: none;
+}
+
+.grammar-detail-inline-wrapper {
+  position: relative;
+}
+
 .grammar-detail {
   display: flex;
   flex-direction: column;

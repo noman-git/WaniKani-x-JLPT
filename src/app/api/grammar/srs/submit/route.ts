@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { userProgress } from "@/lib/db/schema";
+import { grammarProgress } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { calculateNextState, SrsState } from "@/lib/srs/algorithm";
 import { requireAuth, AuthError } from "@/lib/auth";
 
-/**
- * Handle incoming SRS grades
- */
 export async function POST(req: NextRequest) {
   let session;
   try {
@@ -22,17 +19,15 @@ export async function POST(req: NextRequest) {
   try {
     const userId = session.userId; 
 
-    // Expecting: { jlptItemId: 123, isCorrect: true, timeToAnswerMs: 1500, mistakeType: null, forceKnown: false }
     const payload = await req.json();
-    const { jlptItemId, isCorrect, timeToAnswerMs, mistakeType, forceKnown } = payload;
+    const { grammarPointId, isCorrect, timeToAnswerMs, mistakeType, forceKnown } = payload;
 
-    if (!jlptItemId) {
-      return NextResponse.json({ error: "Missing jlptItemId" }, { status: 400 });
+    if (!grammarPointId) {
+      return NextResponse.json({ error: "Missing grammarPointId" }, { status: 400 });
     }
 
-    // Grab current state
-    const progress = await db.query.userProgress.findFirst({
-      where: and(eq(userProgress.userId, userId), eq(userProgress.jlptItemId, jlptItemId))
+    const progress = await db.query.grammarProgress.findFirst({
+      where: and(eq(grammarProgress.userId, userId), eq(grammarProgress.grammarPointId, grammarPointId))
     });
 
     const currentState: SrsState = progress ? {
@@ -45,33 +40,28 @@ export async function POST(req: NextRequest) {
       easeFactor: 2.5,
     };
 
-    // Calculate next mathematical interval
     let nextState: SrsState;
     if (forceKnown) {
         nextState = {
-            srsStage: 8, // Master
-            interval: 120, // 4 months out
-            easeFactor: 2.7, // High ease
+            srsStage: 8,
+            interval: 120,
+            easeFactor: 2.7,
         };
     } else {
         nextState = calculateNextState(
           currentState,
           isCorrect,
-          timeToAnswerMs || 5000, // Defend against undefined
+          timeToAnswerMs || 5000,
           mistakeType
         );
     }
 
-    // Turn interval (in days) into a hard NextReviewAt timestamp
     const now = new Date();
     const nextDate = new Date(now.getTime() + nextState.interval * 24 * 60 * 60 * 1000);
-
-    // Determine literal status
     const status = nextState.srsStage >= 8 ? "known" : "learning";
 
-    // Re-save logic
     if (progress) {
-      await db.update(userProgress)
+      await db.update(grammarProgress)
         .set({
           status,
           srsStage: nextState.srsStage,
@@ -81,12 +71,12 @@ export async function POST(req: NextRequest) {
           lastReviewedAt: now.toISOString(),
           updatedAt: now.toISOString()
         })
-        .where(and(eq(userProgress.userId, userId), eq(userProgress.jlptItemId, jlptItemId)));
+        .where(eq(grammarProgress.id, progress.id));
     } else {
-      await db.insert(userProgress)
+      await db.insert(grammarProgress)
         .values({
           userId,
-          jlptItemId,
+          grammarPointId,
           status,
           srsStage: nextState.srsStage,
           interval: nextState.interval,
@@ -99,7 +89,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, nextState, nextReviewAt: nextDate.toISOString() });
   } catch (error) {
-    console.error("SRS Submit Error:", error);
+    console.error("Grammar SRS Submit Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

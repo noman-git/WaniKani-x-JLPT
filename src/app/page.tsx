@@ -13,6 +13,8 @@ interface SrsStats {
      enlightened: number;
      burned: number;
   }>;
+  grammarLessons?: number;
+  grammarReviews?: number;
 }
 
 export default function DashboardPage() {
@@ -49,11 +51,11 @@ export default function DashboardPage() {
     <>
       <div className="page-header">
         <h1 className="page-title">JLPT Study Dashboard</h1>
-        <p className="page-subtitle">Track your N4 & N5 kanji and vocabulary mastery</p>
+        <p className="page-subtitle">Track your N4 & N5 grammar, kanji, and vocabulary mastery</p>
       </div>
 
       {/* Overview Stats */}
-      <div className="srs-dashboard-cards">
+      <div className="srs-dashboard-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
          <button 
            onClick={() => router.push('/learn')}
            className="srs-action-btn srs-lesson-btn"
@@ -76,6 +78,40 @@ export default function DashboardPage() {
            <div className="srs-action-count">{srsStats?.dueReviews || 0}</div>
            
            {srsStats?.dueReviews ? (
+             <div className="srs-action-icon">
+                <svg width="140" height="140" viewBox="0 0 24 24" fill="currentColor">
+                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                </svg>
+             </div>
+           ) : null}
+         </button>
+
+         {/* Grammar Lesssons */}
+         <button 
+           onClick={() => router.push('/grammar-learn')}
+           className="srs-action-btn srs-lesson-btn"
+           style={{ background: 'linear-gradient(to bottom right, var(--bg-glass), rgba(99, 102, 241, 0.1))', borderColor: 'rgba(99, 102, 241, 0.2)' }}
+         >
+           <h3 className="srs-action-title">GRAMMAR LESSONS</h3>
+           <div className="srs-action-count">{srsStats?.grammarLessons || 0}</div>
+           <div className="srs-action-icon">
+              <svg width="140" height="140" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 22h20L12 2zm0 3.8l7.2 14.2H4.8L12 5.8z" />
+              </svg>
+           </div>
+         </button>
+
+         {/* Grammar Reviews */}
+         <button 
+           onClick={() => srsStats?.grammarReviews ? router.push('/grammar-review') : null}
+           disabled={!srsStats?.grammarReviews}
+           className="srs-action-btn srs-review-btn"
+           style={{ background: 'linear-gradient(to bottom right, var(--bg-glass), rgba(236, 72, 153, 0.1))', borderColor: 'rgba(236, 72, 153, 0.2)' }}
+         >
+           <h3 className="srs-action-title">GRAMMAR REVIEWS</h3>
+           <div className="srs-action-count">{srsStats?.grammarReviews || 0}</div>
+           
+           {srsStats?.grammarReviews ? (
              <div className="srs-action-icon">
                 <svg width="140" height="140" viewBox="0 0 24 24" fill="currentColor">
                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />

@@ -1,13 +1,24 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { jlptItems, userProgress, wanikaniSubjects } from "@/lib/db/schema";
 import { eq, inArray, isNull, and } from "drizzle-orm";
+import { requireAuth, AuthError } from "@/lib/auth";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
+  let session;
+  try {
+    session = await requireAuth(req);
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return NextResponse.json({ error: e.message }, { status: 401 });
+    }
+    throw e;
+  }
+
   try {
     const url = new URL(req.url);
     const limit = parseInt(url.searchParams.get("limit") || "5", 10);
-    const userId = 1; // Standard bypass for prototype
+    const userId = session.userId;
 
     // Find items that DO NOT exist in user_progress OR have srsStage = 0
     // Using a simple algorithm: Fetch bottom-up jlptItems, checking user_progress loosely

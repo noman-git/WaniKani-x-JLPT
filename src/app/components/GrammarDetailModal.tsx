@@ -48,9 +48,11 @@ interface GrammarDetail {
 export default function GrammarDetailModal({
   slug,
   onClose,
+  inline = false,
 }: {
   slug: string;
   onClose: () => void;
+  inline?: boolean;
 }) {
   const [data, setData] = useState<GrammarDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -84,12 +86,12 @@ export default function GrammarDetailModal({
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      // Only close if no other modal is stacked above
-      if (e.key === "Escape" && !selectedVocabId) onClose();
+      // Only close if no other modal is stacked above, and not inline
+      if (e.key === "Escape" && !selectedVocabId && !inline) onClose();
     };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
+  }, [onClose, inline, selectedVocabId]);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === overlayRef.current) onClose();
@@ -201,21 +203,23 @@ export default function GrammarDetailModal({
   };
 
   return (
-    <div className="modal-overlay" ref={overlayRef} onClick={handleOverlayClick}>
-      <div className="modal-wrapper">
-        <div className="modal-content grammar-modal">
-          <div className="modal-header" style={{ paddingBottom: '12px', borderBottom: 'none' }}>
-            <div className="modal-header-actions" style={{display: "flex", gap: "10px", alignItems: "center", position: "absolute", top: "16px", right: "16px"}}>
-              <button 
-                className={`modal-toggle-note-btn ${isNotesOpen ? 'open' : ''} ${noteContent ? 'has-note' : ''}`}
-                onClick={() => setIsNotesOpen(!isNotesOpen)}
-                title="Toggle Notes"
-              >
-                📝 Notes {noteContent && '(1)'}
-              </button>
-              <button className="modal-close" onClick={onClose} style={{ position: "relative", top: 0, right: 0 }}>✕</button>
+    <div className={inline ? "grammar-detail-inline-wrapper" : "modal-overlay"} ref={overlayRef} onClick={inline ? undefined : handleOverlayClick}>
+      <div className={inline ? "" : "modal-wrapper"}>
+        <div className={`modal-content grammar-modal ${inline ? "inline-mode" : ""}`} style={inline ? {boxShadow: 'none', border: 'none', padding: 0, position: 'relative' as const} : {}}>
+          {!inline && (
+            <div className="modal-header" style={{ paddingBottom: '12px', borderBottom: 'none' }}>
+              <div className="modal-header-actions" style={{display: "flex", gap: "10px", alignItems: "center", position: "absolute", top: "16px", right: "16px", zIndex: 10}}>
+                <button 
+                  className={`modal-toggle-note-btn ${isNotesOpen ? 'open' : ''} ${noteContent ? 'has-note' : ''}`}
+                  onClick={() => setIsNotesOpen(!isNotesOpen)}
+                  title="Toggle Notes"
+                >
+                  📝 Notes {noteContent && '(1)'}
+                </button>
+                <button className="modal-close" onClick={onClose} style={{ position: "relative", top: 0, right: 0 }}>✕</button>
+              </div>
             </div>
-          </div>
+          )}
           
           {loading ? (
           <div className="loading-container" style={{ minHeight: 300 }}>
@@ -306,51 +310,55 @@ export default function GrammarDetailModal({
               </div>
             )}
 
-            {/* Progress Buttons */}
-            <div className="modal-footer">
-              <div className="modal-status-buttons">
-                {(["unknown", "learning", "known"] as const).map((s) => (
-                  <button
-                    key={s}
-                    className={`status-btn ${(data.userStatus === s || (s === "unknown" && data.userStatus === "not-started")) ? "active" : ""} status-${s}`}
-                    onClick={() => updateStatus(s)}
-                  >
-                    {s === "unknown" ? "❓" : s === "learning" ? "📖" : "✅"}{" "}
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
-                  </button>
-                ))}
+            {/* Progress Buttons - only in modal mode */}
+            {!inline && (
+              <div className="modal-footer">
+                <div className="modal-status-buttons">
+                  {(["unknown", "learning", "known"] as const).map((s) => (
+                    <button
+                      key={s}
+                      className={`status-btn ${(data.userStatus === s || (s === "unknown" && data.userStatus === "not-started")) ? "active" : ""} status-${s}`}
+                      onClick={() => updateStatus(s)}
+                    >
+                      {s === "unknown" ? "❓" : s === "learning" ? "📖" : "✅"}{" "}
+                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Sliding Notes Drawer */}
-      <div className={`modal-notes-drawer ${isNotesOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
-        {!loading && data && (
-          <div className="note-section">
-            <div className="note-header">
-              <span className="note-title">📝 My Note</span>
+      {/* Sliding Notes Drawer - only in modal mode */}
+      {!inline && (
+        <div className={`modal-notes-drawer ${isNotesOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
+          {!loading && data && (
+            <div className="note-section">
+              <div className="note-header">
+                <span className="note-title">📝 My Note</span>
+              </div>
+              <textarea
+                className="note-textarea"
+                value={noteContent}
+                onChange={(e) => { setNoteContent(e.target.value); setNoteSaved(false); }}
+                placeholder="Add your personal note for this grammar point..."
+                rows={4}
+              />
+              <div className="note-footer">
+                <button
+                  className={`note-save-btn ${noteSaving ? "saving" : ""} ${noteSaved ? "saved" : ""}`}
+                  onClick={saveNote}
+                  disabled={noteSaving}
+                >
+                  {noteSaving ? "Saving..." : noteSaved ? "✓ Saved" : "Save Note"}
+                </button>
+              </div>
             </div>
-            <textarea
-              className="note-textarea"
-              value={noteContent}
-              onChange={(e) => { setNoteContent(e.target.value); setNoteSaved(false); }}
-              placeholder="Add your personal note for this grammar point..."
-              rows={4}
-            />
-            <div className="note-footer">
-              <button
-                className={`note-save-btn ${noteSaving ? "saving" : ""} ${noteSaved ? "saved" : ""}`}
-                onClick={saveNote}
-                disabled={noteSaving}
-              >
-                {noteSaving ? "Saving..." : noteSaved ? "✓ Saved" : "Save Note"}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
 
     {/* Render stacked Item Modal */}
