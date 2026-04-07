@@ -259,22 +259,20 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
           ) : (
              <div className="srs-item-details-box" style={{ padding: '0', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', justifyContent: 'center', height: 'calc(100vh - 200px)', minHeight: '0', boxSizing: 'border-box' }}>
                 
-                {/* Relative Anchor Wrapper: Dead Center of the screen */}
-                <div style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto', height: '100%' }}>
+                {/* Responsive Grid Layout */}
+                <div className="srs-learn-grid" style={{ width: '100%', maxWidth: '1152px' }}>
                   
-                   <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', textAlign: 'left', margin: 0, overflow: 'hidden' }}>
+                   <div className="srs-learn-main" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', textAlign: 'left', margin: 0, overflow: 'hidden' }}>
                       <div style={{ flex: '1', overflowY: 'auto', padding: '24px', WebkitOverflowScrolling: 'touch' }}>
                          <LessonModal item={currentTask.item} />
                       </div>
                    </div>
                    
-                   {/* Zero-Width Absolute Anchor Column for Right Sidecar */}
-                   <div style={{ position: 'absolute', top: 0, left: '100%', height: '100%', pointerEvents: 'none' }}>
-                      <div style={{ marginLeft: '32px', width: '320px', zIndex: 10, pointerEvents: 'auto' }}>
-                         <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'left' }}>
-                            <div style={{ padding: '24px' }}>
-                               <QuizNoteManager itemId={currentTask.item.jlptItemId} initialNote={currentTask.item.note || ""} />
-                            </div>
+                   {/* Sidecar */}
+                   <div className="srs-learn-sidecar" style={{ height: '100%' }}>
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'left', height: '100%' }}>
+                         <div style={{ padding: '24px' }}>
+                            <QuizNoteManager itemId={currentTask.item.jlptItemId} initialNote={currentTask.item.note || ""} />
                          </div>
                       </div>
                    </div>

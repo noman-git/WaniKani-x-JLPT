@@ -138,6 +138,8 @@ body {
   display: flex;
   gap: 8px;
   list-style: none;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .nav-link {
@@ -815,10 +817,12 @@ body {
 .modal-tabs {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 8px;
   padding: 0 28px;
   border-bottom: 1px solid var(--border-subtle);
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .modal-tab {
@@ -2209,7 +2213,7 @@ body {
     gap: 16px;
   }
   .grammar-modal {
-    max-width: 100%;
+    width: calc(100% - 20px);
     margin: 10px;
   }
   .grammar-detail-title {
@@ -2367,8 +2371,12 @@ body {
   text-align: left;
 }
 
-.inline-vocab:hover .inline-tooltip {
+.inline-vocab:hover .inline-tooltip,
+.inline-vocab:active .inline-tooltip,
+.inline-vocab:focus .inline-tooltip,
+.inline-vocab:focus-within .inline-tooltip {
   opacity: 1;
+  pointer-events: auto;
   transform: translateX(-50%) translateY(0);
 }
 
@@ -2382,6 +2390,26 @@ body {
   border-width: 6px;
   border-style: solid;
   border-color: var(--border-medium) transparent transparent transparent;
+}
+
+.tooltip-open-btn {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  pointer-events: auto; /* very important because tooltip parent has pointer-events: none sometimes! */
+}
+.tooltip-open-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--text-secondary);
 }
 
 .inline-tooltip-reading {
@@ -2560,6 +2588,38 @@ body {
   display: block; 
 }
 
+.srs-learn-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 800px) 320px;
+  gap: 32px;
+  max-width: 1152px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.srs-learn-main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+.srs-learn-sidecar {
+  display: block;
+  position: sticky;
+  top: 80px; 
+}
+
+@media (max-width: 1000px) {
+  .srs-learn-grid {
+    grid-template-columns: 1fr;
+    max-width: 800px;
+  }
+  .srs-learn-sidecar {
+    position: static;
+  }
+}
+
 .srs-learn-header {
   width: 100%;
   max-width: 800px;
@@ -2581,7 +2641,9 @@ body {
 }
 
 .srs-learn-progress-tick {
-  width: 48px;
+  flex: 1;
+  min-width: 12px;
+  max-width: 48px;
   height: 8px;
   border-radius: 4px;
   transition: background-color 0.3s ease;
@@ -2632,6 +2694,12 @@ body {
 .srs-star {
   color: #f59e0b;
   transition: transform 0.2s ease;
+}
+
+@media (max-width: 600px) {
+  .srs-deep-check span:not(.srs-star) {
+    display: none;
+  }
 }
 
 .srs-display-block {

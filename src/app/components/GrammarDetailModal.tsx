@@ -181,15 +181,26 @@ export default function GrammarDetailModal({
           <span 
             key={i} 
             className="inline-vocab" 
-            onClick={(e) => { e.stopPropagation(); setSelectedVocabId(match.id); }}
+            tabIndex={0}
             onMouseEnter={handleTooltipPosition}
           >
             {chunk}
             <span className="inline-tooltip">
-              {displayReading && displayReading !== match.expression && (
-                <span className="inline-tooltip-reading">{displayReading}</span>
-              )}
-              <span className="inline-tooltip-meaning">{match.meaning}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px', marginBottom: '6px' }}>
+                <div style={{ paddingRight: '12px' }}>
+                  {displayReading && displayReading !== match.expression && (
+                    <span className="inline-tooltip-reading" style={{ display: 'block' }}>{displayReading}</span>
+                  )}
+                  <span className="inline-tooltip-meaning" style={{ display: 'block' }}>{match.meaning}</span>
+                </div>
+                <button 
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedVocabId(match.id); }}
+                  className="tooltip-open-btn"
+                  title="Open Details"
+                >
+                  ↗
+                </button>
+              </div>
               <div className="inline-tooltip-meta">
                 <span className={`badge badge-${match.jlptLevel.toLowerCase()}`} style={{fontSize: 9}}>{match.jlptLevel}</span>
                 <span className={`badge badge-${match.type === 'kanji' ? 'kanji' : 'vocab'}`} style={{fontSize: 9}}>{match.type}</span>

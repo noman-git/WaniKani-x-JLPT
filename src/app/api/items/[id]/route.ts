@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Database from "better-sqlite3";
 import path from "path";
-import { getSession } from "@/lib/auth";
+import { requireAuth, AuthError } from "@/lib/auth";
 
 interface WKMeaningRow {
   meaning: string;
@@ -28,6 +28,16 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let session;
+  try {
+    session = await requireAuth(request);
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return NextResponse.json({ error: e.message }, { status: 401 });
+    }
+    throw e;
+  }
+
   const { id } = await params;
   const itemId = parseInt(id);
 
@@ -60,18 +70,13 @@ export async function GET(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    // Get user progress and note(scoped by userId)
-    const session = await getSession(request);
-    const progress = session
-      ? (rawDb
-          .prepare(`SELECT status FROM user_progress WHERE jlpt_item_id = ? AND user_id = ?`)
-          .get(itemId, session.userId) as { status: string } | undefined)
-      : undefined;
-    const noteRow = session
-      ? (rawDb
-          .prepare(`SELECT content FROM user_notes WHERE jlpt_item_id = ? AND user_id = ?`)
-          .get(itemId, session.userId) as { content: string } | undefined)
-      : undefined;
+    // Get user progress and note
+    const progress = rawDb
+      .prepare(`SELECT status FROM user_progress WHERE jlpt_item_id = ? AND user_id = ?`)
+      .get(itemId, session.userId) as { status: string } | undefined;
+    const noteRow = rawDb
+      .prepare(`SELECT content FROM user_notes WHERE jlpt_item_id = ? AND user_id = ?`)
+      .get(itemId, session.userId) as { content: string } | undefined;
 
     // Get ALL WK subjects matched to this item (could be multiple, e.g. kanji + vocab)
     const wkRows = rawDb

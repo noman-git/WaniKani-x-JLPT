@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, ReactNode } from "react";
 import * as wanakana from "wanakana";
 import GrammarDetailModal from "./GrammarDetailModal";
+import ItemModal from "./ItemModal";
 
 interface LinkedItem {
   id: number;
@@ -43,6 +44,7 @@ export default function GrammarClozeQuiz({ items, onComplete, mode }: Props) {
   const [linkedItemsCache, setLinkedItemsCache] = useState<Record<number, LinkedItem[]>>({});
   const startTime = useRef<number>(Date.now());
   const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedVocabId, setSelectedVocabId] = useState<number | null>(null);
 
   // Build a mixed queue with both cloze and meaning modes
   useEffect(() => {
@@ -188,13 +190,24 @@ export default function GrammarClozeQuiz({ items, onComplete, mode }: Props) {
           } catch {}
         }
         return (
-          <span key={i} className="inline-vocab" onMouseEnter={handleTooltipPosition}>
+          <span key={i} className="inline-vocab" tabIndex={0} onMouseEnter={handleTooltipPosition}>
             {chunk}
             <span className="inline-tooltip">
-              {displayReading && displayReading !== match.expression && (
-                <span className="inline-tooltip-reading">{displayReading}</span>
-              )}
-              <span className="inline-tooltip-meaning">{match.meaning}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px', marginBottom: '6px' }}>
+                <div style={{ paddingRight: '12px' }}>
+                  {displayReading && displayReading !== match.expression && (
+                    <span className="inline-tooltip-reading" style={{ display: 'block' }}>{displayReading}</span>
+                  )}
+                  <span className="inline-tooltip-meaning" style={{ display: 'block' }}>{match.meaning}</span>
+                </div>
+                <button 
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedVocabId(match.id); }}
+                  className="tooltip-open-btn"
+                  title="Open Details"
+                >
+                  ↗
+                </button>
+              </div>
               <div className="inline-tooltip-meta">
                 <span className={`badge badge-${match.jlptLevel.toLowerCase()}`} style={{fontSize: 9}}>{match.jlptLevel}</span>
                 <span className={`badge badge-${match.type === 'kanji' ? 'kanji' : 'vocab'}`} style={{fontSize: 9}}>{match.type}</span>
@@ -325,6 +338,26 @@ export default function GrammarClozeQuiz({ items, onComplete, mode }: Props) {
            }}
         />
       </div>
+
+      {selectedVocabId !== null && (() => {
+        let onNext, onPrev;
+        if (currentItem && currentItem.linkedItems) {
+          const idx = currentItem.linkedItems.findIndex((v: LinkedItem) => v.id === selectedVocabId);
+          if (idx !== -1) {
+            if (idx > 0) onPrev = () => setSelectedVocabId(currentItem.linkedItems![idx - 1].id);
+            if (idx < currentItem.linkedItems.length - 1) onNext = () => setSelectedVocabId(currentItem.linkedItems![idx + 1].id);
+          }
+        }
+        return (
+          <ItemModal
+            target={{ type: "item", id: selectedVocabId }}
+            onClose={() => setSelectedVocabId(null)}
+            onNavigateItem={(id) => setSelectedVocabId(id)}
+            onNext={onNext}
+            onPrev={onPrev}
+          />
+        );
+      })()}
     </div>
   );
 }
