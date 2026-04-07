@@ -44,7 +44,9 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
   const [queue, setQueue] = useState<QuizTask[]>([]);
   const [currentTask, setCurrentTask] = useState<QuizTask | null>(null);
   const [inputValue, setInputValue] = useState("");
-  const [feedback, setFeedback] = useState<"correct" | "incorrect" | "typo" | null>(null);
+  const [feedback, setFeedback] = useState<"correct" | "incorrect" | "typo" | "warning" | null>(null);
+  const [warningMsg, setWarningMsg] = useState<string | null>(null);
+  const [hasMultipleMeanings, setHasMultipleMeanings] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const startTime = useRef<number>(Date.now());
@@ -68,26 +70,15 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     startTime.current = Date.now();
   }, [items]);
 
-  // Bind WanaKana exclusively when reading
-  useEffect(() => {
-    const inputEl = inputRef.current;
-    if (inputEl && currentTask?.questionType === "reading") {
-      wanakana.bind(inputEl, { IMEMode: true });
-      return () => {
-        try {
-          wanakana.unbind(inputEl);
-        } catch (e) {
-          // silently catch internal wanakana serialization errors during unbind
-        }
-      };
-    }
-  }, [currentTask]);
+
 
   const popNext = () => {
     const nextQueue = queue.slice(1);
     setQueue(nextQueue);
     setInputValue("");
     setFeedback(null);
+    setWarningMsg(null);
+    setHasMultipleMeanings(false);
     setShowInfo(false);
     setCurrentTask(nextQueue[0] || null);
     startTime.current = Date.now();
@@ -105,6 +96,8 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     setQueue(newQueue);
     setInputValue("");
     setFeedback(null);
+    setWarningMsg(null);
+    setHasMultipleMeanings(false);
     setShowInfo(false);
     setCurrentTask(newQueue[0] || null);
     startTime.current = Date.now();
@@ -117,31 +110,85 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     const timeToAnswerMs = Date.now() - startTime.current;
     let isCorrect = false;
     let isTypo = false;
+    let isWarning = false;
+    let warnMessage = "";
 
-    // Local grading algorithm relying loosely on API structures or simple string match
     const answerNorm = inputValue.trim().toLowerCase();
+    
+    setHasMultipleMeanings(false);
+    setWarningMsg(null);
 
+    // --- READING CHECK ---
     if (currentTask.questionType === "reading") {
-       // Exact match for hiragana readings
-       const cleanExpected = currentTask.item.readings.map(r => r.replace(/[^ぁ-んァ-ンー]/g, ''));
-       if (cleanExpected.includes(answerNorm)) {
-          isCorrect = true;
-       }
-    } else {
-       // Check against API typo logic directly, but for now perform local naive checks
-       const expected = currentTask.item.meanings.map(m => m.toLowerCase());
-       if (expected.includes(answerNorm)) {
-         isCorrect = true;
+       const advancedReadings = currentTask.item.advancedReadings || [];
+       const targetType = currentTask.item.matchType?.toLowerCase();
+       
+       if (currentTask.item.type === "kanji" && targetType) {
+          const expectedReadingsForType = advancedReadings
+                .filter(r => r.type.toLowerCase() === targetType)
+                .map(r => r.reading.replace(/\..*/, '').replace(/[^ぁ-んァ-ンー]/g, ''));
+                
+          const allOtherValidReadings = advancedReadings
+                .map(r => r.reading.replace(/\..*/, '').replace(/[^ぁ-んァ-ンー]/g, ''));
+                
+          const fallbackReadings = currentTask.item.readings.map(r => r.replace(/[^ぁ-んァ-ンー]/g, ''));
+          
+          const primaryExpected = expectedReadingsForType.length > 0 ? expectedReadingsForType : fallbackReadings;
+          
+          if (primaryExpected.includes(answerNorm)) {
+             isCorrect = true;
+             if (primaryExpected.length > 1 || allOtherValidReadings.length > 0) {
+                 setHasMultipleMeanings(true);
+             }
+          } else if (allOtherValidReadings.includes(answerNorm) || fallbackReadings.includes(answerNorm)) {
+             isWarning = true;
+             warnMessage = `We are looking for the ${targetType} reading.`;
+          }
        } else {
-         // Local Levenshtein distance simplified check for typos
-         for(const ex of expected) {
+          // Normal vocab, just match any reading
+          const cleanExpected = currentTask.item.readings.map(r => r.replace(/[^ぁ-んァ-ンー]/g, ''));
+          // Include advanced reading equivalents if any
+          const cleanAdvanced = advancedReadings.map(r => r.reading.replace(/[^ぁ-んァ-ンー]/g, ''));
+          
+          if (cleanExpected.includes(answerNorm) || cleanAdvanced.includes(answerNorm)) {
+             isCorrect = true;
+             if (cleanExpected.length > 1 || cleanAdvanced.length > 1) {
+                 setHasMultipleMeanings(true);
+             }
+          }
+       }
+
+    // --- MEANING CHECK ---
+    } else {
+       const expectedMeanings = [
+         ...currentTask.item.meanings,
+         ...(currentTask.item.advancedMeanings || []).map(m => m.meaning)
+       ].map(m => m.toLowerCase().trim());
+       
+       if (expectedMeanings.includes(answerNorm)) {
+         isCorrect = true;
+         if (expectedMeanings.length > 1) {
+            setHasMultipleMeanings(true);
+         }
+       } else {
+         for(const ex of expectedMeanings) {
             if (ex.length > 3 && levenshteinDistanceLocal(answerNorm, ex) === 1) {
               isCorrect = true;
               isTypo = true;
+              if (expectedMeanings.length > 1) {
+                 setHasMultipleMeanings(true);
+              }
               break;
             }
          }
        }
+    }
+
+    if (isWarning) {
+       setFeedback("warning");
+       setWarningMsg(warnMessage);
+       setLoading(false);
+       return; // Break out, no grading yet!
     }
 
     if (isCorrect) {
@@ -185,6 +232,10 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
           reInsertAndPop();
        } else if (feedback === "correct" || feedback === "typo") {
           popNext();
+       } else if (feedback === "warning") {
+          setFeedback(null);
+          setWarningMsg(null);
+          setInputValue("");
        } else {
           checkAnswer();
        }
@@ -221,22 +272,55 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
           TYPE THE {currentTask.questionType === "reading" ? "READING (Hiragana)" : "MEANING (English)"}
         </label>
         
-        <input
-          ref={inputRef}
-          type="text"
-          lang={currentTask.questionType === "reading" ? "ja" : "en"}
-          autoFocus
-          readOnly={loading || feedback !== null}
-          disabled={loading}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className={`srs-quiz-input ${feedback ? feedback : ''}`}
-        />
+        <div style={{ position: 'relative' }}>
+          <input
+            ref={inputRef}
+            type="text"
+            lang={currentTask.questionType === "reading" ? "ja" : "en"}
+            autoFocus
+            readOnly={loading || (feedback !== null && feedback !== "warning")}
+            disabled={loading}
+            value={inputValue}
+            onChange={(e) => {
+               let val = e.target.value;
+               if (currentTask.questionType === "reading") {
+                  val = wanakana.toKana(val, { IMEMode: true });
+               }
+               setInputValue(val);
+               if (feedback === "warning") {
+                 setFeedback(null);
+                 setWarningMsg(null);
+               }
+            }}
+            onKeyDown={handleKeyDown}
+            className={`srs-quiz-input ${feedback ? feedback : ''}`}
+            style={{ paddingRight: '56px' }}
+          />
+          <button
+             onClick={() => handleKeyDown({ key: 'Enter' })}
+             className={`srs-quiz-submit-btn ${feedback ? feedback : ''}`}
+             disabled={loading}
+             tabIndex={-1}
+          >
+             ➔
+          </button>
+        </div>
+
+        {feedback === "warning" && warningMsg && (
+           <div className="srs-typo-warning" style={{ backgroundColor: '#f59e0b', color: '#fff' }}>
+             {warningMsg}
+           </div>
+        )}
 
         {feedback === "typo" && (
            <div className="srs-typo-warning">
              Almost! (Typo allowed)
+           </div>
+        )}
+        
+        {feedback === "correct" && hasMultipleMeanings && (
+           <div className="srs-typo-warning" style={{ backgroundColor: '#10b981', color: '#fff' }}>
+             Correct! (This word has multiple valid {currentTask.questionType === "reading" ? "readings" : "meanings"})
            </div>
         )}
         

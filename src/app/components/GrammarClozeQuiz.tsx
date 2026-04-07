@@ -77,16 +77,7 @@ export default function GrammarClozeQuiz({ items, onComplete, mode }: Props) {
     })();
   }, [currentItem?.id]);
 
-  // Bind wanakana for Japanese input
-  useEffect(() => {
-    const inputEl = inputRef.current;
-    if (inputEl && currentItem?.quizMode === "cloze") {
-      wanakana.bind(inputEl, { IMEMode: true });
-      return () => {
-        try { wanakana.unbind(inputEl); } catch {}
-      };
-    }
-  }, [currentItem]);
+
 
   const popNext = () => {
     const nextQueue = queue.slice(1);
@@ -285,18 +276,32 @@ export default function GrammarClozeQuiz({ items, onComplete, mode }: Props) {
           {isCloze ? 'TYPE THE MISSING GRAMMAR (Hiragana)' : 'TYPE THE GRAMMAR PATTERN (Hiragana)'}
         </label>
         
-        <input
-          ref={inputRef}
-          type="text"
-          lang="ja"
-          autoFocus
-          readOnly={loading || feedback !== null}
-          disabled={loading}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className={`srs-quiz-input ${feedback ? feedback : ''}`}
-        />
+        <div style={{ position: 'relative' }}>
+          <input
+            ref={inputRef}
+            type="text"
+            lang="ja"
+            autoFocus
+            readOnly={loading || feedback !== null}
+            disabled={loading}
+            value={inputValue}
+            onChange={(e) => {
+               const val = wanakana.toKana(e.target.value, { IMEMode: true });
+               setInputValue(val);
+            }}
+            onKeyDown={handleKeyDown}
+            className={`srs-quiz-input ${feedback ? feedback : ''}`}
+            style={{ paddingRight: '56px' }}
+          />
+          <button
+             onClick={() => handleKeyDown({ key: 'Enter' })}
+             className={`srs-quiz-submit-btn ${feedback ? feedback : ''}`}
+             disabled={loading}
+             tabIndex={-1}
+          >
+             ➔
+          </button>
+        </div>
 
         {feedback === "incorrect" && (
            <div className="srs-incorrect-hint">

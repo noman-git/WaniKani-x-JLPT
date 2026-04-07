@@ -3083,24 +3083,64 @@ body {
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
+@keyframes srs-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
 .srs-quiz-input:focus { border-color: var(--accent-n5); }
 .srs-quiz-input.correct { border-color: #10b981; }
 .srs-quiz-input.typo { border-color: #f59e0b; }
 .srs-quiz-input.incorrect { border-color: #ef4444; }
-
-.srs-typo-warning {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 24px;
-  color: #f59e0b;
-  font-weight: bold;
-  animation: bounce 1s infinite alternate;
+.srs-quiz-input.warning { 
+  border-color: #f59e0b; 
+  animation: srs-shake 0.3s ease-in-out; 
 }
 
-@keyframes bounce {
-  from { transform: translateY(-50%) translateX(0); }
-  to { transform: translateY(-50%) translateX(-5px); }
+.srs-quiz-submit-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 52px;
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+.srs-quiz-submit-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+.srs-quiz-submit-btn.correct { background-color: #10b981; color: white; }
+.srs-quiz-submit-btn.incorrect { background-color: #ef4444; color: white; }
+.srs-quiz-submit-btn.warning { background-color: #f59e0b; color: white; }
+.srs-quiz-submit-btn.typo { background-color: #f59e0b; color: white; }
+
+.srs-typo-warning {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: slide-up-fade 0.2s ease-out;
+  width: 100%;
+}
+
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .srs-incorrect-hint {
