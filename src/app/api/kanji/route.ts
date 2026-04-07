@@ -1,7 +1,17 @@
-import { getSession } from "@/lib/auth";
+import { requireAuth, AuthError } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  let session;
+  try {
+    session = await requireAuth(request);
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return NextResponse.json({ error: e.message }, { status: 401 });
+    }
+    throw e;
+  }
+  
   const { searchParams } = new URL(request.url);
   const level = searchParams.get("level");
   // type is hardcoded to kanji
@@ -11,9 +21,7 @@ export async function GET(request: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "50");
 
-  // Get userId from session (optional — unauthenticated users see no progress)
-  const session = await getSession(request);
-  const userId = session?.userId ?? null;
+  const userId = session.userId;
 
   try {
     const whereClauses: string[] = [];

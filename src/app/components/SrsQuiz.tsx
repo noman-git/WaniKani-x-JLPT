@@ -44,7 +44,9 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
   const [queue, setQueue] = useState<QuizTask[]>([]);
   const [currentTask, setCurrentTask] = useState<QuizTask | null>(null);
   const [inputValue, setInputValue] = useState("");
-  const [feedback, setFeedback] = useState<"correct" | "incorrect" | "typo" | null>(null);
+  const [feedback, setFeedback] = useState<"correct" | "incorrect" | "typo" | "warning" | null>(null);
+  const [warningMsg, setWarningMsg] = useState<string | null>(null);
+  const [hasMultipleMeanings, setHasMultipleMeanings] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const startTime = useRef<number>(Date.now());
@@ -68,26 +70,15 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     startTime.current = Date.now();
   }, [items]);
 
-  // Bind WanaKana exclusively when reading
-  useEffect(() => {
-    const inputEl = inputRef.current;
-    if (inputEl && currentTask?.questionType === "reading") {
-      wanakana.bind(inputEl, { IMEMode: true });
-      return () => {
-        try {
-          wanakana.unbind(inputEl);
-        } catch (e) {
-          // silently catch internal wanakana serialization errors during unbind
-        }
-      };
-    }
-  }, [currentTask]);
+
 
   const popNext = () => {
     const nextQueue = queue.slice(1);
     setQueue(nextQueue);
     setInputValue("");
     setFeedback(null);
+    setWarningMsg(null);
+    setHasMultipleMeanings(false);
     setShowInfo(false);
     setCurrentTask(nextQueue[0] || null);
     startTime.current = Date.now();
@@ -105,6 +96,8 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     setQueue(newQueue);
     setInputValue("");
     setFeedback(null);
+    setWarningMsg(null);
+    setHasMultipleMeanings(false);
     setShowInfo(false);
     setCurrentTask(newQueue[0] || null);
     startTime.current = Date.now();
@@ -117,31 +110,85 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     const timeToAnswerMs = Date.now() - startTime.current;
     let isCorrect = false;
     let isTypo = false;
+    let isWarning = false;
+    let warnMessage = "";
 
-    // Local grading algorithm relying loosely on API structures or simple string match
     const answerNorm = inputValue.trim().toLowerCase();
+    
+    setHasMultipleMeanings(false);
+    setWarningMsg(null);
 
+    // --- READING CHECK ---
     if (currentTask.questionType === "reading") {
-       // Exact match for hiragana readings
-       const cleanExpected = currentTask.item.readings.map(r => r.replace(/[^ぁ-んァ-ンー]/g, ''));
-       if (cleanExpected.includes(answerNorm)) {
-          isCorrect = true;
-       }
-    } else {
-       // Check against API typo logic directly, but for now perform local naive checks
-       const expected = currentTask.item.meanings.map(m => m.toLowerCase());
-       if (expected.includes(answerNorm)) {
-         isCorrect = true;
+       const advancedReadings = currentTask.item.advancedReadings || [];
+       const targetType = currentTask.item.matchType?.toLowerCase();
+       
+       if (currentTask.item.type === "kanji" && targetType) {
+          const expectedReadingsForType = advancedReadings
+                .filter(r => r.type.toLowerCase() === targetType)
+                .map(r => r.reading.replace(/\..*/, '').replace(/[^ぁ-んァ-ンー]/g, ''));
+                
+          const allOtherValidReadings = advancedReadings
+                .map(r => r.reading.replace(/\..*/, '').replace(/[^ぁ-んァ-ンー]/g, ''));
+                
+          const fallbackReadings = currentTask.item.readings.map(r => r.replace(/[^ぁ-んァ-ンー]/g, ''));
+          
+          const primaryExpected = expectedReadingsForType.length > 0 ? expectedReadingsForType : fallbackReadings;
+          
+          if (primaryExpected.includes(answerNorm)) {
+             isCorrect = true;
+             if (primaryExpected.length > 1 || allOtherValidReadings.length > 0) {
+                 setHasMultipleMeanings(true);
+             }
+          } else if (allOtherValidReadings.includes(answerNorm) || fallbackReadings.includes(answerNorm)) {
+             isWarning = true;
+             warnMessage = `We are looking for the ${targetType} reading.`;
+          }
        } else {
-         // Local Levenshtein distance simplified check for typos
-         for(const ex of expected) {
+          // Normal vocab, just match any reading
+          const cleanExpected = currentTask.item.readings.map(r => r.replace(/[^ぁ-んァ-ンー]/g, ''));
+          // Include advanced reading equivalents if any
+          const cleanAdvanced = advancedReadings.map(r => r.reading.replace(/[^ぁ-んァ-ンー]/g, ''));
+          
+          if (cleanExpected.includes(answerNorm) || cleanAdvanced.includes(answerNorm)) {
+             isCorrect = true;
+             if (cleanExpected.length > 1 || cleanAdvanced.length > 1) {
+                 setHasMultipleMeanings(true);
+             }
+          }
+       }
+
+    // --- MEANING CHECK ---
+    } else {
+       const expectedMeanings = [
+         ...currentTask.item.meanings,
+         ...(currentTask.item.advancedMeanings || []).map(m => m.meaning)
+       ].map(m => m.toLowerCase().trim());
+       
+       if (expectedMeanings.includes(answerNorm)) {
+         isCorrect = true;
+         if (expectedMeanings.length > 1) {
+            setHasMultipleMeanings(true);
+         }
+       } else {
+         for(const ex of expectedMeanings) {
             if (ex.length > 3 && levenshteinDistanceLocal(answerNorm, ex) === 1) {
               isCorrect = true;
               isTypo = true;
+              if (expectedMeanings.length > 1) {
+                 setHasMultipleMeanings(true);
+              }
               break;
             }
          }
        }
+    }
+
+    if (isWarning) {
+       setFeedback("warning");
+       setWarningMsg(warnMessage);
+       setLoading(false);
+       return; // Break out, no grading yet!
     }
 
     if (isCorrect) {
@@ -185,6 +232,10 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
           reInsertAndPop();
        } else if (feedback === "correct" || feedback === "typo") {
           popNext();
+       } else if (feedback === "warning") {
+          setFeedback(null);
+          setWarningMsg(null);
+          setInputValue("");
        } else {
           checkAnswer();
        }
@@ -221,22 +272,55 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
           TYPE THE {currentTask.questionType === "reading" ? "READING (Hiragana)" : "MEANING (English)"}
         </label>
         
-        <input
-          ref={inputRef}
-          type="text"
-          lang={currentTask.questionType === "reading" ? "ja" : "en"}
-          autoFocus
-          readOnly={loading || feedback !== null}
-          disabled={loading}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className={`srs-quiz-input ${feedback ? feedback : ''}`}
-        />
+        <div style={{ position: 'relative' }}>
+          <input
+            ref={inputRef}
+            type="text"
+            lang={currentTask.questionType === "reading" ? "ja" : "en"}
+            autoFocus
+            readOnly={loading || (feedback !== null && feedback !== "warning")}
+            disabled={loading}
+            value={inputValue}
+            onChange={(e) => {
+               let val = e.target.value;
+               if (currentTask.questionType === "reading") {
+                  val = wanakana.toKana(val, { IMEMode: true });
+               }
+               setInputValue(val);
+               if (feedback === "warning") {
+                 setFeedback(null);
+                 setWarningMsg(null);
+               }
+            }}
+            onKeyDown={handleKeyDown}
+            className={`srs-quiz-input ${feedback ? feedback : ''}`}
+            style={{ paddingRight: '56px' }}
+          />
+          <button
+             onClick={() => handleKeyDown({ key: 'Enter' })}
+             className={`srs-quiz-submit-btn ${feedback ? feedback : ''}`}
+             disabled={loading}
+             tabIndex={-1}
+          >
+             ➔
+          </button>
+        </div>
+
+        {feedback === "warning" && warningMsg && (
+           <div className="srs-typo-warning" style={{ backgroundColor: '#f59e0b', color: '#fff' }}>
+             {warningMsg}
+           </div>
+        )}
 
         {feedback === "typo" && (
            <div className="srs-typo-warning">
              Almost! (Typo allowed)
+           </div>
+        )}
+        
+        {feedback === "correct" && hasMultipleMeanings && (
+           <div className="srs-typo-warning" style={{ backgroundColor: '#10b981', color: '#fff' }}>
+             Correct! (This word has multiple valid {currentTask.questionType === "reading" ? "readings" : "meanings"})
            </div>
         )}
         
@@ -259,22 +343,20 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
           ) : (
              <div className="srs-item-details-box" style={{ padding: '0', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', justifyContent: 'center', height: 'calc(100vh - 200px)', minHeight: '0', boxSizing: 'border-box' }}>
                 
-                {/* Relative Anchor Wrapper: Dead Center of the screen */}
-                <div style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto', height: '100%' }}>
+                {/* Responsive Grid Layout */}
+                <div className="srs-learn-grid" style={{ width: '100%', maxWidth: '1152px' }}>
                   
-                   <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', textAlign: 'left', margin: 0, overflow: 'hidden' }}>
+                   <div className="srs-learn-main" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', textAlign: 'left', margin: 0, overflow: 'hidden' }}>
                       <div style={{ flex: '1', overflowY: 'auto', padding: '24px', WebkitOverflowScrolling: 'touch' }}>
                          <LessonModal item={currentTask.item} />
                       </div>
                    </div>
                    
-                   {/* Zero-Width Absolute Anchor Column for Right Sidecar */}
-                   <div style={{ position: 'absolute', top: 0, left: '100%', height: '100%', pointerEvents: 'none' }}>
-                      <div style={{ marginLeft: '32px', width: '320px', zIndex: 10, pointerEvents: 'auto' }}>
-                         <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'left' }}>
-                            <div style={{ padding: '24px' }}>
-                               <QuizNoteManager itemId={currentTask.item.jlptItemId} initialNote={currentTask.item.note || ""} />
-                            </div>
+                   {/* Sidecar */}
+                   <div className="srs-learn-sidecar" style={{ height: '100%' }}>
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'left', height: '100%' }}>
+                         <div style={{ padding: '24px' }}>
+                            <QuizNoteManager itemId={currentTask.item.jlptItemId} initialNote={currentTask.item.note || ""} />
                          </div>
                       </div>
                    </div>

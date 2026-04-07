@@ -138,21 +138,21 @@ export default function LearnPage() {
       /* Lock body scroll purely for the container, rely on internal modal scrolling */
       <div className="srs-learn-container" style={{ padding: '40px 20px', display: 'flex', justifyContent: 'center', height: 'calc(100vh - 65px)', minHeight: '0', boxSizing: 'border-box' }}>
         
-        {/* Relative Anchor Wrapper: Dead Center of the screen */}
-        <div style={{ position: 'relative', width: '100%', maxWidth: '800px', height: '100%' }}>
+        {/* Responsive Grid Layout */}
+        <div className="srs-learn-grid">
           
-          {/* Main Flashcard Card - Fixed Height App Grid */}
-          <div className="srs-card" style={{ width: '100%', height: '100%', margin: 0, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+          {/* Main Flashcard Card */}
+          <div className="srs-learn-main srs-card" style={{ height: 'calc(100vh - 200px)', minHeight: '600px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', textAlign: 'left', margin: 0, padding: 0, overflow: 'hidden' }}>
             
             {/* Seamless Header - Now Statically Pinned in the Flex Column */}
-            <div className="srs-learn-header" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, backgroundColor: 'var(--bg-secondary)', padding: '16px 24px', borderBottom: '1px solid var(--border-medium)' }}>
-              <div className="srs-learn-progress">
+            <div className="srs-learn-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0, backgroundColor: 'var(--bg-secondary)', padding: '16px 24px', borderBottom: '1px solid var(--border-medium)', maxWidth: '100%', gap: '16px' }}>
+              <div className="srs-learn-progress" style={{ flex: 1 }}>
                 {batch.map((_, i) => (
                   <div key={i} className={`srs-learn-progress-tick ${i <= currentIndex ? 'active' : 'inactive'}`} />
                 ))}
               </div>
 
-              <div style={{ position: 'absolute', right: '24px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
                  <button onClick={prevSlide} disabled={currentIndex === 0} style={{ padding: '6px 12px', backgroundColor: 'var(--bg-glass)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: currentIndex === 0 ? 'var(--border-medium)' : 'var(--text-primary)', cursor: currentIndex === 0 ? 'default' : 'pointer', fontSize: '13px' }}>
                    ← Prev
                  </button>
@@ -168,17 +168,17 @@ export default function LearnPage() {
               </div>
             </div>
 
-            <button 
-               onClick={handleMarkKnown}
-               className="srs-deep-check"
-               style={{ top: '86px' }} /* Account for the internal sticky header's height */
-            >
-               <span className="srs-star">★</span>
-               <span>Deep Check-in (Mark Known)</span>
-            </button>
-
             <div className="srs-display-block" style={{ flexShrink: 0 }}>
-              <div style={{ position: 'absolute', top: '86px', left: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button 
+                 onClick={handleMarkKnown}
+                 className="srs-deep-check"
+                 style={{ top: '16px', right: '16px', position: 'absolute' }}
+              >
+                 <span className="srs-star">★</span>
+                 <span>Deep Check-in (Mark Known)</span>
+              </button>
+
+              <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
                  <span className="srs-type-badge" style={{ position: 'static' }}>{item.type}</span>
                  {item.jlptLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '4px 8px', borderRadius: '4px' }}>{item.jlptLevel.toUpperCase()}</span>}
                  {item.wkLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', padding: '4px 8px', borderRadius: '4px' }}>WK Lv {item.wkLevel}</span>}
@@ -192,15 +192,13 @@ export default function LearnPage() {
             </div>
           </div>
           
-          {/* Zero-Width Absolute Anchor Column for Right Sidecar */}
-          <div style={{ position: 'absolute', top: 0, left: '100%', height: '100%', pointerEvents: 'none' }}>
-             <div style={{ marginLeft: '32px', width: '320px', zIndex: 10, pointerEvents: 'auto' }}>
-               <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
-                 <div style={{ padding: '24px' }}>
-                   <QuizNoteManager itemId={item.jlptItemId} initialNote={item.note || ""} />
-                 </div>
-               </div>
-             </div>
+          {/* Sidecar for Grid */}
+          <div className="srs-learn-sidecar">
+            <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', height: '100%' }}>
+              <div style={{ padding: '24px' }}>
+                <QuizNoteManager itemId={item.jlptItemId} initialNote={item.note || ""} />
+              </div>
+            </div>
           </div>
         </div>
       </div>

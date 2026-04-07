@@ -38,6 +38,16 @@ function setCachedResponse(rawDb: InstanceType<typeof Database>, key: string, js
 }
 
 export async function GET(request: NextRequest) {
+  try {
+    const { requireAuth, AuthError } = await import("@/lib/auth");
+    await requireAuth(request);
+  } catch (e: any) {
+    if (e?.name === "AuthError") {
+      return NextResponse.json({ error: e.message }, { status: 401 });
+    }
+    throw e;
+  }
+
   const { searchParams } = new URL(request.url);
   const char = searchParams.get("char");
   const word = searchParams.get("word");
