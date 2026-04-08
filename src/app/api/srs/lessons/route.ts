@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { jlptItems, userProgress, wanikaniSubjects } from "@/lib/db/schema";
-import { eq, inArray, isNull, and } from "drizzle-orm";
+import { eq, inArray, isNull, and, ne } from "drizzle-orm";
 import { requireAuth, AuthError } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
         progress: userProgress,
       })
       .from(jlptItems)
+      .where(ne(jlptItems.jlptLevel, "other"))
       .leftJoin(userProgress, and(
         eq(userProgress.jlptItemId, jlptItems.id),
         eq(userProgress.userId, userId)
@@ -79,7 +80,12 @@ export async function GET(req: NextRequest) {
             for (const c of components) {
               if (c.matchedJlptItemId && !masteredIds.has(c.matchedJlptItemId) && !addedIds.has(c.matchedJlptItemId)) {
                  // Component needs to be learned first!
-                 const rawKanjiItem = await db.query.jlptItems.findFirst({ where: eq(jlptItems.id, c.matchedJlptItemId) });
+                 const rawKanjiItem = await db.query.jlptItems.findFirst({ 
+                   where: and(
+                     eq(jlptItems.id, c.matchedJlptItemId),
+                     ne(jlptItems.jlptLevel, "other")
+                   ) 
+                 });
                  if (rawKanjiItem && finalQueue.length < limit) {
                    finalQueue.push({ item: rawKanjiItem, wkDetails: c });
                    addedIds.add(rawKanjiItem.id);
