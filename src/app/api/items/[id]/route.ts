@@ -78,44 +78,54 @@ export async function GET(
       .prepare(`SELECT content FROM user_notes WHERE jlpt_item_id = ? AND user_id = ?`)
       .get(itemId, session.userId) as { content: string } | undefined;
 
-    // Get ALL WK subjects matched to this item (could be multiple, e.g. kanji + vocab)
-    const wkRows = rawDb
-      .prepare(
-        `SELECT wk_subject_id, characters, meanings, readings, wk_level,
-                object_type, match_type, component_subject_ids, amalgamation_subject_ids,
-                meaning_mnemonic, reading_mnemonic, meaning_hint, reading_hint,
-                context_sentences, patterns_of_use, parts_of_speech
-         FROM wanikani_subjects WHERE matched_jlpt_item_id = ?`
-      )
-      .all(itemId) as Array<{
-      wk_subject_id: number;
-      characters: string;
-      meanings: string;
-      readings: string;
-      wk_level: number;
-      object_type: string;
-      match_type: string | null;
-      component_subject_ids: string | null;
-      amalgamation_subject_ids: string | null;
-      meaning_mnemonic: string | null;
-      reading_mnemonic: string | null;
-      meaning_hint: string | null;
-      reading_hint: string | null;
-      context_sentences: string | null;
-      patterns_of_use: string | null;
-      parts_of_speech: string | null;
-    }>;
+    let primaryWk: any = null;
 
-    // Pick the best WK match: prefer kanji type for kanji items, vocab for vocab items
-    let primaryWk = wkRows[0] || null;
-    if (item.type === "kanji") {
-      const kanjiMatch = wkRows.find((r) => r.object_type === "kanji");
-      if (kanjiMatch) primaryWk = kanjiMatch;
+    if (item.type === "radical") {
+      const radRow = rawDb.prepare(
+        `SELECT wk_subject_id, characters, meanings, wk_level, character_image_url,
+                meaning_mnemonic, meaning_hint, amalgamation_subject_ids
+         FROM wanikani_radicals WHERE matched_jlpt_item_id = ?`
+      ).get(itemId) as any;
+      
+      if (radRow) {
+         primaryWk = {
+            wk_subject_id: radRow.wk_subject_id,
+            characters: radRow.characters,
+            meanings: JSON.stringify(JSON.parse(radRow.meanings).map((m: any) => ({ ...m, accepted_answer: true }))),
+            readings: "[]",
+            wk_level: radRow.wk_level,
+            object_type: "radical",
+            match_type: "radical",
+            component_subject_ids: null,
+            amalgamation_subject_ids: radRow.amalgamation_subject_ids,
+            meaning_mnemonic: radRow.meaning_mnemonic,
+            reading_mnemonic: null,
+            meaning_hint: radRow.meaning_hint,
+            reading_hint: null,
+            context_sentences: null,
+            patterns_of_use: null,
+            parts_of_speech: null
+         };
+      }
     } else {
-      const vocabMatch = wkRows.find(
-        (r) => r.object_type === "vocabulary" || r.object_type === "kana_vocabulary"
-      );
-      if (vocabMatch) primaryWk = vocabMatch;
+      const wkRows = rawDb.prepare(
+          `SELECT wk_subject_id, characters, meanings, readings, wk_level,
+                  object_type, match_type, component_subject_ids, amalgamation_subject_ids,
+                  meaning_mnemonic, reading_mnemonic, meaning_hint, reading_hint,
+                  context_sentences, patterns_of_use, parts_of_speech
+           FROM wanikani_subjects WHERE matched_jlpt_item_id = ?`
+        ).all(itemId) as any[];
+
+      primaryWk = wkRows[0] || null;
+      if (item.type === "kanji") {
+        const kanjiMatch = wkRows.find((r: any) => r.object_type === "kanji");
+        if (kanjiMatch) primaryWk = kanjiMatch;
+      } else {
+        const vocabMatch = wkRows.find(
+          (r: any) => r.object_type === "vocabulary" || r.object_type === "kana_vocabulary"
+        );
+        if (vocabMatch) primaryWk = vocabMatch;
+      }
     }
 
     // Resolve radicals from component_subject_ids

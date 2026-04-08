@@ -7,7 +7,7 @@ import LessonModal, { QuizNoteManager } from "./LessonModal";
 
 export type QuizItem = {
   id: number;
-  type: "kanji" | "vocab";
+  type: "kanji" | "vocab" | "radical";
   characters: string;
   meanings: string[];
   readings: string[];
@@ -98,7 +98,9 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
       items.forEach(item => {
         itemMistakeState.current[item.id] = "none";
         freshQueue.push({ item, questionType: "meaning" });
-        freshQueue.push({ item, questionType: "reading" });
+        if (item.type !== "radical") {
+          freshQueue.push({ item, questionType: "reading" });
+        }
       });
       // Shuffle
       freshQueue.sort(() => Math.random() - 0.5);

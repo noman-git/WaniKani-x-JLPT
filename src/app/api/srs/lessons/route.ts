@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { jlptItems, userProgress, wanikaniSubjects } from "@/lib/db/schema";
-import { eq, inArray, isNull, and, ne } from "drizzle-orm";
 import { requireAuth, AuthError } from "@/lib/auth";
+import Database from "better-sqlite3";
+import path from "path";
 
 export async function GET(req: NextRequest) {
   let session;
@@ -20,90 +20,107 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(url.searchParams.get("limit") || "5", 10);
     const userId = session.userId;
 
-    // Find items that DO NOT exist in user_progress OR have srsStage = 0
-    // Using a simple algorithm: Fetch bottom-up jlptItems, checking user_progress loosely
-    const rawUnknownItems = await db
-      .select({
-        item: jlptItems,
-        wkDetails: wanikaniSubjects,
-        progress: userProgress,
-      })
-      .from(jlptItems)
-      .where(ne(jlptItems.jlptLevel, "other"))
-      .leftJoin(userProgress, and(
-        eq(userProgress.jlptItemId, jlptItems.id),
-        eq(userProgress.userId, userId)
-      ))
-      .leftJoin(wanikaniSubjects, eq(wanikaniSubjects.matchedJlptItemId, jlptItems.id))
-      .orderBy(jlptItems.jlptLevel, jlptItems.id) // Implicit bottom up sorting. N5 first!
-      .limit(limit * 3); // Fetch slightly more to account for complex filtering
+    const dbPath = path.join(process.cwd(), "data", "jlpt.db");
+    const rawDb = new Database(dbPath, { readonly: true });
 
-    const candidates = rawUnknownItems.filter((r) => !r.progress || r.progress.srsStage === 0);
+    // 1. Build a fast WK ID -> JLPT ID lookup
+    const wkToJlpt = new Map<number, number>();
+    const mappingRows = rawDb.prepare(`
+       SELECT wk_subject_id, matched_jlpt_item_id FROM wanikani_subjects WHERE matched_jlpt_item_id IS NOT NULL
+       UNION ALL
+       SELECT wk_subject_id, matched_jlpt_item_id FROM wanikani_radicals WHERE matched_jlpt_item_id IS NOT NULL
+    `).all() as any[];
+    mappingRows.forEach(r => wkToJlpt.set(r.wk_subject_id, r.matched_jlpt_item_id));
 
-    // Smart Pipeline: Inject missing component kanji ahead of vocabulary!
+    // 2. Fetch all learned items for the user
+    const learnedRows = rawDb.prepare(`
+       SELECT jlpt_item_id FROM user_progress WHERE user_id = ? AND srs_stage > 0
+    `).all(userId) as any[];
+    const learnedIds = new Set(learnedRows.map(r => r.jlpt_item_id));
+
+    // 3. Fetch all UNLEARNED candidates, sorted strictly by wk_level!
+    const candidatesQuery = `
+       SELECT 
+          j.id as jlptItemId, 
+          j.expression, 
+          j.reading, 
+          j.meaning, 
+          j.type, 
+          j.jlpt_level as jlptLevel,
+          COALESCE(w.wk_level, r.wk_level, 99) as wkLevel,
+          COALESCE(w.component_subject_ids, r.amalgamation_subject_ids) as componentSubjectIds,
+          'true' as _isRaw
+       FROM jlpt_items j
+       LEFT JOIN user_progress p ON p.jlpt_item_id = j.id AND p.user_id = ?
+       LEFT JOIN wanikani_subjects w ON w.matched_jlpt_item_id = j.id
+       LEFT JOIN wanikani_radicals r ON r.matched_jlpt_item_id = j.id
+       WHERE (p.id IS NULL OR p.srs_stage = 0)
+         AND j.jlpt_level != 'other'
+       ORDER BY wkLevel ASC, j.id ASC
+    `;
+    const sortedCandidates = rawDb.prepare(candidatesQuery).all(userId) as any[];
+
+    // 4. Smart Prerequisites Pipeline
     const finalQueue: any[] = [];
-    const addedIds = new Set<number>();
+    const fullItemsFetchKeys: number[] = [];
 
-    for (const record of candidates) {
-      if (finalQueue.length >= limit) break;
-      if (addedIds.has(record.item.id)) continue;
+    for (const row of sortedCandidates) {
+       if (finalQueue.length >= limit) break;
 
-      // If it's Vocab, we must check its Component Kanji!
-      if (record.item.type === "vocab" && record.wkDetails?.componentSubjectIds) {
-        let componentSubjectIds: number[] = [];
-        try {
-          componentSubjectIds = JSON.parse(record.wkDetails.componentSubjectIds);
-        } catch { } // Ignore parse errors
+       let isUnlocked = true;
 
-        if (componentSubjectIds.length > 0) {
-          // Fetch the corresponding WK records for these components
-          const components = await db.query.wanikaniSubjects.findMany({
-            where: inArray(wanikaniSubjects.wkSubjectId, componentSubjectIds)
-          });
+       if (row.componentSubjectIds && (row.type === "kanji" || row.type === "vocab")) {
+          let componentWkIds: number[] = [];
+          try {
+             componentWkIds = JSON.parse(row.componentSubjectIds);
+          } catch(e) {}
 
-          const componentJlptIds = components
-            .filter(c => c.matchedJlptItemId !== null)
-            .map(c => c.matchedJlptItemId!);
-
-          if (componentJlptIds.length > 0) {
-            // Check progress for these components
-            const componentProgress = await db.query.userProgress.findMany({
-              where: and(
-                eq(userProgress.userId, userId),
-                inArray(userProgress.jlptItemId, componentJlptIds)
-              )
-            });
-
-            const masteredIds = new Set(componentProgress.filter(p => p.srsStage > 0).map(p => p.jlptItemId));
-
-            // Any component that IS NOT > 0 (mastered/learning) needs to be prepended safely!
-            for (const c of components) {
-              if (c.matchedJlptItemId && !masteredIds.has(c.matchedJlptItemId) && !addedIds.has(c.matchedJlptItemId)) {
-                 // Component needs to be learned first!
-                 const rawKanjiItem = await db.query.jlptItems.findFirst({ 
-                   where: and(
-                     eq(jlptItems.id, c.matchedJlptItemId),
-                     ne(jlptItems.jlptLevel, "other")
-                   ) 
-                 });
-                 if (rawKanjiItem && finalQueue.length < limit) {
-                   finalQueue.push({ item: rawKanjiItem, wkDetails: c });
-                   addedIds.add(rawKanjiItem.id);
-                 }
-              }
-            }
+          // Check if ALL components that exist in our system have been learned
+          for (const wkId of componentWkIds) {
+             const dependentJlptId = wkToJlpt.get(wkId);
+             // If a component maps to a JLPT item in our DB, the user MUST have learned it!
+             if (dependentJlptId && !learnedIds.has(dependentJlptId)) {
+                isUnlocked = false;
+                break;
+             }
           }
-        }
-      }
+       }
 
-      // Finally append the actual Vocab (or Kanji) record
-      if (finalQueue.length < limit && !addedIds.has(record.item.id)) {
-        finalQueue.push(record);
-        addedIds.add(record.item.id);
-      }
+       if (isUnlocked) {
+          finalQueue.push({ _tempId: row.jlptItemId, type: row.type });
+          fullItemsFetchKeys.push(row.jlptItemId);
+       }
     }
 
-    return NextResponse.json({ lessons: finalQueue });
+    rawDb.close();
+
+    if (fullItemsFetchKeys.length === 0) {
+       return NextResponse.json({ lessons: [] });
+    }
+
+    // 5. Fetch fully hydrated objects for the frontend using Drizzle
+    const hydratedLessons: any[] = [];
+    for (const id of fullItemsFetchKeys) {
+        const itemRecord = await db.query.jlptItems.findFirst({
+            where: (jlptItems, { eq }) => eq(jlptItems.id, id)
+        });
+        if (!itemRecord) continue;
+
+        let wkDetails = null;
+        if (itemRecord.type === "radical") {
+           wkDetails = await db.query.wanikaniRadicals.findFirst({
+               where: (wanikaniRadicals, { eq }) => eq(wanikaniRadicals.matchedJlptItemId, id)
+           });
+        } else {
+           wkDetails = await db.query.wanikaniSubjects.findFirst({
+               where: (wanikaniSubjects, { eq }) => eq(wanikaniSubjects.matchedJlptItemId, id)
+           });
+        }
+
+        hydratedLessons.push({ item: itemRecord, wkDetails });
+    }
+
+    return NextResponse.json({ lessons: hydratedLessons });
   } catch (error) {
     console.error("SRS Lessons Queue Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

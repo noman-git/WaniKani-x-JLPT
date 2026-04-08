@@ -62,6 +62,7 @@ export const wanikaniRadicals = sqliteTable("wanikani_radicals", {
   meaningMnemonic: text("meaning_mnemonic"),
   meaningHint: text("meaning_hint"),
   amalgamationSubjectIds: text("amalgamation_subject_ids"),
+  matchedJlptItemId: integer("matched_jlpt_item_id").references(() => jlptItems.id),
 });
 
 export const kanjiCache = sqliteTable("kanji_cache", {

@@ -31,7 +31,7 @@ export default function ItemsBrowser({
 }: { 
   apiUrl: string; 
   title: string; 
-  itemType: "kanji" | "vocab" 
+  itemType: "kanji" | "vocab" | "radical"
 }) {
   const [items, setItems] = useState<Item[]>([]);
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 30, total: 0, totalPages: 0 });
@@ -113,8 +113,11 @@ export default function ItemsBrowser({
   // Build external URLs
   const getWkUrl = (item: Item) => {
     if (!item.wkSubjectId || item.matchType === "pseudo") return null;
-    const wkExpr = item.wkCharacters || item.expression;
-    const wkType = item.type === "kanji" ? "kanji" : "vocabulary";
+    let wkExpr = item.wkCharacters || item.expression;
+    if (item.type === "radical") {
+       wkExpr = item.meaning.toLowerCase();
+    }
+    const wkType = item.type === "kanji" ? "kanji" : item.type === "radical" ? "radicals" : "vocabulary";
     return `https://www.wanikani.com/${wkType}/${encodeURIComponent(wkExpr)}`;
   };
 
@@ -221,7 +224,7 @@ export default function ItemsBrowser({
               <div className="item-meaning">{item.meaning}</div>
               <div className="item-meta">
                 <span className={`badge badge-${item.jlptLevel.toLowerCase()}`}>{item.jlptLevel}</span>
-                <span className={`badge badge-${item.type}`}>{item.type === "kanji" ? "漢字" : "語彙"}</span>
+                <span className={`badge badge-${item.type}`}>{item.type === "kanji" ? "漢字" : item.type === "radical" ? "部首" : "語彙"}</span>
                 {item.wkSubjectId && item.matchType !== "pseudo" && (
                   <span className="badge badge-wk">WK Lv.{item.wkLevel}</span>
                 )}
