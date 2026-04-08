@@ -326,20 +326,32 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
          </div>
       </div>
 
-      <div className="srs-quiz-character">
+      <div 
+         className="srs-quiz-character"
+         style={{
+            backgroundColor: `var(--accent-${currentTask.item.type})`,
+            padding: '40px 80px',
+            borderRadius: '16px',
+            boxShadow: `0 10px 30px var(--accent-${currentTask.item.type}-soft)`,
+            width: '100%',
+            maxWidth: '600px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: '0 auto 48px auto'
+         }}
+      >
         {currentTask.item.characters}
       </div>
 
       <div className="srs-input-container">
-        <label className="srs-input-label">
-          TYPE THE {currentTask.questionType === "reading" ? "READING (Hiragana)" : "MEANING (English)"}
-        </label>
         
         <div style={{ position: 'relative' }}>
           <input
             ref={inputRef}
             type="text"
             lang={currentTask.questionType === "reading" ? "ja" : "en"}
+            placeholder={currentTask.questionType === "reading" ? "ひらがな" : "Meaning"}
             autoFocus
             readOnly={loading || (feedback !== null && feedback !== "warning")}
             disabled={loading}
@@ -357,7 +369,7 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
             }}
             onKeyDown={handleKeyDown}
             className={`srs-quiz-input ${feedback ? feedback : ''}`}
-            style={{ paddingRight: '56px' }}
+            style={{ paddingRight: '56px', textAlign: 'center' }}
           />
           <button
              onClick={() => handleKeyDown({ key: 'Enter' })}
