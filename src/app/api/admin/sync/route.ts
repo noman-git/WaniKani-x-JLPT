@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     }
 
     const prodDb = new Database(PROD_DB_PATH);
-    const tempWritableSeed = path.join(path.dirname(PROD_DB_PATH), "temp-seed.db");
+    const tempWritableSeed = "/tmp/temp-seed.db";
     fs.copyFileSync(targetSeed, tempWritableSeed);
     
     // Disable FK constraints for mass deletion
@@ -86,6 +86,6 @@ export async function GET(req: NextRequest) {
 
   } catch (error) {
     console.error("Admin Sync Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error", details: String(error) }, { status: 500 });
   }
 }
