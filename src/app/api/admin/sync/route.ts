@@ -32,6 +32,9 @@ export async function GET(req: NextRequest) {
 
     const prodDb = new Database(PROD_DB_PATH);
     
+    // Disable FK constraints for mass deletion
+    prodDb.pragma("foreign_keys = OFF");
+
     // Safety: Run entirely inside a transaction
     prodDb.exec("BEGIN TRANSACTION;");
 
@@ -39,7 +42,15 @@ export async function GET(req: NextRequest) {
         // Attach the seed database as 'seed'
         prodDb.exec(`ATTACH DATABASE '${targetSeed}' AS seed;`);
 
-        // Nuke existing master tables
+        // 1. Wipe everyone's progression matrices so they restart at queue 0
+        // Doing this first eliminates foreign key locks on the master tables
+        prodDb.exec(`
+            DELETE FROM user_progress;
+            DELETE FROM user_notes;
+            DELETE FROM grammar_progress;
+        `);
+
+        // 2. Nuke existing master tables
         prodDb.exec(`
             DELETE FROM jlpt_items;
             DELETE FROM wanikani_subjects;
@@ -48,19 +59,12 @@ export async function GET(req: NextRequest) {
             DELETE FROM sqlite_sequence WHERE name IN ('jlpt_items', 'wanikani_subjects', 'wanikani_radicals', 'grammar_points');
         `);
 
-        // Clone completely from seed
+        // 3. Clone completely from seed
         prodDb.exec(`
             INSERT INTO jlpt_items SELECT * FROM seed.jlpt_items;
             INSERT INTO wanikani_subjects SELECT * FROM seed.wanikani_subjects;
             INSERT INTO wanikani_radicals SELECT * FROM seed.wanikani_radicals;
             INSERT INTO grammar_points SELECT * FROM seed.grammar_points;
-        `);
-
-        // Finally, wipe everyone's progression matrices so they restart at queue 0
-        prodDb.exec(`
-            DELETE FROM user_progress;
-            DELETE FROM user_notes;
-            DELETE FROM grammar_progress;
         `);
 
         prodDb.exec("COMMIT;");
