@@ -55,26 +55,103 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
   // Track errors so if you miss reading, meaning also counts as bad for the item interval
   const itemMistakeState = useRef<Record<number, "reading" | "meaning" | "both" | "none">>({});
 
-  // Initialize Queue Randomly
+  const [queueLoaded, setQueueLoaded] = useState(false);
+
+  // Initialize Queue Randomly (with localStorage caching for reviews)
   useEffect(() => {
-    const freshQueue: QuizTask[] = [];
-    items.forEach(item => {
-      itemMistakeState.current[item.id] = "none";
-      freshQueue.push({ item, questionType: "meaning" });
-      freshQueue.push({ item, questionType: "reading" });
-    });
-    // Shuffle
-    freshQueue.sort(() => Math.random() - 0.5);
-    setQueue(freshQueue);
-    setCurrentTask(freshQueue[0] || null);
+    if (queueLoaded) return;
+    
+    let initialQueue: QuizTask[] | null = null;
+    
+    if (mode === "review") {
+      try {
+        const cached = localStorage.getItem("srs-active-queue");
+        if (cached) {
+          const parsedCache: Array<{id: number, type: "reading" | "meaning"}> = JSON.parse(cached);
+          
+          // Re-hydrate the queue from the passed items prop!
+          const restoredQueue: QuizTask[] = [];
+          for (const cachedTask of parsedCache) {
+             const matchingItem = items.find(i => i.id === cachedTask.id);
+             if (matchingItem) {
+               restoredQueue.push({ item: matchingItem, questionType: cachedTask.type });
+             }
+          }
+          
+          // Only use cache if it actually restored tasks AND isn't completely empty
+          if (restoredQueue.length > 0) {
+            initialQueue = restoredQueue;
+            // Also we need to restore mistake states safely!
+            const cachedMistakes = localStorage.getItem("srs-mistake-state");
+            if (cachedMistakes) {
+               itemMistakeState.current = JSON.parse(cachedMistakes);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to restore SRS queue cache", e);
+      }
+    }
+
+    if (!initialQueue) {
+      const freshQueue: QuizTask[] = [];
+      items.forEach(item => {
+        itemMistakeState.current[item.id] = "none";
+        freshQueue.push({ item, questionType: "meaning" });
+        freshQueue.push({ item, questionType: "reading" });
+      });
+      // Shuffle
+      freshQueue.sort(() => Math.random() - 0.5);
+      initialQueue = freshQueue;
+    }
+    
+    setQueue(initialQueue);
+    setCurrentTask(initialQueue[0] || null);
     startTime.current = Date.now();
-  }, [items]);
+    setQueueLoaded(true);
+  }, [items, mode, queueLoaded]);
+  
+  // Persist Queue Changes
+  const persistQueueState = (newQueue: QuizTask[]) => {
+    if (mode === "review") {
+      try {
+        const serialized = newQueue.map(t => ({ id: t.item.id, type: t.questionType }));
+        localStorage.setItem("srs-active-queue", JSON.stringify(serialized));
+        localStorage.setItem("srs-mistake-state", JSON.stringify(itemMistakeState.current));
+      } catch (e) {}
+    }
+  };
 
 
 
-  const popNext = () => {
+  const popNext = async () => {
     const nextQueue = queue.slice(1);
+    
+    // Check if the item is FULLY completed (no other tasks for this ID in the nextQueue)
+    if (currentTask && mode === "review") {
+        const isFullyCompleted = !nextQueue.some(t => t.item.id === currentTask.item.id);
+        if (isFullyCompleted) {
+            const itemStatus = itemMistakeState.current[currentTask.item.id];
+            const hasPreviousMistake = itemStatus === "both" || itemStatus === "reading" || itemStatus === "meaning";
+            
+            try {
+              await fetch("/api/srs/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  jlptItemId: currentTask.item.jlptItemId,
+                  isCorrect: !hasPreviousMistake,
+                  timeToAnswerMs: 2000, // Aggregate simplified
+                  mistakeType: hasPreviousMistake ? itemStatus : null,
+                  forceKnown: false
+                })
+              });
+            } catch(e) {}
+        }
+    }
+    
     setQueue(nextQueue);
+    persistQueueState(nextQueue);
     setInputValue("");
     setFeedback(null);
     setWarningMsg(null);
@@ -84,6 +161,10 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     startTime.current = Date.now();
 
     if (nextQueue.length === 0) {
+      if (mode === "review") {
+        localStorage.removeItem("srs-active-queue");
+        localStorage.removeItem("srs-mistake-state");
+      }
       onComplete(); // All done!
     }
   };
@@ -94,6 +175,7 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     const insertIdx = Math.floor(Math.random() * Math.min(newQueue.length, 5));
     newQueue.splice(insertIdx, 0, currentTask!);
     setQueue(newQueue);
+    persistQueueState(newQueue);
     setInputValue("");
     setFeedback(null);
     setWarningMsg(null);
@@ -193,27 +275,8 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
 
     if (isCorrect) {
       setFeedback(isTypo ? "typo" : "correct");
-      // If it's a review, we don't submit to API until BOTH reading and meaning are complete!
-      // But for simplicity, we immediately POST the grade snippet!
-      
-      const itemStatus = itemMistakeState.current[currentTask.item.id];
-      const hasPreviousMistake = itemStatus === "both" || itemStatus === currentTask.questionType || (itemStatus !== "none" && itemStatus !== currentTask.questionType);
-      
-      // Submit Grade exactly once BOTH are finished, OR sequentially. Sequentially is safer mathematically per-interaction.
-      // E.g. we instantly submit the grade to the backend.
-      try {
-        await fetch("/api/srs/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            jlptItemId: currentTask.item.jlptItemId,
-            isCorrect: !hasPreviousMistake, // Mathematically penalize if they EVER got either half wrong
-            timeToAnswerMs,
-            mistakeType: hasPreviousMistake ? itemMistakeState.current[currentTask.item.id] : null,
-            forceKnown: false
-          })
-        });
-      } catch(e) {}
+      // We no longer instantly submit here. It is handled in popNext!
+
       
       setLoading(false); // Let handleKeyDown pop it strictly on Enter
     } else {

@@ -25,10 +25,14 @@ export default function LearnPage() {
            return;
         }
 
-        const items: QuizItem[] = await Promise.all(data.lessons.map(async (r: any) => {
-           // Deep Hydration directly from the legacy modal API!
-           const detailRes = await fetch(`/api/items/${r.item.id}`);
-           const detail = await detailRes.json();
+        const lessonIds = data.lessons.map((r: any) => r.item.id);
+        const bulkRes = await fetch(`/api/items/bulk?ids=${lessonIds.join(",")}`);
+        const bulkData = await bulkRes.json();
+        
+        const items: QuizItem[] = [];
+        for (const id of lessonIds) {
+           const detail = bulkData.items[id];
+           if (!detail) continue;
            
            let parsedReadings = [];
            let parsedMeanings = [];
@@ -46,7 +50,7 @@ export default function LearnPage() {
            if (parsedReadings.length === 0 && detail.item.reading) parsedReadings.push(detail.item.reading);
            if (parsedMeanings.length === 0 && detail.item.meaning) parsedMeanings.push(detail.item.meaning);
 
-           return {
+           items.push({
              id: detail.item.id,
              jlptItemId: detail.item.id,
              type: detail.item.type,
@@ -68,8 +72,8 @@ export default function LearnPage() {
              radicals: detail.wanikani?.radicals,
              componentKanji: detail.componentKanji,
              relatedVocab: detail.relatedVocab
-           };
-        }));
+           });
+        }
 
         setBatch(items);
         setPhase("lesson");

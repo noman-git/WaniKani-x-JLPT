@@ -20,51 +20,63 @@ export default function ReviewPage() {
            return;
         }
 
-        const items: QuizItem[] = await Promise.all(data.reviews.map(async (r: any) => {
-           // Deep Hydration directly from the legacy modal API!
-           const detailRes = await fetch(`/api/items/${r.item.id}`);
-           const detail = await detailRes.json();
-           
-           let parsedReadings = [];
-           let parsedMeanings = [];
-           let advancedReadings: Array<{reading: string; type: string; primary: boolean}> | undefined = undefined;
-           let advancedMeanings: Array<{meaning: string; primary: boolean}> | undefined = undefined;
-           try {
-              const wkReadings = detail.wanikani?.readings || [];
-              const wkMeanings = detail.wanikani?.meanings || [];
-              parsedReadings = wkReadings.map((reading: any) => reading.reading);
-              parsedMeanings = wkMeanings.map((m: any) => m.meaning);
-              advancedReadings = wkReadings.map((r: any) => ({ reading: r.reading, type: r.type || "nanori", primary: !!r.primary }));
-              advancedMeanings = wkMeanings.map((m: any) => ({ meaning: m.meaning, primary: !!m.primary }));
-           } catch(e) {}
+        const reviewIds = data.reviews.map((r: any) => r.item.id);
+        const chunks = [];
+        for (let i = 0; i < reviewIds.length; i += 50) {
+            chunks.push(reviewIds.slice(i, i + 50));
+        }
 
-           if (parsedReadings.length === 0 && detail.item.reading) parsedReadings.push(detail.item.reading);
-           if (parsedMeanings.length === 0 && detail.item.meaning) parsedMeanings.push(detail.item.meaning);
+        const items: QuizItem[] = [];
+        
+        for (const chunk of chunks) {
+            const bulkRes = await fetch(`/api/items/bulk?ids=${chunk.join(",")}`);
+            const bulkData = await bulkRes.json();
+            
+            for (const id of chunk) {
+                const detail = bulkData.items[id];
+                if (!detail) continue;
+                
+                let parsedReadings = [];
+                let parsedMeanings = [];
+                let advancedReadings: Array<{reading: string; type: string; primary: boolean}> | undefined = undefined;
+                let advancedMeanings: Array<{meaning: string; primary: boolean}> | undefined = undefined;
+                try {
+                   const wkReadings = detail.wanikani?.readings || [];
+                   const wkMeanings = detail.wanikani?.meanings || [];
+                   parsedReadings = wkReadings.map((reading: any) => reading.reading);
+                   parsedMeanings = wkMeanings.map((m: any) => m.meaning);
+                   advancedReadings = wkReadings.map((r: any) => ({ reading: r.reading, type: r.type || "nanori", primary: !!r.primary }));
+                   advancedMeanings = wkMeanings.map((m: any) => ({ meaning: m.meaning, primary: !!m.primary }));
+                } catch(e) {}
 
-           return {
-             id: detail.item.id,
-             jlptItemId: detail.item.id,
-             type: detail.item.type,
-             jlptLevel: detail.item.jlptLevel,
-             characters: detail.item.expression,
-             readings: parsedReadings,
-             advancedReadings,
-             meanings: parsedMeanings,
-             advancedMeanings,
-             note: detail.note,
-             meaningMnemonic: detail.wanikani?.meaningMnemonic,
-             readingMnemonic: detail.wanikani?.readingMnemonic,
-             meaningHint: detail.wanikani?.meaningHint,
-             readingHint: detail.wanikani?.readingHint,
-             contextSentences: detail.wanikani?.contextSentences,
-             partsOfSpeech: detail.wanikani?.partsOfSpeech,
-             matchType: detail.wanikani?.matchType,
-             wkLevel: detail.wanikani?.level,
-             radicals: detail.wanikani?.radicals,
-             componentKanji: detail.componentKanji,
-             relatedVocab: detail.relatedVocab
-           };
-        }));
+                if (parsedReadings.length === 0 && detail.item.reading) parsedReadings.push(detail.item.reading);
+                if (parsedMeanings.length === 0 && detail.item.meaning) parsedMeanings.push(detail.item.meaning);
+
+                items.push({
+                  id: detail.item.id,
+                  jlptItemId: detail.item.id,
+                  type: detail.item.type,
+                  jlptLevel: detail.item.jlptLevel,
+                  characters: detail.item.expression,
+                  readings: parsedReadings,
+                  advancedReadings,
+                  meanings: parsedMeanings,
+                  advancedMeanings,
+                  note: detail.note,
+                  meaningMnemonic: detail.wanikani?.meaningMnemonic,
+                  readingMnemonic: detail.wanikani?.readingMnemonic,
+                  meaningHint: detail.wanikani?.meaningHint,
+                  readingHint: detail.wanikani?.readingHint,
+                  contextSentences: detail.wanikani?.contextSentences,
+                  partsOfSpeech: detail.wanikani?.partsOfSpeech,
+                  matchType: detail.wanikani?.matchType,
+                  wkLevel: detail.wanikani?.level,
+                  radicals: detail.wanikani?.radicals,
+                  componentKanji: detail.componentKanji,
+                  relatedVocab: detail.relatedVocab
+                });
+            }
+        }
 
         setBatch(items);
         setLoading(false);
