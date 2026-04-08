@@ -13,6 +13,7 @@ export type QuizItem = {
   readings: string[];
   advancedReadings?: Array<{ reading: string; type: string; primary: boolean }> | null;
   advancedMeanings?: Array<{ meaning: string; primary: boolean }> | null;
+  imageUrl?: string | null;
   note?: string | null;
   meaningMnemonic?: string | null;
   readingMnemonic?: string | null;
@@ -25,6 +26,7 @@ export type QuizItem = {
   radicals?: Array<{ id: number; characters: string | null; meaning: string; imageUrl: string | null; level: number; }> | null;
   componentKanji?: Array<{ id: number | null; expression: string; reading: string; meaning: string; jlptLevel: string | null; wkLevel: number | null; }> | null;
   relatedVocab?: Array<{ id: number; expression: string; reading: string; meaning: string; jlptLevel: string; }> | null;
+  usedInKanji?: Array<{ id: number; expression: string; reading: string; meaning: string; jlptLevel: string; }> | null;
   jlptItemId: number;
   jlptLevel?: string | null;
 };
@@ -343,7 +345,15 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
             margin: '0 auto 48px auto'
          }}
       >
-        {currentTask.item.characters}
+        {(!currentTask.item.characters || currentTask.item.characters.startsWith('[')) && currentTask.item.imageUrl ? (
+            <img 
+               src={currentTask.item.imageUrl} 
+               alt={currentTask.item.meanings[0] || "radical"} 
+               style={{ height: '80px', filter: 'brightness(0) invert(1)' }} 
+            />
+        ) : (
+            currentTask.item.characters
+        )}
       </div>
 
       <div className="srs-input-container">

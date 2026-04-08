@@ -55,7 +55,8 @@ export async function GET(req: NextRequest) {
        LEFT JOIN wanikani_subjects w ON w.matched_jlpt_item_id = j.id
        LEFT JOIN wanikani_radicals r ON r.matched_jlpt_item_id = j.id
        WHERE (p.id IS NULL OR p.srs_stage = 0)
-         AND j.jlpt_level != 'other'
+         AND (j.jlpt_level != 'other' OR j.type = 'radical')
+       GROUP BY j.id
        ORDER BY wkLevel ASC, j.id ASC
     `;
     const sortedCandidates = rawDb.prepare(candidatesQuery).all(userId) as any[];

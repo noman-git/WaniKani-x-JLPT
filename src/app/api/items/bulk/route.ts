@@ -129,15 +129,48 @@ export async function GET(
       }>;
 
     // Pick the best WK match: prefer kanji type for kanji items, vocab for vocab items
-    let primaryWk = wkRows[0] || null;
-    if (item.type === "kanji") {
-      const kanjiMatch = wkRows.find((r) => r.object_type === "kanji");
-      if (kanjiMatch) primaryWk = kanjiMatch;
+    let primaryWk: any = null;
+    
+    if (item.type === "radical") {
+       const getWkRadicalsStmt = rawDb.prepare(
+         `SELECT wk_subject_id, characters, meanings, wk_level, character_image_url,
+                 meaning_mnemonic, meaning_hint, amalgamation_subject_ids
+          FROM wanikani_radicals WHERE matched_jlpt_item_id = ?`
+       );
+       const radRow = getWkRadicalsStmt.get(itemId) as any;
+       if (radRow) {
+         primaryWk = {
+            wk_subject_id: radRow.wk_subject_id,
+            characters: radRow.characters,
+            meanings: radRow.meanings,
+            readings: "[]",
+            wk_level: radRow.wk_level,
+            object_type: "radical",
+            match_type: "radical",
+            component_subject_ids: null,
+            amalgamation_subject_ids: radRow.amalgamation_subject_ids,
+            meaning_mnemonic: radRow.meaning_mnemonic,
+            reading_mnemonic: null,
+            meaning_hint: radRow.meaning_hint,
+            reading_hint: null,
+            context_sentences: null,
+            patterns_of_use: null,
+            parts_of_speech: null,
+            imageUrl: radRow.character_image_url
+         };
+       }
     } else {
-      const vocabMatch = wkRows.find(
-        (r) => r.object_type === "vocabulary" || r.object_type === "kana_vocabulary"
-      );
-      if (vocabMatch) primaryWk = vocabMatch;
+       let bestMatch = wkRows[0] || null;
+       if (item.type === "kanji") {
+         const kanjiMatch = wkRows.find((r) => r.object_type === "kanji");
+         if (kanjiMatch) bestMatch = kanjiMatch;
+       } else {
+         const vocabMatch = wkRows.find(
+           (r) => r.object_type === "vocabulary" || r.object_type === "kana_vocabulary"
+         );
+         if (vocabMatch) bestMatch = vocabMatch;
+       }
+       primaryWk = bestMatch;
     }
 
     // Resolve radicals from component_subject_ids
@@ -185,7 +218,40 @@ export async function GET(
     }> = [];
 
     if (item.type === "kanji" && item.expression.length === 1) {
-      relatedVocab = getRelatedVocabStmt.all(`%${item.expression}%`, item.expression) as typeof relatedVocab;
+      relatedVocab = rawDb.prepare(`
+           SELECT j.id, j.expression, j.reading, j.meaning, j.type, j.jlpt_level as jlptLevel
+           FROM jlpt_items j
+           LEFT JOIN wanikani_subjects w ON w.matched_jlpt_item_id = j.id
+           WHERE j.type = 'vocab'
+             AND j.expression LIKE ?
+             AND j.expression != ?
+           GROUP BY j.id
+           ORDER BY MIN(w.wk_level) ASC NULLS LAST, j.jlpt_level ASC, j.expression ASC
+           LIMIT 30
+      `).all(`%${item.expression}%`, item.expression) as typeof relatedVocab;
+    }
+
+    // Find related JLPT kanji that contain this radical
+    let usedInKanji: Array<{
+      id: number;
+      expression: string;
+      reading: string;
+      meaning: string;
+      type: string;
+      jlptLevel: string;
+    }> = [];
+
+    if (item.type === "radical" && primaryWk?.wk_subject_id) {
+       usedInKanji = rawDb.prepare(`
+          SELECT j.id, j.expression, j.reading, j.meaning, j.type, j.jlpt_level as jlptLevel
+          FROM wanikani_subjects w
+          INNER JOIN jlpt_items j ON w.matched_jlpt_item_id = j.id
+          JOIN json_each(w.component_subject_ids) as comp
+          WHERE comp.value = ? AND j.type = 'kanji'
+          GROUP BY j.id
+          ORDER BY MIN(w.wk_level) ASC NULLS LAST, j.jlpt_level ASC, j.expression ASC
+          LIMIT 50
+       `).all(primaryWk.wk_subject_id) as any[];
     }
 
     // For vocab items, find component kanji (from JLPT list + WK subjects)
@@ -214,14 +280,16 @@ export async function GET(
         // First: get JLPT kanji (deduplicate by expression, prefer lowest level)
         const jlptRaw = rawDb
           .prepare(
-            `SELECT id, expression, reading, meaning, jlpt_level as jlptLevel
-             FROM jlpt_items
-             WHERE type = 'kanji'
-               AND expression IN (${placeholders})
-             ORDER BY jlpt_level ASC`
+            `SELECT j.id, j.expression, j.reading, j.meaning, j.jlpt_level as jlptLevel, MIN(w.wk_level) as wkLevel
+             FROM jlpt_items j
+             LEFT JOIN wanikani_subjects w ON w.matched_jlpt_item_id = j.id
+             WHERE j.type = 'kanji'
+               AND j.expression IN (${placeholders})
+             GROUP BY j.id
+             ORDER BY MIN(w.wk_level) ASC NULLS LAST, j.jlpt_level ASC`
           )
           .all(...kanjiChars) as Array<{
-            id: number; expression: string; reading: string; meaning: string; jlptLevel: string;
+            id: number; expression: string; reading: string; meaning: string; jlptLevel: string; wkLevel: number | null;
           }>;
 
         // Dedupe: keep first occurrence (lowest level due to ORDER BY)
@@ -272,14 +340,22 @@ export async function GET(
           });
         }
 
-        // Merge and order by position in the original expression
+        // Merge and sort purely by WK Level globally
         const allKanji = [
-          ...jlptKanji.map(k => ({ ...k, wkLevel: null as number | null })),
+          ...jlptKanji.map(k => ({ ...k, wkLevel: k.wkLevel as number | null })),
           ...wkKanji,
         ];
-        componentKanji = kanjiChars
+        
+        // Find every character in the string, then sort it.
+        const mappedKanji = kanjiChars
           .map(ch => allKanji.find(k => k.expression === ch))
           .filter((k): k is typeof allKanji[number] => k !== undefined);
+          
+        componentKanji = mappedKanji.sort((a, b) => {
+           const aLvl = a.wkLevel ?? 99;
+           const bLvl = b.wkLevel ?? 99;
+           return aLvl - bLvl;
+        });
       }
     }
 
@@ -305,6 +381,7 @@ export async function GET(
         contextSentences: primaryWk.context_sentences ? JSON.parse(primaryWk.context_sentences) : null,
         patternsOfUse: primaryWk.patterns_of_use ? JSON.parse(primaryWk.patterns_of_use) : null,
         partsOfSpeech: primaryWk.parts_of_speech ? JSON.parse(primaryWk.parts_of_speech) : null,
+        imageUrl: primaryWk.imageUrl,
       };
     }
 
@@ -319,6 +396,7 @@ export async function GET(
       note: noteRow?.content ?? "",
       wanikani,
       relatedVocab,
+      usedInKanji,
       componentKanji,
       linkedGrammar,
     };

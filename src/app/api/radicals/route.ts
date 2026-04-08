@@ -15,6 +15,8 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
   const search = searchParams.get("search");
+  const level = searchParams.get("level");
+  const onWanikani = searchParams.get("onWanikani");
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "50");
 
@@ -26,6 +28,19 @@ export async function GET(request: NextRequest) {
 
     whereClauses.push("j.type = @type");
     params.type = "radical";
+
+    if (level) {
+      whereClauses.push("j.jlpt_level = @level");
+      params.level = level;
+    }
+
+    if (onWanikani) {
+      if (onWanikani === "true") {
+        whereClauses.push("w_agg.wk_subject_id IS NOT NULL");
+      } else {
+        whereClauses.push("w_agg.wk_subject_id IS NULL");
+      }
+    }
 
     if (status) {
       if (status === "unknown") {

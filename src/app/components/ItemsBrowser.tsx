@@ -163,6 +163,7 @@ export default function ItemsBrowser({
         />
         <FilterBtn label="N5" value="N5" current={level} setter={setLevel} />
         <FilterBtn label="N4" value="N4" current={level} setter={setLevel} />
+        <FilterBtn label="Other" value="other" current={level} setter={setLevel} />
         <span style={{ color: "var(--text-muted)", fontSize: 12 }}>|</span>
         <FilterBtn label="✅ Known" value="known" current={status} setter={setStatus} />
         <FilterBtn label="📖 Learning" value="learning" current={status} setter={setStatus} />

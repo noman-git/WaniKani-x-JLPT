@@ -62,6 +62,7 @@ export default function ReviewPage() {
                   advancedReadings,
                   meanings: parsedMeanings,
                   advancedMeanings,
+                  imageUrl: detail.wanikani?.imageUrl,
                   note: detail.note,
                   meaningMnemonic: detail.wanikani?.meaningMnemonic,
                   readingMnemonic: detail.wanikani?.readingMnemonic,
@@ -73,6 +74,7 @@ export default function ReviewPage() {
                   wkLevel: detail.wanikani?.level,
                   radicals: detail.wanikani?.radicals,
                   componentKanji: detail.componentKanji,
+                  usedInKanji: detail.usedInKanji,
                   relatedVocab: detail.relatedVocab
                 });
             }
