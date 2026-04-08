@@ -31,6 +31,8 @@ export async function GET(req: NextRequest) {
     }
 
     const prodDb = new Database(PROD_DB_PATH);
+    const tempWritableSeed = path.join(path.dirname(PROD_DB_PATH), "temp-seed.db");
+    fs.copyFileSync(targetSeed, tempWritableSeed);
     
     // Disable FK constraints for mass deletion
     prodDb.pragma("foreign_keys = OFF");
@@ -39,8 +41,8 @@ export async function GET(req: NextRequest) {
     prodDb.exec("BEGIN TRANSACTION;");
 
     try {
-        // Attach the seed database as 'seed'
-        prodDb.exec(`ATTACH DATABASE '${targetSeed}' AS seed;`);
+        // Attach the completely writable temporary seed database as 'seed'
+        prodDb.exec(`ATTACH DATABASE '${tempWritableSeed}' AS seed;`);
 
         // 1. Wipe everyone's progression matrices so they restart at queue 0
         // Doing this first eliminates foreign key locks on the master tables
@@ -68,12 +70,17 @@ export async function GET(req: NextRequest) {
         `);
 
         prodDb.exec("COMMIT;");
+        prodDb.exec("DETACH DATABASE seed;");
         prodDb.close();
+        if (fs.existsSync(tempWritableSeed)) fs.unlinkSync(tempWritableSeed);
 
         return NextResponse.json({ success: true, message: "Database synchronized and user progress reset successfully!" });
     } catch (dbErr) {
         prodDb.exec("ROLLBACK;");
+        // We try pulling it loose gently if we can
+        try { prodDb.exec("DETACH DATABASE seed;"); } catch (e) {}
         prodDb.close();
+        if (fs.existsSync(tempWritableSeed)) fs.unlinkSync(tempWritableSeed);
         throw dbErr;
     }
 
