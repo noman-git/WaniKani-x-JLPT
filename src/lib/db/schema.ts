@@ -26,8 +26,8 @@ export const jlptItems = sqliteTable("jlpt_items", {
   expression: text("expression").notNull(),
   reading: text("reading").notNull(),
   meaning: text("meaning").notNull(),
-  type: text("type", { enum: ["kanji", "vocab"] }).notNull(),
-  jlptLevel: text("jlpt_level", { enum: ["N4", "N5"] }).notNull(),
+  type: text("type", { enum: ["kanji", "vocab", "radical"] }).notNull(),
+  jlptLevel: text("jlpt_level", { enum: ["N4", "N5", "other"] }).notNull(),
   sources: text("sources").notNull().default("[]"),
 });
 
@@ -62,6 +62,7 @@ export const wanikaniRadicals = sqliteTable("wanikani_radicals", {
   meaningMnemonic: text("meaning_mnemonic"),
   meaningHint: text("meaning_hint"),
   amalgamationSubjectIds: text("amalgamation_subject_ids"),
+  matchedJlptItemId: integer("matched_jlpt_item_id").references(() => jlptItems.id),
 });
 
 export const kanjiCache = sqliteTable("kanji_cache", {
@@ -187,5 +188,5 @@ export type GrammarPoint = typeof grammarPoints.$inferSelect;
 export type GrammarProgressRecord = typeof grammarProgress.$inferSelect;
 export type GrammarNote = typeof grammarNotes.$inferSelect;
 export type ItemStatus = "known" | "learning" | "unknown";
-export type JlptLevel = "N4" | "N5";
-export type ItemType = "kanji" | "vocab";
+export type JlptLevel = "N4" | "N5" | "other";
+export type ItemType = "kanji" | "vocab" | "radical";

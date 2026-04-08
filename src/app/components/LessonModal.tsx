@@ -259,6 +259,29 @@ export default function LessonModal({ item }: { item: QuizItem }) {
         </div>
       )}
 
+      {/* Used in Kanji (Related Kanji for Radicals) */}
+      {(item.usedInKanji?.length || 0) > 0 && (
+        <div className="srs-breakdown-section">
+          <h4 className="srs-info-label">
+             <span className="srs-info-color-tick" style={{backgroundColor: 'var(--accent-kanji)'}}></span> Found In Kanji
+          </h4>
+          <div className="srs-chip-grid">
+            {item.usedInKanji!.map((k, idx) => (
+              <div 
+                key={idx} 
+                className="srs-feature-chip kanji-composition-chip"
+                onClick={() => setModalTarget({ type: "item", id: k.id })}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="srs-chip-main">{k.expression}</div>
+                <div className="srs-chip-sub">{k.meaning}</div>
+                <div className="srs-chip-meta">{k.jlptLevel?.toUpperCase() || ''}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Note Section is now handled separately by the parent container! */}
     </div>
   );

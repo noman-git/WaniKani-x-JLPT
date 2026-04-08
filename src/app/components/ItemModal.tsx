@@ -65,6 +65,14 @@ interface ItemDetail {
     type: string;
     jlptLevel: string;
   }>;
+  usedInKanji?: Array<{
+    id: number;
+    expression: string;
+    reading: string;
+    meaning: string;
+    type: string;
+    jlptLevel: string;
+  }>;
   componentKanji: Array<{
     id: number | null;
     expression: string;
@@ -594,6 +602,27 @@ function ItemView({
                 >
                   <span className="vocab-chip-expr">{v.expression}</span>
                   <span className="vocab-chip-level">{v.jlptLevel}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Used in Kanji (for radical items) ── */}
+        {detail.usedInKanji && detail.usedInKanji.length > 0 && (
+          <div className="modal-section">
+            <h3 className="modal-section-title">Found In Kanji</h3>
+            <div className="modal-related-vocab">
+              {detail.usedInKanji.map((k) => (
+                <button
+                  key={k.id}
+                  className="related-vocab-chip kanji-chip"
+                  onClick={() => navigateToItem(k.id)}
+                  title={`${k.reading} — ${k.meaning}`}
+                >
+                  <span className="vocab-chip-expr">{k.expression}</span>
+                  <span className="vocab-chip-meaning">{k.meaning}</span>
+                  <span className="vocab-chip-level">{k.jlptLevel}</span>
                 </button>
               ))}
             </div>

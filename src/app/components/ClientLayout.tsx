@@ -29,6 +29,7 @@ function NavBar() {
         </Link>
         <ul className="nav-links">
           <li><Link href="/" className={`nav-link ${isActive("/") ? "active" : ""}`}>Dashboard</Link></li>
+          <li><Link href="/radicals" className={`nav-link radical-nav ${isActive("/radicals") ? "active" : ""}`}>Radicals</Link></li>
           <li><Link href="/kanji" className={`nav-link kanji-nav ${isActive("/kanji") ? "active" : ""}`}>Kanji</Link></li>
           <li><Link href="/vocab" className={`nav-link vocab-nav ${isActive("/vocab") ? "active" : ""}`}>Vocab</Link></li>
           <li><Link href="/grammar" className={`nav-link grammar-nav ${isActive("/grammar") ? "active" : ""}`}>Grammar</Link></li>

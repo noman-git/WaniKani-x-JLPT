@@ -25,10 +25,14 @@ export default function LearnPage() {
            return;
         }
 
-        const items: QuizItem[] = await Promise.all(data.lessons.map(async (r: any) => {
-           // Deep Hydration directly from the legacy modal API!
-           const detailRes = await fetch(`/api/items/${r.item.id}`);
-           const detail = await detailRes.json();
+        const lessonIds = data.lessons.map((r: any) => r.item.id);
+        const bulkRes = await fetch(`/api/items/bulk?ids=${lessonIds.join(",")}`);
+        const bulkData = await bulkRes.json();
+        
+        const items: QuizItem[] = [];
+        for (const id of lessonIds) {
+           const detail = bulkData.items[id];
+           if (!detail) continue;
            
            let parsedReadings = [];
            let parsedMeanings = [];
@@ -46,7 +50,7 @@ export default function LearnPage() {
            if (parsedReadings.length === 0 && detail.item.reading) parsedReadings.push(detail.item.reading);
            if (parsedMeanings.length === 0 && detail.item.meaning) parsedMeanings.push(detail.item.meaning);
 
-           return {
+           items.push({
              id: detail.item.id,
              jlptItemId: detail.item.id,
              type: detail.item.type,
@@ -56,6 +60,7 @@ export default function LearnPage() {
              advancedReadings,
              meanings: parsedMeanings,
              advancedMeanings,
+             imageUrl: detail.wanikani?.imageUrl,
              note: detail.note,
              meaningMnemonic: detail.wanikani?.meaningMnemonic,
              readingMnemonic: detail.wanikani?.readingMnemonic,
@@ -67,9 +72,10 @@ export default function LearnPage() {
              wkLevel: detail.wanikani?.level,
              radicals: detail.wanikani?.radicals,
              componentKanji: detail.componentKanji,
+             usedInKanji: detail.usedInKanji,
              relatedVocab: detail.relatedVocab
-           };
-        }));
+           });
+        }
 
         setBatch(items);
         setPhase("lesson");
@@ -183,7 +189,17 @@ export default function LearnPage() {
                  {item.jlptLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '4px 8px', borderRadius: '4px' }}>{item.jlptLevel.toUpperCase()}</span>}
                  {item.wkLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', padding: '4px 8px', borderRadius: '4px' }}>WK Lv {item.wkLevel}</span>}
               </div>
-              <h2 className="srs-character-display">{item.characters}</h2>
+              {(!item.characters || item.characters.startsWith('[')) && item.imageUrl ? (
+                <div className="srs-character-display" style={{ display: 'flex', justifyContent: 'center' }}>
+                   <img 
+                     src={item.imageUrl} 
+                     alt={item.meanings?.[0] || 'radical'} 
+                     style={{ height: '120px', filter: 'brightness(0) invert(1)' }} 
+                   />
+                </div>
+              ) : (
+                <h2 className="srs-character-display">{item.characters}</h2>
+              )}
             </div>
             
             {/* Scrollable Content Panel! */}

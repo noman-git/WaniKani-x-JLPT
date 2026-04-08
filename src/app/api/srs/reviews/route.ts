@@ -22,28 +22,23 @@ export async function GET(req: NextRequest) {
 
     const now = new Date().toISOString();
 
-    // Fetch all items from user_progress where nextReviewAt <= NOW()
-    const reviews = await db
+    const rawReviews = await db
       .select({
         item: jlptItems,
-        wkDetails: wanikaniSubjects,
         progress: userProgress,
       })
       .from(userProgress)
       .innerJoin(jlptItems, eq(userProgress.jlptItemId, jlptItems.id))
-      .leftJoin(wanikaniSubjects, eq(wanikaniSubjects.matchedJlptItemId, jlptItems.id))
       .where(
         and(
           eq(userProgress.userId, userId),
           isNotNull(userProgress.nextReviewAt),
           lte(userProgress.nextReviewAt, now),
-          // Do not fetch burned/mastered/known items for routine reviews
-          // Actually, 'known' items don't have nextReviewAt if they are sidestepped, OR their nextReviewAt is 120 days away. If it hits, it hits!
         )
       )
-      .limit(limit);
+      .orderBy(userProgress.nextReviewAt);
 
-    return NextResponse.json({ reviews });
+    return NextResponse.json({ reviews: rawReviews });
   } catch (error) {
     console.error("SRS Reviews Queue Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
