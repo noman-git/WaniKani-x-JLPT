@@ -22,6 +22,7 @@ fs.copyFileSync(DB_PATH, SEED_PATH);
 // Open the copy and strip user data
 const db = new Database(SEED_PATH);
 db.pragma("journal_mode = DELETE"); // No WAL for the seed file
+db.pragma("foreign_keys = OFF"); // Disable for mass deletion
 
 // Clear user-specific tables
 db.exec(`

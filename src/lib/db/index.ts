@@ -6,7 +6,9 @@ import path from "path";
 import fs from "fs";
 
 const DB_PATH = path.join(process.cwd(), "data", "jlpt.db");
-const SEED_DB_PATH = path.join(process.cwd(), "data", "jlpt-seed.db");
+const APP_SEED_PATH = path.join("/app", "seed", "jlpt-seed.db");
+const LOCAL_SEED_PATH = path.join(process.cwd(), "data", "jlpt-seed.db");
+const SEED_DB_PATH = fs.existsSync(APP_SEED_PATH) ? APP_SEED_PATH : LOCAL_SEED_PATH;
 
 // Ensure data directory exists
 const dataDir = path.dirname(DB_PATH);
