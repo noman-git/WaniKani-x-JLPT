@@ -33,7 +33,8 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/drizzle ./drizzle
 
 # Copy seed database (will be used if no DB exists on the volume)
-COPY --from=builder /app/data/jlpt-seed.db ./data/
+RUN mkdir -p /app/seed
+COPY --from=builder /app/data/jlpt-seed.db ./seed/
 
 # Set ownership for data directory (will be a volume mount)
 RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
