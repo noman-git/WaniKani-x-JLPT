@@ -1,0 +1,1 @@
+ALTER TABLE `wanikani_radicals` ADD `matched_jlpt_item_id` integer REFERENCES jlpt_items(id);

@@ -15,6 +15,13 @@
       "when": 1775486097562,
       "tag": "0001_cooing_ted_forrester",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1775660860482,
+      "tag": "0002_loving_salo",
+      "breakpoints": true
     }
   ]
 }
