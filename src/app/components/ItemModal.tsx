@@ -365,7 +365,6 @@ export default function ItemModal({
 
 function ItemView({
   detail,
-  status,
   note,
   onNoteChange,
   activeTab,
