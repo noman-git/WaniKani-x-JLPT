@@ -91,13 +91,93 @@ body {
 
 /* ===== Nav ===== */
 .nav {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
   backdrop-filter: blur(20px);
   background: rgba(10, 10, 18, 0.8);
   border-bottom: 1px solid var(--border-subtle);
   padding: 16px 0;
+}
+
+/* Desktop nav hidden on mobile, mobile nav hidden on desktop */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-desktop-only {
+    display: none !important;
+  }
+  .mobile-nav {
+    display: block;
+    position: relative;
+    z-index: 100;
+    background: rgba(10, 10, 18, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .mobile-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .mobile-nav-brand {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+  }
+  .mobile-nav-hamburger {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .mobile-nav-hamburger:hover {
+    background: var(--bg-glass);
+    color: var(--text-primary);
+  }
+  .mobile-nav-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    left: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-medium);
+    border-radius: 12px;
+    padding: 8px 0;
+    z-index: 200;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+  .mobile-nav-item {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 15px;
+    padding: 12px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .mobile-nav-item:hover {
+    background: var(--bg-glass);
+  }
+  .mobile-nav-item-active {
+    color: var(--accent-n5);
+    font-weight: 600;
+  }
 }
 
 .nav-inner {
@@ -1678,37 +1758,110 @@ body {
 }
 
 /* ===== Nav User ===== */
-.nav-user {
+/* User Menu */
+.user-menu {
+  position: relative;
+}
+
+.user-menu-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.user-menu-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-n5), var(--accent-n4));
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: box-shadow 0.15s;
+}
+.user-menu-trigger:hover .user-menu-avatar {
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-n5);
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  border-radius: 12px;
+  padding: 0;
+  min-width: 180px;
+  z-index: 300;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.user-menu-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: 8px;
-  padding-left: 16px;
-  border-left: 1px solid var(--border-subtle);
+  padding: 14px 16px;
 }
 
-.nav-username {
+.user-menu-avatar-lg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-n5), var(--accent-n4));
+  color: white;
   font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
-.nav-logout {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  font-size: 12px;
+.user-menu-name {
+  font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
-  font-family: var(--font-ui);
-  transition: all 0.2s;
+  color: var(--text-primary);
 }
 
-.nav-logout:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.4);
+.user-menu-divider {
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.user-menu-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  padding: 10px 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.user-menu-item:hover {
+  background: var(--bg-glass);
+}
+
+.user-menu-item-danger {
+  color: #ef4444;
+}
+.user-menu-item-danger:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* Mobile nav right section */
+.mobile-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ===== Note Section ===== */
@@ -3218,15 +3371,15 @@ body {
   top: 0;
   z-index: 100;
   background: var(--bg-primary);
+  padding: 4px 0;
+  max-width: 880px;
+  margin: 0 auto;
 }
 
 .cs-topbar-inner {
-  max-width: 720px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  padding: 12px 16px 8px;
 }
 
 .cs-progress-line {
@@ -3261,9 +3414,9 @@ body {
 
 /* Card Stack Container */
 .cs-card-stack {
-  max-width: 680px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: 8px 16px;
+  padding: 16px 16px 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -3500,13 +3653,28 @@ body {
   right: 0;
   background: var(--bg-primary);
   border-top: 1px solid var(--border-subtle);
-  padding: 12px 20px;
+  padding: 0 20px 12px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0;
   z-index: 100;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+.cs-bottom-nav > .cs-progress-line {
+  margin: 0 -20px;
+  border-radius: 0;
+  height: 4px;
+  min-height: 4px;
+  flex: none;
+}
+
+.cs-bottom-nav-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
 }
 
 .cs-nav-btn {
@@ -3538,6 +3706,7 @@ body {
   color: var(--text-muted);
   font-weight: 600;
 }
+
 
 @media (max-width: 600px) {
   .cs-card-stack {

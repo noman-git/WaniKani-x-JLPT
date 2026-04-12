@@ -160,24 +160,7 @@ export default function LearnPage() {
 
     return (
       <div className="cs-lesson-page">
-        {/* ── Minimal Top Bar ── */}
-        <div className="cs-topbar">
-          <div className="cs-topbar-inner">
-            <div className="cs-progress-line">
-              <div 
-                className="cs-progress-fill" 
-                style={{ width: `${((currentIndex + 1) / batch.length) * 100}%` }}
-              />
-            </div>
-            <button 
-              className="cs-topbar-close" 
-              onClick={() => router.push('/')}
-              title="Exit Lessons"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
+
 
         {/* ── Scrollable Card Stack ── */}
         <div className="cs-card-stack">
@@ -328,24 +311,32 @@ export default function LearnPage() {
 
         {/* ── Fixed Bottom Navigation ── */}
         <div className="cs-bottom-nav">
-          <button 
-            onClick={prevSlide} 
-            disabled={currentIndex === 0} 
-            className="cs-nav-btn"
-            style={{ opacity: currentIndex === 0 ? 0.3 : 1 }}
-          >
-            ← Prev
-          </button>
-          <span className="cs-nav-counter">{currentIndex + 1} / {batch.length}</span>
-          {currentIndex < batch.length - 1 ? (
-            <button onClick={nextSlide} className="cs-nav-btn">
-              Next →
+          <div className="cs-progress-line">
+            <div 
+              className="cs-progress-fill" 
+              style={{ width: `${((currentIndex + 1) / batch.length) * 100}%` }}
+            />
+          </div>
+          <div className="cs-bottom-nav-buttons">
+            <button 
+              onClick={prevSlide} 
+              disabled={currentIndex === 0} 
+              className="cs-nav-btn"
+              style={{ opacity: currentIndex === 0 ? 0.3 : 1 }}
+            >
+              ← Prev
             </button>
-          ) : (
-            <button onClick={nextSlide} className="cs-nav-btn cs-nav-quiz">
-              Start Quiz →
-            </button>
-          )}
+            <span className="cs-nav-counter">{currentIndex + 1} / {batch.length}</span>
+            {currentIndex < batch.length - 1 ? (
+              <button onClick={nextSlide} className="cs-nav-btn">
+                Next →
+              </button>
+            ) : (
+              <button onClick={nextSlide} className="cs-nav-btn cs-nav-quiz">
+                Start Quiz →
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
