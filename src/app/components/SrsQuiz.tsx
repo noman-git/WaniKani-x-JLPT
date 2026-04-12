@@ -444,6 +444,7 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
                       <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'left', height: '100%' }}>
                          <div style={{ padding: '24px' }}>
                             <QuizNoteManager 
+                              key={currentTask.item.jlptItemId}
                               itemId={currentTask.item.jlptItemId} 
                               initialNote={currentTask.item.note || ""} 
                               onSaveSuccess={(newNote) => {

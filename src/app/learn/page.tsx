@@ -298,6 +298,7 @@ export default function LearnPage() {
               Personal Notes
             </h3>
             <QuizNoteManager 
+              key={item.jlptItemId}
               itemId={item.jlptItemId} 
               initialNote={item.note || ""} 
               onSaveSuccess={(newNote) => {
