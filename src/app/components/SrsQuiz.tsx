@@ -443,7 +443,16 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
                    <div className="srs-learn-sidecar" style={{ height: '100%' }}>
                       <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'left', height: '100%' }}>
                          <div style={{ padding: '24px' }}>
-                            <QuizNoteManager itemId={currentTask.item.jlptItemId} initialNote={currentTask.item.note || ""} />
+                            <QuizNoteManager 
+                              itemId={currentTask.item.jlptItemId} 
+                              initialNote={currentTask.item.note || ""} 
+                              onSaveSuccess={(newNote) => {
+                                 const newTask = { ...currentTask, item: { ...currentTask.item, note: newNote } };
+                                 setCurrentTask(newTask);
+                                 // Also update it in the underlying items/queue so it stays if re-inserted
+                                 setQueue(prev => prev.map(t => t.item.id === currentTask.item.id ? { ...t, item: { ...t.item, note: newNote } } : t));
+                              }}
+                            />
                          </div>
                       </div>
                    </div>

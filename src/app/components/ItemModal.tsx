@@ -431,10 +431,17 @@ function ItemView({
   return (
     <>
       {/* ── Header ── */}
-      <div className="modal-header">
+      <div 
+        className="modal-header"
+        style={{
+          backgroundColor: `var(--accent-${detail.item.type})`,
+          color: 'white',
+          borderBottom: 'none'
+        }}
+      >
         <div className="modal-header-left">
           {canGoBack && (
-            <button className="modal-back" onClick={goBack} title="Go back">
+            <button className="modal-back" onClick={goBack} title="Go back" style={{ color: 'white' }}>
               ←
             </button>
           )}
@@ -447,23 +454,24 @@ function ItemView({
             )}
           </div>
           <div className="modal-header-meta">
-            <span className="modal-reading-label">{detail.item.reading}</span>
-            <span className="modal-meaning-label">{detail.item.meaning}</span>
+            <span className="modal-reading-label" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>{detail.item.reading}</span>
+            <span className="modal-meaning-label" style={{ color: 'white' }}>{detail.item.meaning}</span>
           </div>
         </div>
         <div className="modal-header-actions" style={{display: "flex", gap: "10px", alignItems: "center"}}>
           <div className="modal-nav-arrows" style={{display: "flex", gap: "4px"}}>
-            {onPrev && <button className="modal-close" onClick={onPrev} title="Previous Item">‹</button>}
-            {onNext && <button className="modal-close" onClick={onNext} title="Next Item">›</button>}
+            {onPrev && <button className="modal-close" onClick={onPrev} title="Previous Item" style={{ color: 'white' }}>‹</button>}
+            {onNext && <button className="modal-close" onClick={onNext} title="Next Item" style={{ color: 'white' }}>›</button>}
           </div>
           <button 
             className={`modal-toggle-note-btn ${isNotesOpen ? 'open' : ''} ${note ? 'has-note' : ''}`}
             onClick={() => setIsNotesOpen(!isNotesOpen)}
             title="Toggle Notes"
+            style={{ backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}
           >
             📝 Notes {note && '(1)'}
           </button>
-          <button className="modal-close" onClick={onClose} title="Close">✕</button>
+          <button className="modal-close" onClick={onClose} title="Close" style={{ color: 'white' }}>✕</button>
         </div>
       </div>
 
@@ -749,10 +757,17 @@ function RadicalView({
   return (
     <>
       {/* ── Header ── */}
-      <div className="modal-header radical-header">
+      <div 
+        className="modal-header radical-header"
+        style={{
+          backgroundColor: 'var(--accent-radical)',
+          color: 'white',
+          borderBottom: 'none'
+        }}
+      >
         <div className="modal-header-left">
           {canGoBack && (
-            <button className="modal-back" onClick={goBack} title="Go back">
+            <button className="modal-back" onClick={goBack} title="Go back" style={{ color: 'white' }}>
               ←
             </button>
           )}
@@ -764,11 +779,11 @@ function RadicalView({
             )}
           </span>
           <div className="modal-header-meta">
-            <span className="modal-reading-label radical-type-label">Radical</span>
-            <span className="modal-meaning-label">{primaryMeaning}</span>
+            <span className="modal-reading-label radical-type-label" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Radical</span>
+            <span className="modal-meaning-label" style={{ color: 'white' }}>{primaryMeaning}</span>
           </div>
         </div>
-        <button className="modal-close" onClick={onClose}>✕</button>
+        <button className="modal-close" onClick={onClose} style={{ color: 'white' }}>✕</button>
       </div>
 
       {/* ── Body ── */}

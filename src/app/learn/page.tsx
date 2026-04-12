@@ -174,20 +174,28 @@ export default function LearnPage() {
               </div>
             </div>
 
-            <div className="srs-display-block" style={{ flexShrink: 0 }}>
+            <div 
+              className="srs-display-block" 
+              style={{ 
+                flexShrink: 0,
+                backgroundColor: `var(--accent-${item.type})`,
+                color: 'white',
+                borderBottom: 'none'
+              }}
+            >
               <button 
                  onClick={handleMarkKnown}
                  className="srs-deep-check"
-                 style={{ top: '16px', right: '16px', position: 'absolute' }}
+                 style={{ top: '16px', right: '16px', position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
               >
                  <span className="srs-star">★</span>
                  <span>Deep Check-in (Mark Known)</span>
               </button>
 
               <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                 <span className="srs-type-badge" style={{ position: 'static' }}>{item.type}</span>
-                 {item.jlptLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '4px 8px', borderRadius: '4px' }}>{item.jlptLevel.toUpperCase()}</span>}
-                 {item.wkLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', padding: '4px 8px', borderRadius: '4px' }}>WK Lv {item.wkLevel}</span>}
+                 <span className="srs-type-badge" style={{ position: 'static', backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}>{item.type}</span>
+                 {item.jlptLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)' }}>{item.jlptLevel.toUpperCase()}</span>}
+                 {item.wkLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)' }}>WK Lv {item.wkLevel}</span>}
               </div>
               {(!item.characters || item.characters.startsWith('[')) && item.imageUrl ? (
                 <div className="srs-character-display" style={{ display: 'flex', justifyContent: 'center' }}>
@@ -198,7 +206,7 @@ export default function LearnPage() {
                    />
                 </div>
               ) : (
-                <h2 className="srs-character-display">{item.characters}</h2>
+                <h2 className="srs-character-display" style={{ color: 'white' }}>{item.characters}</h2>
               )}
             </div>
             
@@ -212,7 +220,15 @@ export default function LearnPage() {
           <div className="srs-learn-sidecar">
             <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', height: '100%' }}>
               <div style={{ padding: '24px' }}>
-                <QuizNoteManager itemId={item.jlptItemId} initialNote={item.note || ""} />
+                <QuizNoteManager 
+                  itemId={item.jlptItemId} 
+                  initialNote={item.note || ""} 
+                  onSaveSuccess={(newNote) => {
+                     const newBatch = [...batch];
+                     newBatch[currentIndex] = { ...item, note: newNote };
+                     setBatch(newBatch);
+                  }}
+                />
               </div>
             </div>
           </div>

@@ -359,7 +359,7 @@ export default function GrammarDetailModal({
               />
               <div className="note-footer">
                 <button
-                  className={`note-save-btn ${noteSaving ? "saving" : ""} ${noteSaved ? "saved" : ""}`}
+                  className={`note-save-btn ${noteSaving ? "note-save-saving" : noteSaved ? "note-save-saved" : "note-save-idle"}`}
                   onClick={saveNote}
                   disabled={noteSaving}
                 >

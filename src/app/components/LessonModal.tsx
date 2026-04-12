@@ -2,14 +2,27 @@
 
 import { QuizItem } from "./SrsQuiz";
 import DOMPurify from "dompurify";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ItemModal from "@/app/components/ItemModal";
 
 type NoteSaveState = "idle" | "saving" | "saved" | "error";
 
-export function QuizNoteManager({ itemId, initialNote }: { itemId: number, initialNote: string }) {
+export function QuizNoteManager({ 
+  itemId, 
+  initialNote,
+  onSaveSuccess 
+}: { 
+  itemId: number, 
+  initialNote: string,
+  onSaveSuccess?: (note: string) => void 
+}) {
   const [note, setNote] = useState(initialNote);
   const [saveState, setSaveState] = useState<NoteSaveState>("idle");
+
+  useEffect(() => {
+    setNote(initialNote || "");
+    setSaveState("idle");
+  }, [itemId, initialNote]);
 
   const handleSave = async () => {
     setSaveState("saving");
@@ -21,6 +34,7 @@ export function QuizNoteManager({ itemId, initialNote }: { itemId: number, initi
       });
       if (!res.ok) throw new Error("Save failed");
       setSaveState("saved");
+      if (onSaveSuccess) onSaveSuccess(note);
       setTimeout(() => setSaveState("idle"), 2500);
     } catch {
       setSaveState("error");
@@ -35,38 +49,29 @@ export function QuizNoteManager({ itemId, initialNote }: { itemId: number, initi
     "Save Note";
 
   return (
-    <div className="srs-breakdown-section">
-      <h4 className="srs-info-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-         <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="srs-info-color-tick" style={{backgroundColor: '#eab308'}}></span> 
-            📝 Personal Note
-         </span>
-         <button
-            onClick={handleSave}
-            disabled={saveState === "saving"}
-            style={{ 
-               backgroundColor: saveState === "saved" ? '#10b981' : saveState === "error" ? '#ef4444' : 'var(--bg-card)', 
-               color: saveState === "saved" || saveState === "error" ? "white" : 'var(--text-primary)',
-               border: saveState === "idle" || saveState === "saving" ? '1px solid var(--border-medium)' : 'none',
-               padding: '4px 12px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s'
-            }}
-         >
-           {btnLabel}
-         </button>
-      </h4>
+    <div className="note-section">
+      <div className="note-header">
+        <span className="note-title">📝 My Note</span>
+      </div>
       <textarea
+        className="note-textarea"
         value={note}
         onChange={(e) => {
           setNote(e.target.value);
           setSaveState("idle");
         }}
-        placeholder="Add your personal notes, custom hints, or reminders for this item..."
-        style={{
-           width: '100%', minHeight: '100px', backgroundColor: 'var(--bg-document)',
-           border: '1px solid var(--border-light)', borderRadius: '8px', padding: '12px',
-           color: 'var(--text-primary)', resize: 'vertical', fontSize: '14px', lineHeight: '1.5'
-        }}
+        placeholder="Add your personal note for this item..."
+        rows={3}
       />
+      <div className="note-footer">
+        <button
+          className={`note-save-btn note-save-${saveState}`}
+          onClick={handleSave}
+          disabled={saveState === "saving"}
+        >
+          {btnLabel}
+        </button>
+      </div>
     </div>
   );
 }
