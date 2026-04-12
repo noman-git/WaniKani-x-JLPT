@@ -132,7 +132,7 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     const nextQueue = queue.slice(1);
     
     // Check if the item is FULLY completed (no other tasks for this ID in the nextQueue)
-    if (currentTask && mode === "review") {
+    if (currentTask) {
         const isFullyCompleted = !nextQueue.some(t => t.item.id === currentTask.item.id);
         if (isFullyCompleted) {
             const itemStatus = itemMistakeState.current[currentTask.item.id];
