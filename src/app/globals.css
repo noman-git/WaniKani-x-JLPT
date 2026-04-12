@@ -903,15 +903,15 @@ body {
 .modal-tabs {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
+  gap: 0;
   padding: 0 28px;
   border-bottom: 1px solid var(--border-subtle);
-  overflow-x: auto;
-  white-space: nowrap;
 }
 
 .modal-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: none;
   border: none;
   color: var(--text-muted);
@@ -1558,52 +1558,21 @@ body {
   letter-spacing: 0.5px;
 }
 
-/* ── Modal Tabs Layout ── */
-.modal-tabs-left {
-  display: flex;
-  gap: 0;
-}
-
-/* ── External Links in Modal Tabs ── */
-.modal-external-links {
-  display: flex;
-  gap: 6px;
-  padding-right: 24px;
-}
-
-.modal-ext-link {
+/* ── Tab External Link Arrow ── */
+.tab-ext-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--text-muted);
   text-decoration: none;
-  transition: all 0.2s;
-  white-space: nowrap;
+  opacity: 0.6;
+  transition: opacity 0.15s, color 0.15s;
+  line-height: 1;
 }
-
-.modal-ext-link.wk-link {
-  background: rgba(168, 85, 247, 0.1);
-  color: #c4b5fd;
-  border: 1px solid rgba(168, 85, 247, 0.2);
-}
-
-.modal-ext-link.wk-link:hover {
-  background: rgba(168, 85, 247, 0.2);
-  border-color: rgba(168, 85, 247, 0.4);
-}
-
-.modal-ext-link.jisho-link {
-  background: rgba(56, 189, 248, 0.1);
-  color: #7dd3fc;
-  border: 1px solid rgba(56, 189, 248, 0.2);
-}
-
-.modal-ext-link.jisho-link:hover {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: rgba(56, 189, 248, 0.4);
+.tab-ext-link:hover {
+  opacity: 1;
+  color: var(--accent-n5);
 }
 
 /* ===== Responsive ===== */
@@ -1621,8 +1590,7 @@ body {
   .modal-expression { font-size: 40px; }
   .modal-body { padding: 16px 20px; }
   .modal-footer { padding: 12px 20px; flex-direction: column; gap: 12px; }
-  .modal-tabs { padding: 0 20px; flex-wrap: wrap; }
-  .modal-external-links { padding-right: 12px; }
+  .modal-tabs { padding: 0 20px; }
 
   .login-card { margin: 20px; padding: 32px 24px; }
 }

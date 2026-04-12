@@ -464,34 +464,26 @@ function ItemView({
         </div>
       </div>
 
-      {/* ── Tabs with external links ── */}
+      {/* ── Tabs ── */}
       <div className="modal-tabs">
-        <div className="modal-tabs-left">
-          <button
-            className={`modal-tab ${(activeTab === "wk" || activeTab === "pseudo-wk") ? "active" : ""}`}
-            onClick={() => setActiveTab(detail.wanikani?.matchType === "pseudo" ? "pseudo-wk" : "wk")}
-            disabled={!detail.wanikani}
-            title={!detail.wanikani ? "No context data available" : ""}
-          >
-            {detail.wanikani?.matchType === "pseudo" ? "✨ AI Context" : "🐊 WaniKani"}
-          </button>
-          <button
-            className={`modal-tab ${activeTab === "dict" ? "active" : ""}`}
-            onClick={() => setActiveTab("dict")}
-          >
-            📖 辞書
-          </button>
-        </div>
-        <div className="modal-external-links">
+        <button
+          className={`modal-tab ${(activeTab === "wk" || activeTab === "pseudo-wk") ? "active" : ""}`}
+          onClick={() => setActiveTab(detail.wanikani?.matchType === "pseudo" ? "pseudo-wk" : "wk")}
+          disabled={!detail.wanikani}
+          title={!detail.wanikani ? "No context data available" : ""}
+        >
+          {detail.wanikani?.matchType === "pseudo" ? "✨ AI Context" : "🐊 WaniKani"}
           {wkUrl && (
-            <a href={wkUrl} target="_blank" rel="noopener noreferrer" className="modal-ext-link wk-link" title="Open on WaniKani">
-              🐊 Open
-            </a>
+            <a href={wkUrl} target="_blank" rel="noopener noreferrer" className="tab-ext-link" title="Open on WaniKani" onClick={(e) => e.stopPropagation()}>↗</a>
           )}
-          <a href={jishoUrl} target="_blank" rel="noopener noreferrer" className="modal-ext-link jisho-link" title="Open on Jisho.org">
-            📖 Open
-          </a>
-        </div>
+        </button>
+        <button
+          className={`modal-tab ${activeTab === "dict" ? "active" : ""}`}
+          onClick={() => setActiveTab("dict")}
+        >
+          📖 辞書
+          <a href={jishoUrl} target="_blank" rel="noopener noreferrer" className="tab-ext-link" title="Open on Jisho.org" onClick={(e) => e.stopPropagation()}>↗</a>
+        </button>
       </div>
 
       {/* ── Tab Content ── */}
