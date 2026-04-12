@@ -91,13 +91,98 @@ body {
 
 /* ===== Nav ===== */
 .nav {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
   backdrop-filter: blur(20px);
   background: rgba(10, 10, 18, 0.8);
   border-bottom: 1px solid var(--border-subtle);
   padding: 16px 0;
+}
+
+/* Desktop nav hidden on mobile, mobile nav hidden on desktop */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-desktop-only {
+    display: none !important;
+  }
+  .mobile-nav {
+    display: block;
+    position: relative;
+    z-index: 100;
+    background: rgba(10, 10, 18, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .mobile-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .mobile-nav-brand {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+  }
+  .mobile-nav-hamburger {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .mobile-nav-hamburger:hover {
+    background: var(--bg-glass);
+    color: var(--text-primary);
+  }
+  .mobile-nav-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    left: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-medium);
+    border-radius: 12px;
+    padding: 8px 0;
+    z-index: 200;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+  .mobile-nav-item {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 15px;
+    padding: 12px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .mobile-nav-item:hover {
+    background: var(--bg-glass);
+  }
+  .mobile-nav-item-active {
+    color: var(--accent-n5);
+    font-weight: 600;
+  }
+  .mobile-nav-logout {
+    color: #ef4444;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 4px;
+  }
 }
 
 .nav-inner {
@@ -136,6 +221,7 @@ body {
 
 .nav-links {
   display: flex;
+  align-items: center;
   gap: 8px;
   list-style: none;
   flex-wrap: wrap;
@@ -815,27 +901,32 @@ body {
 
 /* ── Tabs ── */
 .modal-tabs {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  padding: 0 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0;
   border-bottom: 1px solid var(--border-subtle);
-  overflow-x: auto;
-  white-space: nowrap;
 }
 
 .modal-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   background: none;
   border: none;
   color: var(--text-muted);
   font-family: var(--font-ui);
   font-size: 14px;
   font-weight: 500;
-  padding: 14px 20px;
+  padding: 14px 16px;
   cursor: pointer;
   position: relative;
   transition: color 0.2s;
+  width: 100%;
+}
+
+.modal-tab:first-child {
+  border-right: 1px solid var(--border-subtle);
 }
 
 .modal-tab:hover:not(:disabled) {
@@ -1472,52 +1563,23 @@ body {
   letter-spacing: 0.5px;
 }
 
-/* ── Modal Tabs Layout ── */
-.modal-tabs-left {
+/* ── Tab Source Link ── */
+.tab-source-link {
   display: flex;
-  gap: 0;
-}
-
-/* ── External Links in Modal Tabs ── */
-.modal-external-links {
-  display: flex;
-  gap: 6px;
-  padding-right: 24px;
-}
-
-.modal-ext-link {
-  display: inline-flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 4px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-muted);
   text-decoration: none;
-  transition: all 0.2s;
-  white-space: nowrap;
+  margin-bottom: 16px;
+  transition: color 0.15s;
 }
-
-.modal-ext-link.wk-link {
-  background: rgba(168, 85, 247, 0.1);
-  color: #c4b5fd;
-  border: 1px solid rgba(168, 85, 247, 0.2);
+.tab-source-link:hover {
+  color: var(--accent-n5);
 }
-
-.modal-ext-link.wk-link:hover {
-  background: rgba(168, 85, 247, 0.2);
-  border-color: rgba(168, 85, 247, 0.4);
-}
-
-.modal-ext-link.jisho-link {
-  background: rgba(56, 189, 248, 0.1);
-  color: #7dd3fc;
-  border: 1px solid rgba(56, 189, 248, 0.2);
-}
-
-.modal-ext-link.jisho-link:hover {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: rgba(56, 189, 248, 0.4);
+.tab-source-arrow {
+  font-size: 14px;
 }
 
 /* ===== Responsive ===== */
@@ -1535,8 +1597,7 @@ body {
   .modal-expression { font-size: 40px; }
   .modal-body { padding: 16px 20px; }
   .modal-footer { padding: 12px 20px; flex-direction: column; gap: 12px; }
-  .modal-tabs { padding: 0 20px; flex-wrap: wrap; }
-  .modal-external-links { padding-right: 12px; }
+
 
   .login-card { margin: 20px; padding: 32px 24px; }
 }
@@ -1678,37 +1739,110 @@ body {
 }
 
 /* ===== Nav User ===== */
-.nav-user {
+/* User Menu */
+.user-menu {
+  position: relative;
+}
+
+.user-menu-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.user-menu-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-n5), var(--accent-n4));
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: box-shadow 0.15s;
+}
+.user-menu-trigger:hover .user-menu-avatar {
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-n5);
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  border-radius: 12px;
+  padding: 0;
+  min-width: 180px;
+  z-index: 300;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.user-menu-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: 8px;
-  padding-left: 16px;
-  border-left: 1px solid var(--border-subtle);
+  padding: 14px 16px;
 }
 
-.nav-username {
+.user-menu-avatar-lg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-n5), var(--accent-n4));
+  color: white;
   font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
-.nav-logout {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  font-size: 12px;
+.user-menu-name {
+  font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
-  font-family: var(--font-ui);
-  transition: all 0.2s;
+  color: var(--text-primary);
 }
 
-.nav-logout:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.4);
+.user-menu-divider {
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.user-menu-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  padding: 10px 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.user-menu-item:hover {
+  background: var(--bg-glass);
+}
+
+.user-menu-item-danger {
+  color: #ef4444;
+}
+.user-menu-item-danger:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* Mobile nav right section */
+.mobile-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ===== Note Section ===== */
@@ -3201,4 +3335,377 @@ body {
   border: 1px solid var(--border-medium);
   box-sizing: border-box;
   text-align: left;
+}
+
+/* ==============================
+   LESSON CARD STACK (Option C)
+   ============================== */
+
+.cs-lesson-page {
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* Thin top bar */
+.cs-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-primary);
+  padding: 4px 0;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.cs-topbar-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 12px 16px 8px;
+}
+
+.cs-progress-line {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.cs-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-n5), var(--accent-n4));
+  border-radius: 2px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cs-topbar-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.cs-topbar-close:hover {
+  background: var(--bg-glass);
+  color: var(--text-primary);
+}
+
+/* Card Stack Container */
+.cs-card-stack {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 16px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Individual Card */
+.cs-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+}
+
+.cs-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cs-card-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Hero Card */
+.cs-card-hero {
+  border: none;
+  padding: 48px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  position: relative;
+}
+
+.cs-hero-badges {
+  display: flex;
+  gap: 6px;
+  position: absolute;
+  top: 14px;
+  left: 20px;
+}
+
+.cs-hero-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.cs-known-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cs-known-btn:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.cs-hero-char {
+  font-size: 88px;
+  font-weight: 900;
+  color: white;
+  font-family: var(--font-jp);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.cs-hero-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.cs-hero-meaning {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.cs-hero-reading {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-jp);
+}
+
+/* Meanings row */
+.cs-meanings-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.cs-meaning-tag {
+  padding: 4px 12px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.cs-meaning-tag.cs-primary {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #818cf8;
+  font-weight: 600;
+}
+
+/* Readings grid */
+.cs-readings-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.cs-reading-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cs-reading-type {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.cs-reading-values {
+  display: flex;
+  gap: 12px;
+  font-family: var(--font-jp);
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.cs-reading-primary {
+  color: #10b981;
+  border-bottom: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Mnemonics */
+.cs-mnemonic {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.cs-mnemonic radical,
+.cs-mnemonic kanji,
+.cs-mnemonic vocabulary,
+.cs-mnemonic reading,
+.cs-mnemonic ja {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cs-hint {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: var(--bg-glass);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-left: 3px solid var(--accent-n5);
+}
+
+/* Sentences */
+.cs-sentences {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cs-sentence {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.cs-sentence:last-child {
+  border-bottom: none;
+}
+
+.cs-sentence-ja {
+  font-family: var(--font-jp);
+  font-size: 16px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.cs-sentence-en {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Fixed Bottom Navigation */
+.cs-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-subtle);
+  padding: 0 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.cs-bottom-nav > .cs-progress-line {
+  margin: 0 -20px;
+  border-radius: 0;
+  height: 4px;
+  min-height: 4px;
+  flex: none;
+}
+
+.cs-bottom-nav-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.cs-nav-btn {
+  padding: 8px 20px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+.cs-nav-btn:hover:not(:disabled) {
+  background: var(--bg-glass-hover);
+}
+
+.cs-nav-quiz {
+  background: #6366f1;
+  border-color: #4f46e5;
+  color: white;
+}
+.cs-nav-quiz:hover {
+  background: #4f46e5 !important;
+}
+
+.cs-nav-counter {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+
+@media (max-width: 600px) {
+  .cs-card-stack {
+    padding: 8px 10px;
+    gap: 10px;
+  }
+  .cs-card {
+    padding: 18px 16px;
+    border-radius: 12px;
+  }
+  .cs-card-hero {
+    min-height: 200px;
+    padding: 40px 16px 24px;
+  }
+  .cs-hero-char {
+    font-size: 64px;
+  }
+  .cs-hero-meaning {
+    font-size: 18px;
+  }
 }

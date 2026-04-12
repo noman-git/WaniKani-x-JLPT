@@ -96,7 +96,7 @@ export default function LearnPage() {
          isCorrect: true,
          timeToAnswerMs: 100,
          mistakeType: null,
-         forceKnown: true // Deep check-in safety net!
+         forceKnown: true
        })
     });
     nextSlide();
@@ -128,6 +128,12 @@ export default function LearnPage() {
     }
   }, [phase, currentIndex, batch.length]);
 
+  useEffect(() => {
+    if (phase === "lesson") {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentIndex, phase]);
+
   if (phase === "loading") return <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>Constructing your Queue...</div>;
   if (phase === "done") return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', alignItems: 'center', justifyContent: 'center', gap: '24px' }}>
@@ -140,97 +146,196 @@ export default function LearnPage() {
 
   if (phase === "lesson") {
     const item = batch[currentIndex];
+
+    // Build reading summary for hero card
+    let readingSummary = "";
+    if (item.type !== "radical") {
+      if (item.advancedReadings && item.advancedReadings.length > 0) {
+        const primary = item.advancedReadings.find(r => r.primary);
+        readingSummary = primary ? primary.reading : item.readings[0] || "";
+      } else {
+        readingSummary = item.readings[0] || "";
+      }
+    }
+
     return (
-      /* Lock body scroll purely for the container, rely on internal modal scrolling */
-      <div className="srs-learn-container" style={{ padding: '40px 20px', display: 'flex', justifyContent: 'center', height: 'calc(100vh - 65px)', minHeight: '0', boxSizing: 'border-box' }}>
-        
-        {/* Responsive Grid Layout */}
-        <div className="srs-learn-grid">
-          
-          {/* Main Flashcard Card */}
-          <div className="srs-learn-main srs-card" style={{ height: 'calc(100vh - 200px)', minHeight: '600px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', textAlign: 'left', margin: 0, padding: 0, overflow: 'hidden' }}>
-            
-            {/* Seamless Header - Now Statically Pinned in the Flex Column */}
-            <div className="srs-learn-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0, backgroundColor: 'var(--bg-secondary)', padding: '16px 24px', borderBottom: '1px solid var(--border-medium)', maxWidth: '100%', gap: '16px' }}>
-              <div className="srs-learn-progress" style={{ flex: 1 }}>
-                {batch.map((_, i) => (
-                  <div key={i} className={`srs-learn-progress-tick ${i <= currentIndex ? 'active' : 'inactive'}`} />
-                ))}
-              </div>
+      <div className="cs-lesson-page">
 
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
-                 <button onClick={prevSlide} disabled={currentIndex === 0} style={{ padding: '6px 12px', backgroundColor: 'var(--bg-glass)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: currentIndex === 0 ? 'var(--border-medium)' : 'var(--text-primary)', cursor: currentIndex === 0 ? 'default' : 'pointer', fontSize: '13px' }}>
-                   ← Prev
-                 </button>
-                 {currentIndex < batch.length - 1 ? (
-                   <button onClick={nextSlide} style={{ padding: '6px 16px', backgroundColor: 'var(--bg-glass)', border: '1px solid var(--border-medium)', borderRadius: '6px', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>
-                     Next ➔
-                   </button>
-                 ) : (
-                   <button onClick={nextSlide} style={{ padding: '6px 16px', backgroundColor: '#6366f1', border: '1px solid #4f46e5', borderRadius: '6px', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>
-                     Start Quiz ➔
-                   </button>
-                 )}
-              </div>
+
+        {/* ── Scrollable Card Stack ── */}
+        <div className="cs-card-stack">
+
+          {/* Card 1: Hero */}
+          <div 
+            className="cs-card cs-card-hero"
+            style={{ backgroundColor: `var(--accent-${item.type})` }}
+          >
+            <div className="cs-hero-badges">
+              <span className="cs-hero-badge">{item.type}</span>
+              {item.jlptLevel && <span className="cs-hero-badge">{item.jlptLevel.toUpperCase()}</span>}
+              {item.wkLevel && <span className="cs-hero-badge">WK Lv {item.wkLevel}</span>}
             </div>
 
-            <div 
-              className="srs-display-block" 
-              style={{ 
-                flexShrink: 0,
-                backgroundColor: `var(--accent-${item.type})`,
-                color: 'white',
-                borderBottom: 'none'
-              }}
+            <button 
+              onClick={handleMarkKnown}
+              className="cs-known-btn"
+              title="Already know this? Skip it"
             >
-              <button 
-                 onClick={handleMarkKnown}
-                 className="srs-deep-check"
-                 style={{ top: '16px', right: '16px', position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
-              >
-                 <span className="srs-star">★</span>
-                 <span>Deep Check-in (Mark Known)</span>
-              </button>
+              ★ Known
+            </button>
 
-              <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                 <span className="srs-type-badge" style={{ position: 'static', backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}>{item.type}</span>
-                 {item.jlptLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)' }}>{item.jlptLevel.toUpperCase()}</span>}
-                 {item.wkLevel && <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)' }}>WK Lv {item.wkLevel}</span>}
-              </div>
-              {(!item.characters || item.characters.startsWith('[')) && item.imageUrl ? (
-                <div className="srs-character-display" style={{ display: 'flex', justifyContent: 'center' }}>
-                   <img 
-                     src={item.imageUrl} 
-                     alt={item.meanings?.[0] || 'radical'} 
-                     style={{ height: '120px', filter: 'brightness(0) invert(1)' }} 
-                   />
-                </div>
-              ) : (
-                <h2 className="srs-character-display" style={{ color: 'white' }}>{item.characters}</h2>
-              )}
-            </div>
-            
-            {/* Scrollable Content Panel! */}
-            <div className="srs-content-panel" style={{ flex: '1', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-              <LessonModal item={item} />
-            </div>
-          </div>
-          
-          {/* Sidecar for Grid */}
-          <div className="srs-learn-sidecar">
-            <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', height: '100%' }}>
-              <div style={{ padding: '24px' }}>
-                <QuizNoteManager 
-                  itemId={item.jlptItemId} 
-                  initialNote={item.note || ""} 
-                  onSaveSuccess={(newNote) => {
-                     const newBatch = [...batch];
-                     newBatch[currentIndex] = { ...item, note: newNote };
-                     setBatch(newBatch);
-                  }}
+            {(!item.characters || item.characters.startsWith('[')) && item.imageUrl ? (
+              <div className="cs-hero-char">
+                <img 
+                  src={item.imageUrl} 
+                  alt={item.meanings?.[0] || 'radical'} 
+                  style={{ height: '90px', filter: 'brightness(0) invert(1)' }} 
                 />
               </div>
+            ) : (
+              <div className="cs-hero-char">{item.characters}</div>
+            )}
+
+            <div className="cs-hero-info">
+              <span className="cs-hero-meaning">{item.meanings.join(", ")}</span>
+              {readingSummary && (
+                <span className="cs-hero-reading">{readingSummary}</span>
+              )}
             </div>
+          </div>
+
+          {/* Card 2: Meanings & Mnemonics */}
+          {(item.meaningMnemonic || item.advancedMeanings) && (
+            <div className="cs-card">
+              <h3 className="cs-card-title">
+                <span className="cs-card-dot" style={{ backgroundColor: '#6366f1' }} />
+                Meaning
+              </h3>
+              {item.advancedMeanings && (
+                <div className="cs-meanings-row">
+                  {item.advancedMeanings.map((m, i) => (
+                    <span key={i} className={`cs-meaning-tag ${m.primary ? 'cs-primary' : ''}`}>
+                      {m.meaning}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {item.meaningMnemonic && (
+                <div className="cs-mnemonic" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.meaningMnemonic) }} />
+              )}
+              {item.meaningHint && (
+                <div className="cs-hint">
+                  <strong>Hint:</strong> <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.meaningHint) }} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Card 3: Reading & Mnemonic */}
+          {item.type !== "radical" && (item.readingMnemonic || (item.advancedReadings && item.advancedReadings.length > 0)) && (
+            <div className="cs-card">
+              <h3 className="cs-card-title">
+                <span className="cs-card-dot" style={{ backgroundColor: '#10b981' }} />
+                Reading
+              </h3>
+              {item.advancedReadings && item.type === "kanji" && (
+                <div className="cs-readings-grid">
+                  {Object.entries(
+                    item.advancedReadings.reduce((acc, r) => {
+                      const t = r.type || "nanori";
+                      if (!acc[t]) acc[t] = [];
+                      acc[t].push(r);
+                      return acc;
+                    }, {} as Record<string, typeof item.advancedReadings[0][]>)
+                  ).map(([type, rArr]) => (
+                    <div key={type} className="cs-reading-group">
+                      <span className="cs-reading-type">{type}</span>
+                      <div className="cs-reading-values">
+                        {rArr.map((r, i) => (
+                          <span key={i} className={r.primary ? 'cs-reading-primary' : ''}>{r.reading}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {item.readingMnemonic && (
+                <div className="cs-mnemonic" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.readingMnemonic) }} />
+              )}
+              {item.readingHint && (
+                <div className="cs-hint">
+                  <strong>Hint:</strong> <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.readingHint) }} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Card 4: Composition (Radicals / Kanji / Used In) */}
+          <LessonCardStack item={item} />
+
+          {/* Card: Context Sentences */}
+          {item.contextSentences && item.contextSentences.length > 0 && (
+            <div className="cs-card">
+              <h3 className="cs-card-title">
+                <span className="cs-card-dot" style={{ backgroundColor: '#f59e0b' }} />
+                Context Sentences
+              </h3>
+              <div className="cs-sentences">
+                {item.contextSentences.slice(0, 3).map((s, i) => (
+                  <div key={i} className="cs-sentence">
+                    <p className="cs-sentence-ja">{s.ja}</p>
+                    <p className="cs-sentence-en">{s.en}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Card: Notes */}
+          <div className="cs-card">
+            <h3 className="cs-card-title">
+              <span className="cs-card-dot" style={{ backgroundColor: '#eab308' }} />
+              Personal Notes
+            </h3>
+            <QuizNoteManager 
+              itemId={item.jlptItemId} 
+              initialNote={item.note || ""} 
+              onSaveSuccess={(newNote) => {
+                 const newBatch = [...batch];
+                 newBatch[currentIndex] = { ...item, note: newNote };
+                 setBatch(newBatch);
+              }}
+            />
+          </div>
+        </div>
+
+        {/* ── Fixed Bottom Navigation ── */}
+        <div className="cs-bottom-nav">
+          <div className="cs-progress-line">
+            <div 
+              className="cs-progress-fill" 
+              style={{ width: `${((currentIndex + 1) / batch.length) * 100}%` }}
+            />
+          </div>
+          <div className="cs-bottom-nav-buttons">
+            <button 
+              onClick={prevSlide} 
+              disabled={currentIndex === 0} 
+              className="cs-nav-btn"
+              style={{ opacity: currentIndex === 0 ? 0.3 : 1 }}
+            >
+              ← Prev
+            </button>
+            <span className="cs-nav-counter">{currentIndex + 1} / {batch.length}</span>
+            {currentIndex < batch.length - 1 ? (
+              <button onClick={nextSlide} className="cs-nav-btn">
+                Next →
+              </button>
+            ) : (
+              <button onClick={nextSlide} className="cs-nav-btn cs-nav-quiz">
+                Start Quiz →
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -243,4 +348,138 @@ export default function LearnPage() {
       <SrsQuiz items={batch} mode="lesson-quiz" onComplete={() => location.reload()} />
     </div>
   );
+}
+
+// ── Composition Cards (extracted to avoid LessonModal duplication) ──
+
+function LessonCardStack({ item }: { item: QuizItem }) {
+  const [modalTarget, setModalTarget] = useState<{ type: "item"; id: number } | { type: "radical"; wkSubjectId: number } | null>(null);
+
+  const hasRadicals = (item.radicals?.length || 0) > 0;
+  const hasKanjiComp = (item.componentKanji?.length || 0) > 0;
+  const hasRelatedVocab = (item.relatedVocab?.length || 0) > 0;
+  const hasUsedInKanji = (item.usedInKanji?.length || 0) > 0;
+
+  if (!hasRadicals && !hasKanjiComp && !hasRelatedVocab && !hasUsedInKanji) return null;
+
+  return (
+    <>
+      {modalTarget && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
+          <div style={{ position: 'relative', zIndex: 10000 }}>
+            {/* We import ItemModal dynamically to avoid circular deps */}
+            <LazyItemModal 
+              target={modalTarget} 
+              onClose={() => setModalTarget(null)}
+              onNavigateItem={(id: number) => setModalTarget({ type: "item", id })}
+              onNavigateRadical={(wkSubjectId: number) => setModalTarget({ type: "radical", wkSubjectId })}
+            />
+          </div>
+        </div>
+      )}
+
+      {hasRadicals && (
+        <div className="cs-card">
+          <h3 className="cs-card-title">
+            <span className="cs-card-dot" style={{ backgroundColor: 'var(--accent-radical)' }} />
+            Radicals
+          </h3>
+          <div className="srs-chip-grid">
+            {item.radicals!.map((rad, idx) => (
+              <div 
+                key={idx} 
+                className="srs-feature-chip radical-composition-chip"
+                onClick={() => setModalTarget({ type: "radical", wkSubjectId: rad.id })}
+                style={{ cursor: 'pointer' }}
+              >
+                <span className="srs-chip-kanji" style={{ color: 'var(--accent-radical)' }}>
+                  {rad.characters || (rad.imageUrl ? <img src={rad.imageUrl} alt={rad.meaning} /> : "?")}
+                </span>
+                <span className="srs-chip-desc">{rad.meaning}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {hasKanjiComp && (
+        <div className="cs-card">
+          <h3 className="cs-card-title">
+            <span className="cs-card-dot" style={{ backgroundColor: 'var(--accent-kanji)' }} />
+            Kanji Composition
+          </h3>
+          <div className="srs-chip-grid">
+            {item.componentKanji!.map((k, idx) => (
+              <div 
+                key={idx} 
+                className="srs-feature-chip kanji-composition-chip"
+                onClick={() => k.id && setModalTarget({ type: "item", id: k.id })}
+                style={{ cursor: k.id ? 'pointer' : 'default' }}
+              >
+                <div className="srs-chip-main">{k.expression}</div>
+                <div className="srs-chip-sub">{k.meaning}</div>
+                <div className="srs-chip-meta">{k.jlptLevel || `WK Lv ${k.wkLevel}`}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {hasRelatedVocab && (
+        <div className="cs-card">
+          <h3 className="cs-card-title">
+            <span className="cs-card-dot" style={{ backgroundColor: 'var(--accent-vocab)' }} />
+            Found In Vocabulary
+          </h3>
+          <div className="srs-chip-grid grammar-grid">
+            {item.relatedVocab!.map((v, idx) => (
+              <div 
+                key={idx} 
+                className="srs-grammar-chip vocab-chip-override"
+                onClick={() => setModalTarget({ type: "item", id: v.id })}
+                style={{ cursor: 'pointer' }}
+              >
+                <span className="srs-grammar-title" style={{ fontSize: '18px', fontWeight: 'bold' }}>{v.expression} <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 'normal' }}>{v.reading}</span></span>
+                <span className="srs-grammar-meaning">{v.meaning}</span>
+                <span className="srs-grammar-level">{v.jlptLevel?.toUpperCase() || ''}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {hasUsedInKanji && (
+        <div className="cs-card">
+          <h3 className="cs-card-title">
+            <span className="cs-card-dot" style={{ backgroundColor: 'var(--accent-kanji)' }} />
+            Found In Kanji
+          </h3>
+          <div className="srs-chip-grid">
+            {item.usedInKanji!.map((k, idx) => (
+              <div 
+                key={idx} 
+                className="srs-feature-chip kanji-composition-chip"
+                onClick={() => setModalTarget({ type: "item", id: k.id })}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="srs-chip-main">{k.expression}</div>
+                <div className="srs-chip-sub">{k.meaning}</div>
+                <div className="srs-chip-meta">{k.jlptLevel?.toUpperCase() || ''}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// Lazy-import ItemModal to avoid issues
+function LazyItemModal(props: any) {
+  const [Comp, setComp] = useState<any>(null);
+  useEffect(() => {
+    import("@/app/components/ItemModal").then(mod => setComp(() => mod.default));
+  }, []);
+  if (!Comp) return null;
+  return <Comp {...props} />;
 }

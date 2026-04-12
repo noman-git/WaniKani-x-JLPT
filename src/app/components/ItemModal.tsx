@@ -165,7 +165,7 @@ export default function ItemModal({
   const [activeTab, setActiveTab] = useState<"wk" | "pseudo-wk" | "dict">("wk");
   const [loading, setLoading] = useState(true);
   const [dictLoading, setDictLoading] = useState(false);
-  const [status, setStatus] = useState("unknown");
+
   const [note, setNote] = useState("");
   const [isNotesOpen, setIsNotesOpen] = useState(true);
   const [selectedGrammarSlug, setSelectedGrammarSlug] = useState<string | null>(null);
@@ -189,7 +189,7 @@ export default function ItemModal({
             return;
           }
           setDetail(data);
-          setStatus(data.item?.status || "unknown");
+
           if (data.wanikani) {
             setActiveTab(data.wanikani.matchType === "pseudo" ? "pseudo-wk" : "wk");
           } else {
@@ -242,18 +242,7 @@ export default function ItemModal({
   }, [activeTab, detail, dictData, jishoData]);
 
   // Handle status update
-  const updateStatus = useCallback(
-    async (newStatus: string) => {
-      if (!detail) return;
-      setStatus(newStatus);
-      await fetch("/api/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId: detail.item.id, status: newStatus }),
-      });
-    },
-    [detail]
-  );
+
 
   // Navigation history for back button
   const [history, setHistory] = useState<ModalTarget[]>([]);
@@ -314,7 +303,7 @@ export default function ItemModal({
           ) : target.type === "item" && detail ? (
             <ItemView
               detail={detail}
-              status={status}
+
               note={note}
               onNoteChange={setNote}
               activeTab={activeTab}
@@ -323,7 +312,7 @@ export default function ItemModal({
               jishoData={jishoData}
               dictLoading={dictLoading}
               sanitize={sanitize}
-              updateStatus={updateStatus}
+
               navigateToItem={navigateToItem}
               navigateToRadical={navigateToRadical}
               onNavigateGrammar={onNavigateGrammar || setSelectedGrammarSlug}
@@ -385,7 +374,7 @@ function ItemView({
   jishoData,
   dictLoading,
   sanitize,
-  updateStatus,
+
   navigateToItem,
   navigateToRadical,
   onNavigateGrammar,
@@ -398,7 +387,7 @@ function ItemView({
   onPrev
 }: {
   detail: ItemDetail;
-  status: string;
+
   note: string;
   onNoteChange: (n: string) => void;
   activeTab: "wk" | "pseudo-wk" | "dict";
@@ -407,7 +396,7 @@ function ItemView({
   jishoData: JishoWord[] | null;
   dictLoading: boolean;
   sanitize: (html: string) => string;
-  updateStatus: (status: string) => void;
+
   navigateToItem: (id: number) => void;
   navigateToRadical: (id: number) => void;
   onNavigateGrammar?: (slug: string) => void;
@@ -475,40 +464,33 @@ function ItemView({
         </div>
       </div>
 
-      {/* ── Tabs with external links ── */}
+      {/* ── Tabs ── */}
       <div className="modal-tabs">
-        <div className="modal-tabs-left">
-          <button
-            className={`modal-tab ${(activeTab === "wk" || activeTab === "pseudo-wk") ? "active" : ""}`}
-            onClick={() => setActiveTab(detail.wanikani?.matchType === "pseudo" ? "pseudo-wk" : "wk")}
-            disabled={!detail.wanikani}
-            title={!detail.wanikani ? "No context data available" : ""}
-          >
-            {detail.wanikani?.matchType === "pseudo" ? "✨ AI Context" : "🐊 WaniKani"}
-          </button>
-          <button
-            className={`modal-tab ${activeTab === "dict" ? "active" : ""}`}
-            onClick={() => setActiveTab("dict")}
-          >
-            📖 辞書
-          </button>
-        </div>
-        <div className="modal-external-links">
-          {wkUrl && (
-            <a href={wkUrl} target="_blank" rel="noopener noreferrer" className="modal-ext-link wk-link" title="Open on WaniKani">
-              🐊 Open
-            </a>
-          )}
-          <a href={jishoUrl} target="_blank" rel="noopener noreferrer" className="modal-ext-link jisho-link" title="Open on Jisho.org">
-            📖 Open
-          </a>
-        </div>
+        <button
+          className={`modal-tab ${(activeTab === "wk" || activeTab === "pseudo-wk") ? "active" : ""}`}
+          onClick={() => setActiveTab(detail.wanikani?.matchType === "pseudo" ? "pseudo-wk" : "wk")}
+          disabled={!detail.wanikani}
+          title={!detail.wanikani ? "No context data available" : ""}
+        >
+          {detail.wanikani?.matchType === "pseudo" ? "✨ AI Context" : "🐊 WaniKani"}
+        </button>
+        <button
+          className={`modal-tab ${activeTab === "dict" ? "active" : ""}`}
+          onClick={() => setActiveTab("dict")}
+        >
+          📖 辞書
+        </button>
       </div>
 
       {/* ── Tab Content ── */}
       <div className="modal-body">
         {(activeTab === "wk" || activeTab === "pseudo-wk") && detail.wanikani && (
           <>
+            {wkUrl && (
+              <a href={wkUrl} target="_blank" rel="noopener noreferrer" className="tab-source-link">
+                Open on WaniKani <span className="tab-source-arrow">↗</span>
+              </a>
+            )}
             {activeTab === "pseudo-wk" && (
               <div style={{ padding: "12px", backgroundColor: "rgba(99, 102, 241, 0.1)", border: "1px solid rgba(99, 102, 241, 0.3)", borderRadius: "8px", marginBottom: "20px", fontSize: "14px", color: "var(--text-color)" }}>
                 <strong>✨ AI Generated:</strong> This item is not officially on WaniKani. The mnemonics and context sentences below were generated by Gemini to provide an equivalent study experience.
@@ -527,12 +509,17 @@ function ItemView({
           </div>
         )}
         {activeTab === "dict" && (
-          <DictTab
-            isKanji={detail.item.type === "kanji" && detail.item.expression.length === 1}
-            kanjiData={dictData}
-            jishoData={jishoData}
-            loading={dictLoading}
-          />
+          <>
+            <a href={jishoUrl} target="_blank" rel="noopener noreferrer" className="tab-source-link">
+              Open on Jisho.org <span className="tab-source-arrow">↗</span>
+            </a>
+            <DictTab
+              isKanji={detail.item.type === "kanji" && detail.item.expression.length === 1}
+              kanjiData={dictData}
+              jishoData={jishoData}
+              loading={dictLoading}
+            />
+          </>
         )}
 
         {/* ── Component Kanji (for vocab items) ── */}
@@ -640,24 +627,7 @@ function ItemView({
         {/* ── Appears in Grammar ── */}
       </div>
 
-      {/* ── Footer: Status + WK Level ── */}
-      <div className="modal-footer">
-        <div className="modal-status-buttons">
-          {(["unknown", "learning", "known"] as const).map((s) => (
-            <button
-              key={s}
-              className={`status-btn ${status === s ? "active" : ""} status-${s}`}
-              onClick={() => updateStatus(s)}
-            >
-              {s === "unknown" ? "❓" : s === "learning" ? "📖" : "✅"}{" "}
-              {s.charAt(0).toUpperCase() + s.slice(1)}
-            </button>
-          ))}
-        </div>
-        {detail.wanikani && (
-          <div className="modal-wk-badge">🐊 WK Level {detail.wanikani.level}</div>
-        )}
-      </div>
+
     </>
   );
 }
@@ -845,12 +815,7 @@ function RadicalView({
         )}
       </div>
 
-      {/* ── Footer ── */}
-      <div className="modal-footer">
-        <div className="modal-wk-badge radical-badge">
-          🐊 WK Level {detail.radical.level} · Radical
-        </div>
-      </div>
+
     </>
   );
 }
