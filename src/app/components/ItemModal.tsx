@@ -629,12 +629,7 @@ function ItemView({
         {/* ── Appears in Grammar ── */}
       </div>
 
-      {/* ── Footer: WK Level ── */}
-      {detail.wanikani && (
-        <div className="modal-footer">
-          <div className="modal-wk-badge">🐊 WK Level {detail.wanikani.level}</div>
-        </div>
-      )}
+
     </>
   );
 }
@@ -822,12 +817,7 @@ function RadicalView({
         )}
       </div>
 
-      {/* ── Footer ── */}
-      <div className="modal-footer">
-        <div className="modal-wk-badge radical-badge">
-          🐊 WK Level {detail.radical.level} · Radical
-        </div>
-      </div>
+
     </>
   );
 }
