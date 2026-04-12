@@ -92,6 +92,7 @@ function NavBar() {
 
 function MobileNav() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -100,6 +101,7 @@ function MobileNav() {
     { label: "Kanji", href: "/kanji" },
     { label: "Vocab", href: "/vocab" },
     { label: "Grammar", href: "/grammar" },
+    { label: "Settings", href: "/settings" },
   ];
 
   const isActive = (path: string) => {
@@ -113,16 +115,13 @@ function MobileNav() {
         <button onClick={() => router.push('/')} className="mobile-nav-brand" title="Dashboard">
           ⛩️
         </button>
-        <div className="mobile-nav-right">
-          <UserMenu />
-          <button 
-            onClick={() => setMenuOpen(!menuOpen)} 
-            className="mobile-nav-hamburger"
-            aria-label="Menu"
-          >
-            {menuOpen ? '✕' : '☰'}
-          </button>
-        </div>
+        <button 
+          onClick={() => setMenuOpen(!menuOpen)} 
+          className="mobile-nav-hamburger"
+          aria-label="Menu"
+        >
+          {menuOpen ? '✕' : '☰'}
+        </button>
       </div>
 
       {menuOpen && (
@@ -136,6 +135,14 @@ function MobileNav() {
               {item.label}
             </button>
           ))}
+          {user && (
+            <button 
+              onClick={() => { setMenuOpen(false); logout(); }}
+              className="mobile-nav-item mobile-nav-logout"
+            >
+              Logout
+            </button>
+          )}
         </div>
       )}
     </nav>

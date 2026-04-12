@@ -41,7 +41,7 @@ export default function ItemsBrowser({
 
   // Filters
   const [level, setLevel] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
+
   const [search, setSearch] = useState<string>("");
   const [onWanikani, setOnWanikani] = useState<string>("");
   const [page, setPage] = useState(1);
@@ -50,7 +50,7 @@ export default function ItemsBrowser({
     setLoading(true);
     const params = new URLSearchParams();
     if (level) params.set("level", level);
-    if (status) params.set("status", status);
+
     if (search) params.set("search", search);
     if (onWanikani) params.set("onWanikani", onWanikani);
     params.set("page", page.toString());
@@ -63,47 +63,14 @@ export default function ItemsBrowser({
       setPagination(data.pagination || { page: 1, limit: 30, total: 0, totalPages: 0 });
     } catch { /* */ }
     setLoading(false);
-  }, [apiUrl, level, status, search, onWanikani, page]);
+  }, [apiUrl, level, search, onWanikani, page]);
 
   useEffect(() => { loadItems(); }, [loadItems]);
 
   // Reset page when filters change
-  useEffect(() => { setPage(1); }, [level, status, search, onWanikani]);
+  useEffect(() => { setPage(1); }, [level, search, onWanikani]);
 
-  const toggleStatus = async (itemId: number, currentStatus: string) => {
-    const nextStatus = currentStatus === "unknown" ? "learning" : currentStatus === "learning" ? "known" : "unknown";
-    try {
-      const res = await fetch("/api/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId, status: nextStatus }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setItems((prev) => prev.map((i) => i.id === itemId ? { ...i, status: nextStatus } : i));
-        showToast(`Marked as ${nextStatus}`, "success");
-      }
-    } catch {
-      showToast("Failed to update", "error");
-    }
-  };
 
-  const setStatusDirect = async (itemId: number, newStatus: string) => {
-    try {
-      const res = await fetch("/api/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId, status: newStatus }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setItems((prev) => prev.map((i) => i.id === itemId ? { ...i, status: newStatus } : i));
-        showToast(`Marked as ${newStatus}`, "success");
-      }
-    } catch {
-      showToast("Failed to update", "error");
-    }
-  };
 
   const showToast = (message: string, type: string) => {
     setToast({ message, type });
@@ -164,10 +131,7 @@ export default function ItemsBrowser({
         <FilterBtn label="N5" value="N5" current={level} setter={setLevel} />
         <FilterBtn label="N4" value="N4" current={level} setter={setLevel} />
         <FilterBtn label="Other" value="other" current={level} setter={setLevel} />
-        <span style={{ color: "var(--text-muted)", fontSize: 12 }}>|</span>
-        <FilterBtn label="✅ Known" value="known" current={status} setter={setStatus} />
-        <FilterBtn label="📖 Learning" value="learning" current={status} setter={setStatus} />
-        <FilterBtn label="❓ Unknown" value="unknown" current={status} setter={setStatus} />
+
         <span style={{ color: "var(--text-muted)", fontSize: 12 }}>|</span>
         <FilterBtn label="On WK" value="true" current={onWanikani} setter={setOnWanikani} />
         <FilterBtn label="Not on WK" value="false" current={onWanikani} setter={setOnWanikani} />
@@ -233,26 +197,7 @@ export default function ItemsBrowser({
                   <span className="badge badge-wk" style={{backgroundColor: "rgba(99, 102, 241, 0.1)", color: "var(--accent-blue)", border: "1px solid rgba(99, 102, 241, 0.3)"}}>✨ AI Context</span>
                 )}
               </div>
-              <div className="status-toggle" onClick={(e) => e.stopPropagation()}>
-                <button
-                  className={`status-toggle-btn ${item.status === "unknown" ? "active-unknown" : ""}`}
-                  onClick={() => setStatusDirect(item.id, "unknown")}
-                >
-                  Unknown
-                </button>
-                <button
-                  className={`status-toggle-btn ${item.status === "learning" ? "active-learning" : ""}`}
-                  onClick={() => setStatusDirect(item.id, "learning")}
-                >
-                  Learning
-                </button>
-                <button
-                  className={`status-toggle-btn ${item.status === "known" ? "active-known" : ""}`}
-                  onClick={() => setStatusDirect(item.id, "known")}
-                >
-                  Known
-                </button>
-              </div>
+
             </div>
           ))}
         </div>

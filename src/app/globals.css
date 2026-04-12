@@ -178,6 +178,11 @@ body {
     color: var(--accent-n5);
     font-weight: 600;
   }
+  .mobile-nav-logout {
+    color: #ef4444;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 4px;
+  }
 }
 
 .nav-inner {
@@ -216,6 +221,7 @@ body {
 
 .nav-links {
   display: flex;
+  align-items: center;
   gap: 8px;
   list-style: none;
   flex-wrap: wrap;
