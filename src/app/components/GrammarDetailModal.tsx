@@ -97,20 +97,7 @@ export default function GrammarDetailModal({
     if (e.target === overlayRef.current) onClose();
   };
 
-  const updateStatus = async (newStatus: string) => {
-    if (!data) return;
-    try {
-      const res = await fetch("/api/grammar/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ grammarPointId: data.id, status: newStatus }),
-      });
-      const result = await res.json();
-      if (result.success) {
-        setData((prev) => prev ? { ...prev, userStatus: newStatus } : null);
-      }
-    } catch { /* */ }
-  };
+
 
   const saveNote = async () => {
     if (!data) return;
@@ -321,23 +308,7 @@ export default function GrammarDetailModal({
               </div>
             )}
 
-            {/* Progress Buttons - only in modal mode */}
-            {!inline && (
-              <div className="modal-footer">
-                <div className="modal-status-buttons">
-                  {(["unknown", "learning", "known"] as const).map((s) => (
-                    <button
-                      key={s}
-                      className={`status-btn ${(data.userStatus === s || (s === "unknown" && data.userStatus === "not-started")) ? "active" : ""} status-${s}`}
-                      onClick={() => updateStatus(s)}
-                    >
-                      {s === "unknown" ? "❓" : s === "learning" ? "📖" : "✅"}{" "}
-                      {s.charAt(0).toUpperCase() + s.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+
           </div>
         )}
       </div>
