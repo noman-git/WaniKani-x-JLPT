@@ -246,22 +246,63 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
 
     // --- MEANING CHECK ---
     } else {
-       const expectedMeanings = [
+       const rawMeanings = [
          ...currentTask.item.meanings,
          ...(currentTask.item.advancedMeanings || []).map(m => m.meaning)
        ].map(m => m.toLowerCase().trim());
        
-       if (expectedMeanings.includes(answerNorm)) {
+       // Expand raw meanings into all acceptable answer variants:
+       // 1. Split on semicolons (separate meanings packed in one string)
+       // 2. Strip leading/trailing annotations like (abbr.), (lit., ...), (v.i.), etc.
+       // 3. Strip parenthetical clarifiers like "kilo (kilogram)" → accept both "kilo" and "kilogram"
+       const expectedMeanings = new Set<string>();
+       for (const raw of rawMeanings) {
+         // Split on semicolons first
+         const parts = raw.split(/[;]/).map(s => s.trim()).filter(Boolean);
+         for (const part of parts) {
+           expectedMeanings.add(part);
+           // Strip leading annotations: "(abbr.) building" → "building"
+           const withoutLeading = part.replace(/^\([^)]*\)\s*/g, '').trim();
+           if (withoutLeading) expectedMeanings.add(withoutLeading);
+           // Strip trailing annotations: "apartment (abbr.)" → "apartment"
+           const withoutTrailing = part.replace(/\s*\([^)]*\)\s*$/g, '').trim();
+           if (withoutTrailing) expectedMeanings.add(withoutTrailing);
+           // Strip ALL parentheticals: "toilet, restroom, bathroom (lit., ...)" → "toilet, restroom, bathroom"
+           const withoutAll = part.replace(/\s*\([^)]*\)/g, '').trim();
+           if (withoutAll) expectedMeanings.add(withoutAll);
+           // Also extract content inside parens as valid: "kilo (kilogram)" → "kilogram"
+           const parenMatch = part.match(/\(([^)]+)\)/g);
+           if (parenMatch) {
+             for (const m of parenMatch) {
+               const inner = m.slice(1, -1).trim().toLowerCase();
+               // Skip meta-annotations, only accept noun/adj-like content
+               if (inner && !inner.match(/^(abbr|lit|v\.[ti]|neg|pol|hum|hon|inf|formal|esp|i\.e|e\.g)\b/i)) {
+                 expectedMeanings.add(inner);
+               }
+             }
+           }
+         }
+         // Also split on commas for multi-meaning strings like "to pick up (something), to find"
+         const commaParts = raw.split(/[,]/).map(s => s.trim()).filter(Boolean);
+         for (const cp of commaParts) {
+           const cleaned = cp.replace(/\s*\([^)]*\)/g, '').trim();
+           if (cleaned) expectedMeanings.add(cleaned);
+         }
+       }
+       
+       const expectedArr = [...expectedMeanings];
+       
+       if (expectedMeanings.has(answerNorm)) {
          isCorrect = true;
-         if (expectedMeanings.length > 1) {
+         if (expectedArr.length > 1) {
             setHasMultipleMeanings(true);
          }
        } else {
-         for(const ex of expectedMeanings) {
+         for(const ex of expectedArr) {
             if (ex.length > 3 && levenshteinDistanceLocal(answerNorm, ex) === 1) {
               isCorrect = true;
               isTypo = true;
-              if (expectedMeanings.length > 1) {
+              if (expectedArr.length > 1) {
                  setHasMultipleMeanings(true);
               }
               break;
