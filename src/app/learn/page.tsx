@@ -220,6 +220,16 @@ export default function LearnPage() {
                   ))}
                 </div>
               )}
+              {item.partsOfSpeech && item.partsOfSpeech.length > 0 && (
+                <div style={{ marginBottom: "16px", display: "flex", gap: "12px", alignItems: "center" }}>
+                  <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--text-muted)", fontWeight: "bold", letterSpacing: "1px" }}>
+                    WORD TYPE
+                  </span>
+                  <span style={{ color: "var(--text-primary)", fontSize: "15px" }}>
+                    {item.partsOfSpeech.join(", ")}
+                  </span>
+                </div>
+              )}
               {item.meaningMnemonic && (
                 <div className="cs-mnemonic" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.meaningMnemonic) }} />
               )}
@@ -232,13 +242,13 @@ export default function LearnPage() {
           )}
 
           {/* Card 3: Reading & Mnemonic */}
-          {item.type !== "radical" && (item.readingMnemonic || (item.advancedReadings && item.advancedReadings.length > 0)) && (
+          {item.type !== "radical" && (item.readingMnemonic || (item.advancedReadings && item.advancedReadings.length > 0) || (item.readings && item.readings.length > 0)) && (
             <div className="cs-card">
               <h3 className="cs-card-title">
                 <span className="cs-card-dot" style={{ backgroundColor: '#10b981' }} />
                 Reading
               </h3>
-              {item.advancedReadings && item.type === "kanji" && (
+              {item.advancedReadings && item.type === "kanji" ? (
                 <div className="cs-readings-grid">
                   {Object.entries(
                     item.advancedReadings.reduce((acc, r) => {
@@ -249,7 +259,7 @@ export default function LearnPage() {
                     }, {} as Record<string, typeof item.advancedReadings[0][]>)
                   ).map(([type, rArr]) => (
                     <div key={type} className="cs-reading-group">
-                      <span className="cs-reading-type">{type}</span>
+                      <span className="cs-reading-type">{type === 'onyomi' ? "On'yomi" : type === 'kunyomi' ? "Kun'yomi" : "Nanori"}</span>
                       <div className="cs-reading-values">
                         {rArr.map((r, i) => (
                           <span key={i} className={r.primary ? 'cs-reading-primary' : ''}>{r.reading}</span>
@@ -258,7 +268,29 @@ export default function LearnPage() {
                     </div>
                   ))}
                 </div>
-              )}
+              ) : item.advancedReadings && item.advancedReadings.length > 0 ? (
+                <div className="cs-readings-grid">
+                  <div className="cs-reading-group">
+                    <span className="cs-reading-type">Reading</span>
+                    <div className="cs-reading-values">
+                      {item.advancedReadings.map((r, i) => (
+                        <span key={i} className={r.primary ? 'cs-reading-primary' : ''}>{r.reading}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : item.readings && item.readings.length > 0 ? (
+                <div className="cs-readings-grid">
+                  <div className="cs-reading-group">
+                    <span className="cs-reading-type">Reading</span>
+                    <div className="cs-reading-values">
+                      {item.readings.map((r, i) => (
+                        <span key={i} className={i === 0 ? 'cs-reading-primary' : ''}>{r}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               {item.readingMnemonic && (
                 <div className="cs-mnemonic" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.readingMnemonic) }} />
               )}

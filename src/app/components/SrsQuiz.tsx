@@ -469,38 +469,27 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
                <span>👁️</span> Show Item Info
              </button>
           ) : (
-             <div className="srs-item-details-box" style={{ padding: '0', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', justifyContent: 'center', height: 'calc(100vh - 200px)', minHeight: '0', boxSizing: 'border-box' }}>
+             <div style={{ width: '100%', maxWidth: '720px', margin: '0 auto', textAlign: 'left' }}>
+                <LessonModal item={currentTask.item} />
                 
-                {/* Responsive Grid Layout */}
-                <div className="srs-learn-grid" style={{ width: '100%', maxWidth: '1152px' }}>
-                  
-                   <div className="srs-learn-main" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', textAlign: 'left', margin: 0, overflow: 'hidden' }}>
-                      <div style={{ flex: '1', overflowY: 'auto', padding: '24px', WebkitOverflowScrolling: 'touch' }}>
-                         <LessonModal item={currentTask.item} />
-                      </div>
-                   </div>
-                   
-                   {/* Sidecar */}
-                   <div className="srs-learn-sidecar" style={{ height: '100%' }}>
-                      <div style={{ backgroundColor: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'left', height: '100%' }}>
-                         <div style={{ padding: '24px' }}>
-                            <QuizNoteManager 
-                              key={currentTask.item.jlptItemId}
-                              itemId={currentTask.item.jlptItemId} 
-                              initialNote={currentTask.item.note || ""} 
-                              onSaveSuccess={(newNote) => {
-                                 const newTask = { ...currentTask, item: { ...currentTask.item, note: newNote } };
-                                 setCurrentTask(newTask);
-                                 // Also update it in the underlying items/queue so it stays if re-inserted
-                                 setQueue(prev => prev.map(t => t.item.id === currentTask.item.id ? { ...t, item: { ...t.item, note: newNote } } : t));
-                              }}
-                            />
-                         </div>
-                      </div>
-                   </div>
-                   
+                {/* Notes card at the bottom */}
+                <div className="cs-card">
+                  <h3 className="cs-card-title">
+                    <span className="cs-card-dot" style={{ backgroundColor: '#eab308' }} />
+                    Personal Notes
+                  </h3>
+                  <QuizNoteManager 
+                    key={currentTask.item.jlptItemId}
+                    itemId={currentTask.item.jlptItemId} 
+                    initialNote={currentTask.item.note || ""} 
+                    onSaveSuccess={(newNote) => {
+                       const newTask = { ...currentTask, item: { ...currentTask.item, note: newNote } };
+                       setCurrentTask(newTask);
+                       setQueue(prev => prev.map(t => t.item.id === currentTask.item.id ? { ...t, item: { ...t.item, note: newNote } } : t));
+                    }}
+                  />
                 </div>
-             </div>
+              </div>
           )}
         </div>
       )}
