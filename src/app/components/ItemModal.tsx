@@ -45,7 +45,7 @@ interface ItemDetail {
     subjectId: number;
     level: number;
     objectType: string;
-    characters: string;
+    characters: string | null;
     matchType: string | null;
     meanings: WKMeaning[];
     readings: WKReading[];
@@ -57,6 +57,7 @@ interface ItemDetail {
     contextSentences: Array<{ en: string; ja: string }> | null;
     patternsOfUse: Array<{ en: string; ja: string }> | null;
     partsOfSpeech: string[] | null;
+    imageUrl?: string | null;
   } | null;
   relatedVocab: Array<{
     id: number;
@@ -435,8 +436,18 @@ function ItemView({
             </button>
           )}
           <div className="modal-expression-group">
-            <span className="modal-expression">{detail.item.expression}</span>
-            {hasAlt && (
+            {detail.item.type === "radical" &&
+            detail.item.expression.startsWith("[") &&
+            detail.wanikani?.imageUrl ? (
+              <img
+                src={detail.wanikani.imageUrl}
+                alt={detail.item.meaning}
+                className="modal-expression-img"
+              />
+            ) : (
+              <span className="modal-expression">{detail.item.expression}</span>
+            )}
+            {hasAlt && detail.wanikani!.characters && (
               <span className="modal-wk-alt-expr" title={`WaniKani uses: ${detail.wanikani!.characters}`}>
                 WK: {detail.wanikani!.characters}
               </span>

@@ -544,6 +544,13 @@ body {
   line-height: 1.2;
 }
 
+.item-expression-img {
+  height: 38px;
+  width: auto;
+  margin-bottom: 4px;
+  filter: brightness(0) invert(1);
+}
+
 .item-reading {
   font-family: var(--font-jp);
   font-size: 16px;
@@ -855,6 +862,12 @@ body {
   background: linear-gradient(135deg, #f0f0f5, #c0c0d8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.modal-expression-img {
+  height: 64px;
+  width: auto;
+  filter: brightness(0) invert(1);
 }
 
 .modal-header-meta {

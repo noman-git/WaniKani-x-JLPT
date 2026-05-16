@@ -14,6 +14,7 @@ interface Item {
   wkSubjectId: number | null;
   wkLevel: number | null;
   wkCharacters: string | null;
+  wkImageUrl?: string | null; // Set on radicals; SVG fallback for image-only ones
   matchType: string | null; // "exact" | "reading" | "prefix_strip" | null
 }
 
@@ -158,7 +159,15 @@ export default function ItemsBrowser({
             <div key={item.id} className="item-card" onClick={() => openItem(item)} style={{ cursor: "pointer" }}>
               <div className="item-card-header">
                 <div className="item-expression-col">
-                  <div className="item-expression">{item.expression}</div>
+                  {item.type === "radical" && item.expression.startsWith("[") && item.wkImageUrl ? (
+                    <img
+                      src={item.wkImageUrl}
+                      alt={item.meaning}
+                      className="item-expression-img"
+                    />
+                  ) : (
+                    <div className="item-expression">{item.expression}</div>
+                  )}
                   {hasAltExpression(item) && (
                     <span className="item-wk-alt" title={`WaniKani uses: ${item.wkCharacters}`}>
                       WK: {item.wkCharacters}

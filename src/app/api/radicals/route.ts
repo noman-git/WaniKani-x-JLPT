@@ -57,6 +57,7 @@ export const GET = withAuth(async (request, session) => {
                MIN(wk_subject_id) as wk_subject_id,
                MIN(wk_level) as wk_level,
                MIN(characters) as wk_characters,
+               MIN(character_image_url) as wk_image_url,
                'radical' as match_type
         FROM wanikani_radicals
         WHERE matched_jlpt_item_id IS NOT NULL
@@ -85,6 +86,7 @@ export const GET = withAuth(async (request, session) => {
         w_agg.wk_subject_id as wkSubjectId,
         w_agg.wk_level as wkLevel,
         w_agg.wk_characters as wkCharacters,
+        w_agg.wk_image_url as wkImageUrl,
         w_agg.match_type as matchType
       FROM jlpt_items j
       ${progressJoin}
