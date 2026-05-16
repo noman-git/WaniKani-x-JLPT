@@ -1,19 +1,8 @@
-import { requireAuth, AuthError } from "@/lib/auth";
 import { sqlite } from "@/lib/db";
-import { parseIntSafe, PAGE_MAX, LIMIT_MAX } from "@/lib/api-helpers";
-import { NextRequest, NextResponse } from "next/server";
+import { parseIntSafe, PAGE_MAX, LIMIT_MAX, withAuth } from "@/lib/api-helpers";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
-  let session;
-  try {
-    session = await requireAuth(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 401 });
-    }
-    throw e;
-  }
-
+export const GET = withAuth(async (request, session) => {
   const { searchParams } = new URL(request.url);
   const level = searchParams.get("level");
   const type = searchParams.get("type");
@@ -160,4 +149,4 @@ export async function GET(request: NextRequest) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import SrsQuiz, { QuizItem } from "../components/SrsQuiz";
 import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
-import LessonModal, { QuizNoteManager } from "../components/LessonModal";
+import ItemModal from "../components/ItemModal";
+import { QuizNoteManager } from "../components/LessonModal";
 import { dedupeByExpression } from "@/lib/dedupe";
 
 type LessonPhase = "loading" | "lesson" | "quiz" | "done";
@@ -401,9 +402,8 @@ function LessonCardStack({ item }: { item: QuizItem }) {
       {modalTarget && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
           <div style={{ position: 'relative', zIndex: 10000 }}>
-            {/* We import ItemModal dynamically to avoid circular deps */}
-            <LazyItemModal 
-              target={modalTarget} 
+            <ItemModal
+              target={modalTarget}
               onClose={() => setModalTarget(null)}
               onNavigateItem={(id: number) => setModalTarget({ type: "item", id })}
               onNavigateRadical={(wkSubjectId: number) => setModalTarget({ type: "radical", wkSubjectId })}
@@ -508,12 +508,3 @@ function LessonCardStack({ item }: { item: QuizItem }) {
   );
 }
 
-// Lazy-import ItemModal to avoid issues
-function LazyItemModal(props: any) {
-  const [Comp, setComp] = useState<any>(null);
-  useEffect(() => {
-    import("@/app/components/ItemModal").then(mod => setComp(() => mod.default));
-  }, []);
-  if (!Comp) return null;
-  return <Comp {...props} />;
-}

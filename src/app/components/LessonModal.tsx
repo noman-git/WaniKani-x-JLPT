@@ -2,51 +2,26 @@
 
 import { QuizItem } from "./SrsQuiz";
 import DOMPurify from "dompurify";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ItemModal from "@/app/components/ItemModal";
+import { useNoteSaver } from "./useNoteSaver";
 
-type NoteSaveState = "idle" | "saving" | "saved" | "error";
-
-export function QuizNoteManager({ 
-  itemId, 
+export function QuizNoteManager({
+  itemId,
   initialNote,
-  onSaveSuccess 
-}: { 
-  itemId: number, 
-  initialNote: string,
-  onSaveSuccess?: (note: string) => void 
+  onSaveSuccess,
+}: {
+  itemId: number;
+  initialNote: string;
+  onSaveSuccess?: (note: string) => void;
 }) {
-  const [note, setNote] = useState(initialNote);
-  const [saveState, setSaveState] = useState<NoteSaveState>("idle");
-
-  useEffect(() => {
-    setNote(initialNote || "");
-    setSaveState("idle");
-  }, [itemId, initialNote]);
-
-  const handleSave = async () => {
-    setSaveState("saving");
-    try {
-      const res = await fetch("/api/notes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId, content: note }),
-      });
-      if (!res.ok) throw new Error("Save failed");
-      setSaveState("saved");
-      if (onSaveSuccess) onSaveSuccess(note);
-      setTimeout(() => setSaveState("idle"), 2500);
-    } catch {
-      setSaveState("error");
-      setTimeout(() => setSaveState("idle"), 3000);
-    }
-  };
-
-  const btnLabel =
-    saveState === "saving" ? "Saving…" :
-    saveState === "saved"  ? "Saved ✓" :
-    saveState === "error"  ? "Error — retry" :
-    "Save Note";
+  const { note, setNote, saveState, handleSave, btnLabel } = useNoteSaver({
+    endpoint: "/api/notes",
+    idField: "itemId",
+    id: itemId,
+    initialNote,
+    onSaveSuccess,
+  });
 
   return (
     <div className="note-section">
@@ -56,10 +31,7 @@ export function QuizNoteManager({
       <textarea
         className="note-textarea"
         value={note}
-        onChange={(e) => {
-          setNote(e.target.value);
-          setSaveState("idle");
-        }}
+        onChange={(e) => setNote(e.target.value)}
         placeholder="Add your personal note for this item..."
         rows={3}
       />

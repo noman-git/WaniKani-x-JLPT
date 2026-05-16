@@ -1,20 +1,11 @@
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { requireAdmin, AuthError } from "@/lib/auth";
+import { withAdmin } from "@/lib/api-helpers";
 import bcrypt from "bcryptjs";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
-  try {
-    requireAdmin(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 403 });
-    }
-    throw e;
-  }
-
+export const POST = withAdmin(async (request) => {
   try {
     const { userId, newPassword } = await request.json();
 
@@ -51,4 +42,4 @@ export async function POST(request: NextRequest) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

@@ -1,21 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { sqlite } from "@/lib/db";
-import { requireAuth, AuthError } from "@/lib/auth";
+import { withAuth } from "@/lib/api-helpers";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    await requireAuth(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 401 });
-    }
-    throw e;
-  }
-
-  const { id } = await params;
+export const GET = withAuth<{ id: string }>(async (_request, _session, ctx) => {
+  const { id } = await ctx!.params;
   const wkSubjectId = parseInt(id);
 
   if (isNaN(wkSubjectId)) {
@@ -112,4 +100,4 @@ export async function GET(
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});
