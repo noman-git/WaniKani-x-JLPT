@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/lib/auth";
-import Database from "better-sqlite3";
-import path from "path";
-
-const dbPath = () => path.join(process.cwd(), "data", "jlpt.db");
+import { sqlite } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
   let session;
@@ -24,13 +21,11 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const rawDb = new Database(dbPath(), { readonly: true });
-    const row = rawDb
+    const row = sqlite
       .prepare(
         `SELECT content FROM grammar_notes WHERE user_id = ? AND grammar_point_id = ?`
       )
       .get(session.userId, grammarPointId) as { content: string } | undefined;
-    rawDb.close();
 
     return NextResponse.json({ content: row?.content ?? "" });
   } catch (error) {
@@ -57,29 +52,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid grammarPointId or content" }, { status: 400 });
     }
 
-    const rawDb = new Database(dbPath());
-    rawDb.pragma("journal_mode = WAL");
-    rawDb.pragma("foreign_keys = ON");
-
-    const existing = rawDb
+    const existing = sqlite
       .prepare(`SELECT id FROM grammar_notes WHERE user_id = ? AND grammar_point_id = ?`)
       .get(session.userId, grammarPointId) as { id: number } | undefined;
 
     const now = new Date().toISOString();
 
     if (existing) {
-      rawDb
+      sqlite
         .prepare(`UPDATE grammar_notes SET content = ?, updated_at = ? WHERE id = ?`)
         .run(content, now, existing.id);
     } else {
-      rawDb
+      sqlite
         .prepare(
           `INSERT INTO grammar_notes (user_id, grammar_point_id, content, updated_at) VALUES (?, ?, ?, ?)`
         )
         .run(session.userId, grammarPointId, content, now);
     }
 
-    rawDb.close();
     return NextResponse.json({ success: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

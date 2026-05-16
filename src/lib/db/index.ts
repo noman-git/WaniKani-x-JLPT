@@ -26,6 +26,7 @@ const sqlite = new Database(DB_PATH);
 sqlite.pragma("journal_mode = WAL");
 sqlite.pragma("foreign_keys = ON");
 
+export { sqlite };
 export const db = drizzle(sqlite, { schema });
 
 // Ensure all tables exist natively via Drizzle Migrations

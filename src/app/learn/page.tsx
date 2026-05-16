@@ -5,6 +5,7 @@ import SrsQuiz, { QuizItem } from "../components/SrsQuiz";
 import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
 import LessonModal, { QuizNoteManager } from "../components/LessonModal";
+import { dedupeByExpression } from "@/lib/dedupe";
 
 type LessonPhase = "loading" | "lesson" | "quiz" | "done";
 
@@ -442,9 +443,9 @@ function LessonCardStack({ item }: { item: QuizItem }) {
             Kanji Composition
           </h3>
           <div className="srs-chip-grid">
-            {item.componentKanji!.map((k, idx) => (
-              <div 
-                key={idx} 
+            {dedupeByExpression(item.componentKanji!).map((k, idx) => (
+              <div
+                key={idx}
                 className="srs-feature-chip kanji-composition-chip"
                 onClick={() => k.id && setModalTarget({ type: "item", id: k.id })}
                 style={{ cursor: k.id ? 'pointer' : 'default' }}
@@ -465,9 +466,9 @@ function LessonCardStack({ item }: { item: QuizItem }) {
             Found In Vocabulary
           </h3>
           <div className="srs-chip-grid grammar-grid">
-            {item.relatedVocab!.map((v, idx) => (
-              <div 
-                key={idx} 
+            {dedupeByExpression(item.relatedVocab!.filter((v) => v.type === "vocab")).map((v, idx) => (
+              <div
+                key={idx}
                 className="srs-grammar-chip vocab-chip-override"
                 onClick={() => setModalTarget({ type: "item", id: v.id })}
                 style={{ cursor: 'pointer' }}
@@ -488,9 +489,9 @@ function LessonCardStack({ item }: { item: QuizItem }) {
             Found In Kanji
           </h3>
           <div className="srs-chip-grid">
-            {item.usedInKanji!.map((k, idx) => (
-              <div 
-                key={idx} 
+            {dedupeByExpression(item.usedInKanji!.filter((k) => k.type === "kanji")).map((k, idx) => (
+              <div
+                key={idx}
                 className="srs-feature-chip kanji-composition-chip"
                 onClick={() => setModalTarget({ type: "item", id: k.id })}
                 style={{ cursor: 'pointer' }}

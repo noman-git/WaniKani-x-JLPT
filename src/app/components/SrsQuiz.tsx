@@ -25,8 +25,8 @@ export type QuizItem = {
   wkLevel?: number | null;
   radicals?: Array<{ id: number; characters: string | null; meaning: string; imageUrl: string | null; level: number; }> | null;
   componentKanji?: Array<{ id: number | null; expression: string; reading: string; meaning: string; jlptLevel: string | null; wkLevel: number | null; }> | null;
-  relatedVocab?: Array<{ id: number; expression: string; reading: string; meaning: string; jlptLevel: string; }> | null;
-  usedInKanji?: Array<{ id: number; expression: string; reading: string; meaning: string; jlptLevel: string; }> | null;
+  relatedVocab?: Array<{ id: number; expression: string; reading: string; meaning: string; type: string; jlptLevel: string; }> | null;
+  usedInKanji?: Array<{ id: number; expression: string; reading: string; meaning: string; type: string; jlptLevel: string; }> | null;
   jlptItemId: number;
   jlptLevel?: string | null;
 };

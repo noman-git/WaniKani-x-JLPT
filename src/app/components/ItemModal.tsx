@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import DOMPurify from "dompurify";
 import dynamic from "next/dynamic";
+import { dedupeByExpression } from "@/lib/dedupe";
 
 const GrammarDetailModal = dynamic(() => import("./GrammarDetailModal"), { ssr: false });
 
@@ -526,7 +527,7 @@ function ItemView({
           <div className="modal-section">
             <h3 className="modal-section-title">Kanji Composition</h3>
             <div className="modal-related-vocab">
-              {detail.componentKanji.map((k, i) => {
+              {dedupeByExpression(detail.componentKanji).map((k, i) => {
                 const isJlpt = k.id !== null;
                 return isJlpt ? (
                   <button
@@ -587,7 +588,7 @@ function ItemView({
           <div className="modal-section">
             <h3 className="modal-section-title">Related JLPT Vocab</h3>
             <div className="modal-related-vocab">
-              {detail.relatedVocab.map((v) => (
+              {dedupeByExpression(detail.relatedVocab.filter((v) => v.type === "vocab")).map((v) => (
                 <button
                   key={v.id}
                   className="related-vocab-chip"
@@ -607,7 +608,7 @@ function ItemView({
           <div className="modal-section">
             <h3 className="modal-section-title">Found In Kanji</h3>
             <div className="modal-related-vocab">
-              {detail.usedInKanji.map((k) => (
+              {dedupeByExpression(detail.usedInKanji.filter((k) => k.type === "kanji")).map((k) => (
                 <button
                   key={k.id}
                   className="related-vocab-chip kanji-chip"
@@ -791,27 +792,30 @@ function RadicalView({
         )}
 
         {/* Used by Kanji */}
-        {detail.usedByKanji.length > 0 && (
-          <div className="modal-section">
-            <h3 className="modal-section-title">
-              Found in {detail.usedByKanji.length} JLPT Kanji
-            </h3>
-            <div className="modal-related-vocab">
-              {detail.usedByKanji.map((k) => (
-                <button
-                  key={k.id}
-                  className="related-vocab-chip kanji-chip"
-                  onClick={() => navigateToItem(k.id)}
-                  title={`${k.reading} — ${k.meaning}`}
-                >
-                  <span className="vocab-chip-expr">{k.expression}</span>
-                  <span className="vocab-chip-meaning">{k.meaning}</span>
-                  <span className="vocab-chip-level">{k.jlptLevel}</span>
-                </button>
-              ))}
+        {detail.usedByKanji.length > 0 && (() => {
+          const usedByKanji = dedupeByExpression(detail.usedByKanji);
+          return (
+            <div className="modal-section">
+              <h3 className="modal-section-title">
+                Found in {usedByKanji.length} JLPT Kanji
+              </h3>
+              <div className="modal-related-vocab">
+                {usedByKanji.map((k) => (
+                  <button
+                    key={k.id}
+                    className="related-vocab-chip kanji-chip"
+                    onClick={() => navigateToItem(k.id)}
+                    title={`${k.reading} — ${k.meaning}`}
+                  >
+                    <span className="vocab-chip-expr">{k.expression}</span>
+                    <span className="vocab-chip-meaning">{k.meaning}</span>
+                    <span className="vocab-chip-level">{k.jlptLevel}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
 

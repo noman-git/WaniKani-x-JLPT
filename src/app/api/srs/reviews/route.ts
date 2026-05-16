@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { jlptItems, userProgress, wanikaniSubjects } from "@/lib/db/schema";
-import { eq, or, and, lte, isNotNull } from "drizzle-orm";
+import { jlptItems, userProgress } from "@/lib/db/schema";
+import { eq, and, lte, isNotNull } from "drizzle-orm";
 import { requireAuth, AuthError } from "@/lib/auth";
+import { parseIntSafe, LIMIT_MAX } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   let session;
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const userId = session.userId;
-    const limit = parseInt(url.searchParams.get("limit") || "100", 10);
+    const limit = parseIntSafe(url.searchParams.get("limit"), 100, 1, LIMIT_MAX);
 
     const now = new Date().toISOString();
 

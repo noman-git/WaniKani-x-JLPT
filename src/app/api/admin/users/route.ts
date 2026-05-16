@@ -1,7 +1,6 @@
 import { requireAdmin, AuthError } from "@/lib/auth";
+import { sqlite } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
-import Database from "better-sqlite3";
-import path from "path";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,10 +12,7 @@ export async function GET(request: NextRequest) {
     throw e;
   }
 
-  const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-  const rawDb = new Database(dbPath, { readonly: true });
-
-  const usersList = rawDb
+  const usersList = sqlite
     .prepare(
       `SELECT u.id, u.username, u.display_name, u.is_admin, u.created_at,
               COUNT(p.id) as progress_count
@@ -26,8 +22,6 @@ export async function GET(request: NextRequest) {
        ORDER BY u.created_at ASC`
     )
     .all();
-
-  rawDb.close();
 
   return NextResponse.json({ users: usersList });
 }

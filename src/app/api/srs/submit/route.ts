@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { userProgress } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
-import { calculateNextState, SrsState } from "@/lib/srs/algorithm";
+import { calculateNextState, FORCE_KNOWN_STATE, SrsState } from "@/lib/srs/algorithm";
 import { requireAuth, AuthError } from "@/lib/auth";
 
 /**
@@ -48,11 +48,7 @@ export async function POST(req: NextRequest) {
     // Calculate next mathematical interval
     let nextState: SrsState;
     if (forceKnown) {
-        nextState = {
-            srsStage: 8, // Master
-            interval: 120, // 4 months out
-            easeFactor: 2.7, // High ease
-        };
+        nextState = FORCE_KNOWN_STATE;
     } else {
         nextState = calculateNextState(
           currentState,

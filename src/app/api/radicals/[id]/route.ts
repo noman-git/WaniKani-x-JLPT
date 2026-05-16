@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Database from "better-sqlite3";
-import path from "path";
+import { sqlite } from "@/lib/db";
 import { requireAuth, AuthError } from "@/lib/auth";
 
 export async function GET(
@@ -24,8 +23,7 @@ export async function GET(
   }
 
   try {
-    const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-    const rawDb = new Database(dbPath, { readonly: true });
+    const rawDb = sqlite;
 
     // Get the radical with all its data
     const radical = rawDb
@@ -46,7 +44,6 @@ export async function GET(
     } | undefined;
 
     if (!radical) {
-      rawDb.close();
       return NextResponse.json({ error: "Radical not found" }, { status: 404 });
     }
 
@@ -98,8 +95,6 @@ export async function GET(
         )
         .all(...itemIds) as typeof usedByKanji;
     }
-
-    rawDb.close();
 
     return NextResponse.json({
       radical: {
