@@ -121,7 +121,7 @@ export default function DashboardPage() {
          </button>
       </div>
 
-      {srsStats?.levels && ["N5", "N4"].map(level => (
+      {srsStats?.levels && ["N5", "N4", "Other"].map(level => (
          <div key={level} style={{ marginTop: '32px' }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: "-0.5px" }}>{level} Mastery</h2>
             <div className="srs-stages-container">

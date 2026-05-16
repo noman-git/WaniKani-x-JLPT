@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Database from "better-sqlite3";
-import path from "path";
+import { sqlite } from "@/lib/db";
 import { requireAuth, AuthError } from "@/lib/auth";
 
 interface WKMeaningRow {
@@ -50,8 +49,7 @@ export async function GET(
   }
 
   try {
-    const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-    const rawDb = new Database(dbPath, { readonly: true });
+    const rawDb = sqlite;
 
     // Prepare statements outside the loop for maximum sqlite performance
     const getJlptItemStmt = rawDb.prepare(
@@ -401,8 +399,6 @@ export async function GET(
       linkedGrammar,
     };
     } // End of loop over itemIds
-
-    rawDb.close();
 
     return NextResponse.json({ items: results });
   } catch (error) {

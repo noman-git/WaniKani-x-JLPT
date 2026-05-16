@@ -4,6 +4,14 @@ export type SrsState = {
   easeFactor: number;
 };
 
+// State applied when a user clicks "Mark as Known" to skip an item out of the
+// learning queue. Maps to stage 8 (Master) ≈ 4 months until next review.
+export const FORCE_KNOWN_STATE: SrsState = {
+  srsStage: 8,
+  interval: 120,
+  easeFactor: 2.7,
+};
+
 // Maps continuous interval (in days) back to WaniKani stages visually
 export function mapIntervalToStage(interval: number): number {
   if (interval <= 0) return 0;

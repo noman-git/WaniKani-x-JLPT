@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { grammarPoints, grammarProgress } from "@/lib/db/schema";
 import { eq, and, lte, isNotNull } from "drizzle-orm";
 import { requireAuth, AuthError } from "@/lib/auth";
+import { parseIntSafe, LIMIT_MAX } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   let session;
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const userId = session.userId;
-    const limit = parseInt(url.searchParams.get("limit") || "100", 10);
+    const limit = parseIntSafe(url.searchParams.get("limit"), 100, 1, LIMIT_MAX);
 
     const now = new Date().toISOString();
 

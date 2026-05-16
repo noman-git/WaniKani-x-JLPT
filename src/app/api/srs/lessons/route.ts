@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, sqlite } from "@/lib/db";
 import { requireAuth, AuthError } from "@/lib/auth";
-import Database from "better-sqlite3";
-import path from "path";
+import { parseIntSafe, LIMIT_MAX } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   let session;
@@ -17,11 +16,10 @@ export async function GET(req: NextRequest) {
 
   try {
     const url = new URL(req.url);
-    const limit = parseInt(url.searchParams.get("limit") || "5", 10);
+    const limit = parseIntSafe(url.searchParams.get("limit"), 5, 1, LIMIT_MAX);
     const userId = session.userId;
 
-    const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-    const rawDb = new Database(dbPath, { readonly: true });
+    const rawDb = sqlite;
 
     // 1. Build a fast WK ID -> JLPT ID lookup
     const wkToJlpt = new Map<number, number>();
@@ -32,9 +30,11 @@ export async function GET(req: NextRequest) {
     `).all() as any[];
     mappingRows.forEach(r => wkToJlpt.set(r.wk_subject_id, r.matched_jlpt_item_id));
 
-    // 2. Fetch all learned items for the user
+    // 2. Fetch all learned items for the user. "Learned" = at least Guru
+    // (srs_stage >= 5). Anything earlier (Apprentice 1-4) is still being
+    // memorized and shouldn't unlock dependent lessons.
     const learnedRows = rawDb.prepare(`
-       SELECT jlpt_item_id FROM user_progress WHERE user_id = ? AND srs_stage > 0
+       SELECT jlpt_item_id FROM user_progress WHERE user_id = ? AND srs_stage >= 5
     `).all(userId) as any[];
     const learnedIds = new Set(learnedRows.map(r => r.jlpt_item_id));
 
@@ -92,8 +92,6 @@ export async function GET(req: NextRequest) {
           fullItemsFetchKeys.push(row.jlptItemId);
        }
     }
-
-    rawDb.close();
 
     if (fullItemsFetchKeys.length === 0) {
        return NextResponse.json({ lessons: [] });

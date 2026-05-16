@@ -1,4 +1,6 @@
 import { requireAuth, AuthError } from "@/lib/auth";
+import { sqlite } from "@/lib/db";
+import { parseIntSafe, PAGE_MAX, LIMIT_MAX } from "@/lib/api-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -11,14 +13,14 @@ export async function GET(request: NextRequest) {
     }
     throw e;
   }
-  
+
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
   const search = searchParams.get("search");
   const level = searchParams.get("level");
   const onWanikani = searchParams.get("onWanikani");
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "50");
+  const page = parseIntSafe(searchParams.get("page"), 1, 1, PAGE_MAX);
+  const limit = parseIntSafe(searchParams.get("limit"), 50, 1, LIMIT_MAX);
 
   const userId = session.userId;
 
@@ -106,19 +108,14 @@ export async function GET(request: NextRequest) {
     params.limit = limit;
     params.offset = (page - 1) * limit;
 
-    const Database = (await import("better-sqlite3")).default;
-    const path = await import("path");
-    const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-    const rawDb = new Database(dbPath, { readonly: true });
-
-    const countResult = rawDb.prepare(countQuery).get(params) as { total: number };
-    const items = rawDb.prepare(dataQuery).all(params);
+    const countResult = sqlite.prepare(countQuery).get(params) as { total: number };
+    const items = sqlite.prepare(dataQuery).all(params);
 
     const statsProgressJoin = userId
       ? `LEFT JOIN user_progress p ON p.jlpt_item_id = j.id AND p.user_id = ${userId}`
       : `LEFT JOIN user_progress p ON 0 = 1`;
 
-    const stats = rawDb
+    const stats = sqlite
       .prepare(
         `
         SELECT
@@ -141,7 +138,6 @@ export async function GET(request: NextRequest) {
       `
       )
       .all();
-    rawDb.close();
 
     return NextResponse.json({
       items,

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Database from "better-sqlite3";
-import path from "path";
+import { sqlite } from "@/lib/db";
 import { requireAuth, AuthError } from "@/lib/auth";
 
 interface WKMeaningRow {
@@ -46,8 +45,7 @@ export async function GET(
   }
 
   try {
-    const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-    const rawDb = new Database(dbPath, { readonly: true });
+    const rawDb = sqlite;
 
     // Get the JLPT item
     const item = rawDb
@@ -66,7 +64,6 @@ export async function GET(
     } | undefined;
 
     if (!item) {
-      rawDb.close();
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
@@ -349,8 +346,6 @@ export async function GET(
        WHERE l.jlpt_item_id = ?
        ORDER BY g.jlpt_level ASC, g.id ASC`
     ).all(itemId);
-
-    rawDb.close();
 
     return NextResponse.json({
       item: {

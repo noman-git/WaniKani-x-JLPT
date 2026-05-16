@@ -186,10 +186,11 @@ function AuthGate({ children }: { children: ReactNode }) {
 
 function LoginRedirect() {
   const pathname = usePathname();
-  // Use useEffect to avoid hydration issues
-  if (typeof window !== "undefined" && pathname !== "/login") {
-    window.location.href = "/login";
-  }
+  useEffect(() => {
+    if (pathname !== "/login") {
+      window.location.href = "/login";
+    }
+  }, [pathname]);
   return (
     <main className="container">
       <div className="loading-container">

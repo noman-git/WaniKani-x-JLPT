@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import Database from "better-sqlite3";
-import path from "path";
+import { sqlite } from "@/lib/db";
+import type Database from "better-sqlite3";
 
 const CACHE_TTL_DAYS = 30; // Cache responses for 30 days
-
-function getDb() {
-  const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-  return new Database(dbPath);
-}
 
 function getCachedResponse(rawDb: InstanceType<typeof Database>, key: string): string | null {
   const row = rawDb
@@ -59,7 +54,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const rawDb = getDb();
+  const rawDb = sqlite;
 
   try {
     if (char) {
@@ -68,13 +63,11 @@ export async function GET(request: NextRequest) {
       const cached = getCachedResponse(rawDb, cacheKey);
 
       if (cached) {
-        rawDb.close();
         return NextResponse.json({ source: "kanjiapi", data: JSON.parse(cached), cached: true });
       }
 
       const res = await fetch(`https://kanjiapi.dev/v1/kanji/${encodeURIComponent(char)}`);
       if (!res.ok) {
-        rawDb.close();
         return NextResponse.json(
           { error: `kanjiapi.dev returned ${res.status}`, source: "kanjiapi" },
           { status: res.status }
@@ -83,7 +76,6 @@ export async function GET(request: NextRequest) {
 
       const data = await res.json();
       setCachedResponse(rawDb, cacheKey, JSON.stringify(data));
-      rawDb.close();
 
       return NextResponse.json({ source: "kanjiapi", data, cached: false });
     }
@@ -94,7 +86,6 @@ export async function GET(request: NextRequest) {
       const cached = getCachedResponse(rawDb, cacheKey);
 
       if (cached) {
-        rawDb.close();
         return NextResponse.json({ source: "jisho", data: JSON.parse(cached), cached: true });
       }
 
@@ -102,7 +93,6 @@ export async function GET(request: NextRequest) {
         `https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(word)}`
       );
       if (!res.ok) {
-        rawDb.close();
         return NextResponse.json(
           { error: `Jisho API returned ${res.status}`, source: "jisho" },
           { status: res.status }
@@ -116,12 +106,10 @@ export async function GET(request: NextRequest) {
         data: (data.data || []).slice(0, 5),
       };
       setCachedResponse(rawDb, cacheKey, JSON.stringify(trimmed));
-      rawDb.close();
 
       return NextResponse.json({ source: "jisho", data: trimmed, cached: false });
     }
   } catch (error) {
-    rawDb.close();
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }

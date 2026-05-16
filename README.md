@@ -1,297 +1,150 @@
-# ⛩️ JLPT Study Dashboard
+# JLPT Study Dashboard
 
-Track your JLPT N4 & N5 kanji and vocabulary progress. Ships with pre-baked WaniKani reference data (meanings, readings, mnemonics, radicals) — no WaniKani account needed.
+Self-hosted study dashboard for JLPT N4 & N5 — kanji, vocab, radicals, and grammar — with a WaniKani-style SRS on top of pre-baked WaniKani reference data (meanings, readings, mnemonics, radicals). No WaniKani account or API token required.
 
-Multi-user with invite-code registration. Runs on SQLite. Deploys to Fly.io.
+Multi-user, invite-code registration, runs on SQLite. Deployed via Docker / Coolify on a VPS.
 
-![Dashboard](https://img.shields.io/badge/Next.js-16-black) ![SQLite](https://img.shields.io/badge/SQLite-WAL-blue) ![Auth](https://img.shields.io/badge/Auth-JWT-green)
+## Stack
 
----
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router, standalone output) |
+| Database | SQLite (`better-sqlite3`) with WAL |
+| ORM | Drizzle |
+| Auth | `bcryptjs` + JWT (`jose`) in HTTP-only cookies |
+| Hosting | Docker container behind Coolify on a VPS |
+
+## What's in the seed DB
+
+`data/jlpt-seed.db` ships pre-baked. Live counts:
+
+- **2,659** `jlpt_items` — kanji + vocab + radicals, levels N5 / N4 / other
+- **9,746** `wanikani_subjects` rows — WaniKani meanings, readings, mnemonics, context sentences, parts of speech
+- **503** `wanikani_radicals`
+- **278** `grammar_points` + **5,804** grammar↔item links
+
+"Other"-level rows are WK-only context items not in the canonical N5/N4 lists; they show up in the browsing UI but aren't surfaced in the dashboard mastery rollup.
 
 ## Features
 
-- **1,767 JLPT items** — N4/N5 kanji and vocabulary from community-curated lists
-- **WaniKani integration** — meanings, readings, mnemonics, radicals, and cross-references
-- **Progress tracking** — mark items as Known / Learning / Unknown
-- **Multi-user** — each user has isolated progress data
-- **Invite codes** — admin generates one-time registration codes
-- **No external services** — everything runs on SQLite with a single persistent volume
+- Browse kanji / vocab / radicals with status, level, WK-coverage filters
+- Detail modal with WK mnemonics, components, related vocab, linked grammar
+- Grammar points with cloze quizzes (Japanese fill-in-the-blank)
+- WaniKani-style SRS: 9 stages, ease-factor adjustments, separate review timing per item
+- Per-user notes on every item and every grammar point
+- Dashboard with N5/N4 mastery breakdown (Apprentice → Burned)
+- "Mark as known" deep-skip for items the user already knows cold
 
----
-
-## Quick Start
-
-### Prerequisites
-- Node.js 20+
-- npm
-
-### 1. Clone & install
+## Local setup
 
 ```bash
-git clone <your-repo-url>
-cd jlpt-dashboard
 npm install
-```
-
-### 2. Configure environment
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env`:
-
-```env
-SESSION_SECRET=pick-a-random-string-at-least-16-chars
-ADMIN_SECRET=your-admin-password
-```
-
-| Variable | Purpose | Required |
-|---|---|---|
-| `SESSION_SECRET` | Signs JWT session cookies (min 16 chars) | Yes |
-| `ADMIN_SECRET` | Protects admin API endpoints | Yes |
-
-### 3. Run
-
-```bash
+cp .env.example .env  # then edit SESSION_SECRET + ADMIN_SECRET
 npm run dev
 ```
 
-On first run, the app copies `data/jlpt-seed.db` → `data/jlpt.db`. This seed contains all 1,767 JLPT items and 9,396 WaniKani subjects. No sync or API token needed.
+First boot copies `data/jlpt-seed.db` → `data/jlpt.db`. The seed is never touched at runtime.
 
-### 4. Create your first user
+`.env`:
 
-Generate an invite code, then register:
+| Var | Purpose |
+|---|---|
+| `SESSION_SECRET` | Signs JWT session cookies. Min 16 chars. |
+| `ADMIN_SECRET` | Bearer token for admin endpoints. |
+
+## Creating users
+
+There is no open registration — generate an invite code, then register against it.
 
 ```bash
-# Generate an invite code
+# Generate one invite code
 curl -X POST http://localhost:3000/api/admin/invite-codes \
-  -H "Authorization: Bearer YOUR_ADMIN_SECRET" \
+  -H "Authorization: Bearer $ADMIN_SECRET" \
   -H "Content-Type: application/json" \
   -d '{"count": 1}'
-
-# Response: { "codes": ["a1b2c3d4"] }
+# → { "codes": ["a1b2c3d4"] }
 ```
 
-Open `http://localhost:3000`, switch to "Register", enter the invite code + your details.
-
----
+Then open `/`, switch the login form to Register, paste the code.
 
 ## Admin API
 
-All admin endpoints require the header:
-```
-Authorization: Bearer YOUR_ADMIN_SECRET
-```
+All require `Authorization: Bearer $ADMIN_SECRET`.
 
-### Generate Invite Codes
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/api/admin/invite-codes` | List codes + who used each |
+| `POST` | `/api/admin/invite-codes` | Generate 1–20 codes (`{"count": N}`) |
+| `GET` | `/api/admin/users` | List users + progress row counts |
+| `POST` | `/api/admin/reset-password` | `{ "userId": N, "newPassword": "…" }` |
 
-```bash
-# Generate 5 one-time invite codes
-curl -X POST http://localhost:3000/api/admin/invite-codes \
-  -H "Authorization: Bearer YOUR_ADMIN_SECRET" \
-  -H "Content-Type: application/json" \
-  -d '{"count": 5}'
-```
+## Re-baking the seed
 
-Response:
-```json
-{
-  "success": true,
-  "codes": ["a1b2c3d4", "e5f6g7h8", ...],
-  "message": "Generated 5 invite code(s)"
-}
-```
-
-### List Invite Codes
+When the underlying reference data changes (new WK mnemonics, grammar fixes, dedup runs):
 
 ```bash
-curl http://localhost:3000/api/admin/invite-codes \
-  -H "Authorization: Bearer YOUR_ADMIN_SECRET"
-```
-
-Response shows each code's status (unused / used by whom).
-
-### List Users
-
-```bash
-curl http://localhost:3000/api/admin/users \
-  -H "Authorization: Bearer YOUR_ADMIN_SECRET"
-```
-
-Response:
-```json
-{
-  "users": [
-    {
-      "id": 1,
-      "username": "noman",
-      "display_name": "Noman",
-      "is_admin": 0,
-      "created_at": "2026-04-04T15:47:55Z",
-      "progress_count": 42
-    }
-  ]
-}
-```
-
-### Reset a User's Password
-
-```bash
-curl -X POST http://localhost:3000/api/admin/reset-password \
-  -H "Authorization: Bearer YOUR_ADMIN_SECRET" \
-  -H "Content-Type: application/json" \
-  -d '{"userId": 1, "newPassword": "new-password-here"}'
-```
-
----
-
-## Seed Database
-
-The app ships with `data/jlpt-seed.db` — a pre-built SQLite database containing all reference data (JLPT items, WaniKani subjects, radicals) but no user data.
-
-### How it works
-
-1. On first boot, if `data/jlpt.db` doesn't exist, the app copies `jlpt-seed.db` → `jlpt.db`
-2. Users register, log in, and their progress is stored in `jlpt.db`
-3. The seed is never modified at runtime
-
-### Re-baking the seed
-
-If you need to update the WaniKani data (new items, updated mnemonics, etc.):
-
-```bash
-# 1. Make sure your local jlpt.db has the latest data
-#    (run the app, do whatever sync/import you need)
-
-# 2. Export a clean seed (strips users, progress, cache)
+# 1. Make sure data/jlpt.db has the data you want to ship
+# 2. Strip user data + vacuum into jlpt-seed.db
 npx tsx scripts/export-seed.ts
-
-# 3. Verify
-#    Output will show: Items: 1767, Subjects: 9396, Radicals: 503
-
-# 4. Commit the updated seed
-git add data/jlpt-seed.db
-git commit -m "Update seed data"
-
-# 5. Redeploy
-fly deploy
+# 3. Commit the new seed
+git add data/jlpt-seed.db && git commit -m "Reseed"
 ```
 
-The export script (`scripts/export-seed.ts`):
-- Copies your live `jlpt.db` → `jlpt-seed.db`
-- Deletes all rows from: `users`, `invite_codes`, `user_progress`, `kanji_cache`
-- Runs `VACUUM` to compact the file
-- Result: a clean ~9MB database ready to ship
+`scripts/export-seed.ts` copies `jlpt.db` → `jlpt-seed.db`, deletes rows from `users`, `invite_codes`, `user_progress`, `user_notes`, `grammar_progress`, `grammar_notes`, `kanji_cache`, then `VACUUM`s.
 
----
+## Deployment (Coolify on VPS)
 
-## Deployment (Fly.io)
+The repo ships a multi-stage `Dockerfile` that:
+- builds the Next.js standalone bundle
+- copies `data/jlpt-seed.db` into `/app/seed/` inside the image
+- expects a writable volume mounted at `/app/data/` for the live `jlpt.db`
 
-### First-time setup
+In Coolify:
 
-```bash
-# 1. Install Fly CLI
-curl -L https://fly.io/install.sh | sh
+1. Point the app at this repo, set the build pack to **Dockerfile**.
+2. Add a persistent volume mounted at `/app/data` (any size — DB is ~14 MB).
+3. Set environment variables `SESSION_SECRET` and `ADMIN_SECRET`.
+4. Expose port `3000`.
+5. Deploy.
 
-# 2. Sign up / log in
-fly auth login
+On first boot the container copies the baked-in seed to `/app/data/jlpt.db`. On subsequent deploys the volume persists, so user data survives image rebuilds. Re-running the seed via `export-seed.ts` and redeploying does **not** overwrite live user data — the copy-on-init check is "only if jlpt.db is missing."
 
-# 3. Launch the app (detects Dockerfile + fly.toml)
-fly launch
-
-# 4. Create a persistent volume for the SQLite database
-fly volumes create jlpt_data --size 1 --region sin
-
-# 5. Set secrets
-fly secrets set \
-  SESSION_SECRET="$(openssl rand -hex 16)" \
-  ADMIN_SECRET="your-admin-password"
-
-# 6. Deploy
-fly deploy
-```
-
-### Subsequent deploys
-
-```bash
-fly deploy
-```
-
-### Architecture
+## Project layout
 
 ```
-┌─────────────────────────────┐
-│  Fly.io Machine             │
-│  ┌───────────────────────┐  │
-│  │  Next.js (standalone) │  │
-│  │  Port 3000            │  │
-│  └───────┬───────────────┘  │
-│          │ reads/writes     │
-│  ┌───────▼───────────────┐  │
-│  │  /app/data/jlpt.db    │  │  ← Persistent Volume
-│  │  (SQLite + WAL)       │  │
-│  └───────────────────────┘  │
-└─────────────────────────────┘
+data/
+  jlpt-seed.db            # Pre-baked reference data (committed)
+  grammar-seed.json       # Auto-loaded into grammar_points on first boot
+drizzle/                  # Generated migrations
+scripts/
+  build-seed.ts           # Build jlpt-seed.db from raw sources
+  export-seed.ts          # Strip users + vacuum jlpt.db → jlpt-seed.db
+  dedup-items.ts          # Collapse duplicate (expression, type) rows
+  …                       # Various enrichment / import scripts
+src/
+  app/
+    api/                  # Route handlers (auth, items, srs, grammar, admin)
+    components/           # Modals, quiz, item browser, lesson card stack
+    {kanji,vocab,radicals,grammar,learn,review,…}/page.tsx
+  lib/
+    auth.ts               # JWT + cookie session
+    srs/algorithm.ts      # SRS interval/ease math
+    db/{index,schema}.ts  # Drizzle schema + connection
+Dockerfile
 ```
 
-- **Volume**: `jlpt_data` mounted at `/app/data/` — survives redeploys
-- **Seed**: On first boot (empty volume), the app copies the baked-in seed DB
-- **Region**: `sin` (Singapore) — change in `fly.toml` if needed
+## Data sources
 
----
+- **JLPT vocab/kanji lists**: [open-anki-jlpt-decks](https://github.com/jamsinclair/open-anki-jlpt-decks) + [jlptsensei.com](https://jlptsensei.com) for kanji ground truth
+- **WaniKani reference data**: scraped from the public WaniKani API v2
+- **Grammar points**: jlptsensei.com (scraped, see `scripts/scrape-jlptsensei.py`) with AI enrichment for cloze examples
 
-## Project Structure
+## Known data caveats
 
-```
-├── data/
-│   └── jlpt-seed.db           # Pre-baked reference data (committed)
-├── scripts/
-│   └── export-seed.ts          # Re-bake seed from live DB
-├── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── admin/          # Invite codes, users, password reset
-│   │   │   ├── auth/           # Login, register, logout, session
-│   │   │   ├── items/          # JLPT items list + detail
-│   │   │   ├── kanji-lookup/   # Kanji decomposition
-│   │   │   ├── progress/       # Mark items known/learning
-│   │   │   └── radicals/       # Radical detail
-│   │   ├── components/
-│   │   │   ├── AuthProvider.tsx     # Client-side auth context
-│   │   │   ├── ClientLayout.tsx     # Auth gate + nav
-│   │   │   └── ItemDetailModal.tsx  # Item detail with WK data
-│   │   ├── items/page.tsx      # Browse items grid
-│   │   ├── login/page.tsx      # Login / register
-│   │   ├── settings/page.tsx   # User info + about
-│   │   ├── page.tsx            # Dashboard with progress stats
-│   │   ├── layout.tsx          # Root layout
-│   │   └── globals.css         # All styles
-│   └── lib/
-│       ├── auth.ts             # JWT session management
-│       └── db/
-│           ├── index.ts        # DB init + seed copy
-│           └── schema.ts       # Drizzle schema
-├── Dockerfile                  # Multi-stage build
-├── fly.toml                    # Fly.io config
-└── .env.example                # Environment template
-```
+A code+data review surfaced these — none break the app, all are worth knowing:
 
----
-
-## Tech Stack
-
-| Layer | Tech |
-|---|---|
-| Framework | Next.js 16 (App Router, standalone output) |
-| Database | SQLite via `better-sqlite3` |
-| ORM | Drizzle |
-| Auth | `bcryptjs` (password hashing) + `jose` (JWT) |
-| Hosting | Fly.io (free tier) |
-
----
-
-## Data Sources
-
-- **JLPT Items**: [open-anki-jlpt-decks](https://github.com/jamsinclair/open-anki-jlpt-decks) — Tanos-based N4/N5 lists
-- **WaniKani Data**: [WaniKani API v2](https://docs.api.wanikani.com/) — meanings, readings, mnemonics, radicals
+- ~200 single-character JLPT vocab items duplicate an existing JLPT kanji item (same char stored as `type='kanji'` and `type='vocab'`, sometimes at different JLPT levels). Lookup queries that pull "items containing X" can render both side-by-side.
+- 88 byte-for-byte duplicate rows in `wanikani_subjects` (seed-import artifact).
+- `wanikani_subjects.object_type` has 4 values where the code expects 3 (`vocab` for pseudo entries vs `vocabulary` for real WK).
+- `jlpt_items.sources` is declared as JSON but ~65% of rows store a plain comma-separated string. `dedup-items.ts` handles both forms.
+- The dashboard mastery rollup only buckets N5 + N4. ~936 `other`-level items are included in lesson/review counts but invisible in the mastery breakdown.

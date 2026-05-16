@@ -56,11 +56,15 @@ export async function GET(req: NextRequest) {
     const levels: Record<string, any> = {
       "N5": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 },
       "N4": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 },
-      "Unknown": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 }
+      "Other": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 },
     };
 
+    // jlpt_level enum is N4 | N5 | other → map "other" to "Other" bucket
+    const levelKey = (raw: string) =>
+      raw === "N5" ? "N5" : raw === "N4" ? "N4" : "Other";
+
     distributionRes.forEach(row => {
-       const lvl = levels[row.level] ? row.level : "Unknown";
+       const lvl = levelKey(row.level);
        
        if (row.stage >= 1 && row.stage <= 4) levels[lvl].apprentice += row.count;
        else if (row.stage === 5 || row.stage === 6) levels[lvl].guru += row.count;
