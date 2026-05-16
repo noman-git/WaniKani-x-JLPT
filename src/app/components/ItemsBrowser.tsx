@@ -57,7 +57,10 @@ export default function ItemsBrowser({
     params.set("limit", "30");
 
     try {
-      const res = await fetch(`${apiUrl}?${params}`);
+      // apiUrl may already contain a query string (e.g. "/api/items?type=vocab"),
+      // so pick the right separator before appending filter params.
+      const sep = apiUrl.includes("?") ? "&" : "?";
+      const res = await fetch(`${apiUrl}${sep}${params}`);
       const data = await res.json();
       setItems(data.items || []);
       setPagination(data.pagination || { page: 1, limit: 30, total: 0, totalPages: 0 });

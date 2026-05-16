@@ -1,17 +1,8 @@
-import { requireAdmin, AuthError } from "@/lib/auth";
+import { withAdmin } from "@/lib/api-helpers";
 import { sqlite } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
-  try {
-    requireAdmin(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 403 });
-    }
-    throw e;
-  }
-
+export const GET = withAdmin(async () => {
   const usersList = sqlite
     .prepare(
       `SELECT u.id, u.username, u.display_name, u.is_admin, u.created_at,
@@ -24,4 +15,4 @@ export async function GET(request: NextRequest) {
     .all();
 
   return NextResponse.json({ users: usersList });
-}
+});

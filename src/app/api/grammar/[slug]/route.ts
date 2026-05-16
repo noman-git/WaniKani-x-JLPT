@@ -1,25 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth, AuthError } from "@/lib/auth";
+import { NextResponse } from "next/server";
+import { withAuth } from "@/lib/api-helpers";
 import { db } from "@/lib/db";
 import { grammarPoints, grammarProgress, grammarNotes, grammarItemLinks, jlptItems, wanikaniSubjects } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-) {
-  let session;
+export const GET = withAuth<{ slug: string }>(async (_request, session, ctx) => {
   try {
-    session = await requireAuth(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 401 });
-    }
-    throw e;
-  }
-
-  try {
-    const { slug } = await params;
+    const { slug } = await ctx!.params;
 
     const point = db
       .select()
@@ -105,4 +92,4 @@ export async function GET(
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

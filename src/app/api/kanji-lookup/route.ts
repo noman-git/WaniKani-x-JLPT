@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { sqlite } from "@/lib/db";
+import { withAuth } from "@/lib/api-helpers";
 import type Database from "better-sqlite3";
 
 const CACHE_TTL_DAYS = 30; // Cache responses for 30 days
@@ -32,17 +33,7 @@ function setCachedResponse(rawDb: InstanceType<typeof Database>, key: string, js
     .run(key, json, new Date().toISOString());
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    const { requireAuth, AuthError } = await import("@/lib/auth");
-    await requireAuth(request);
-  } catch (e: any) {
-    if (e?.name === "AuthError") {
-      return NextResponse.json({ error: e.message }, { status: 401 });
-    }
-    throw e;
-  }
-
+export const GET = withAuth(async (request) => {
   const { searchParams } = new URL(request.url);
   const char = searchParams.get("char");
   const word = searchParams.get("word");
@@ -109,8 +100,9 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json({ source: "jisho", data: trimmed, cached: false });
     }
+    return NextResponse.json({ error: "Unreachable" }, { status: 500 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

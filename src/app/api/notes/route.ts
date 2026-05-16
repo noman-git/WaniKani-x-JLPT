@@ -1,18 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth, AuthError } from "@/lib/auth";
-import { sqlite } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { withAuth } from "@/lib/api-helpers";
+import { getNote, setNote } from "@/lib/db/queries/user-state";
 
-export async function GET(request: NextRequest) {
-  let session;
-  try {
-    session = await requireAuth(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 401 });
-    }
-    throw e;
-  }
-
+export const GET = withAuth(async (request, session) => {
   const { searchParams } = new URL(request.url);
   const itemId = parseInt(searchParams.get("itemId") || "");
 
@@ -21,58 +11,41 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const row = sqlite
-      .prepare(
-        `SELECT content FROM user_notes WHERE user_id = ? AND jlpt_item_id = ?`
-      )
-      .get(session.userId, itemId) as { content: string } | undefined;
-
-    return NextResponse.json({ content: row?.content ?? "" });
+    const content = getNote({
+      table: "user_notes",
+      fkColumn: "jlpt_item_id",
+      userId: session.userId,
+      fkId: itemId,
+    });
+    return NextResponse.json({ content });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});
 
-export async function POST(request: NextRequest) {
-  let session;
+export const POST = withAuth(async (request, session) => {
   try {
-    session = await requireAuth(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 401 });
-    }
-    throw e;
-  }
-
-  try {
-    const { itemId, content } = await request.json();
+    const { itemId, content } = (await request.json()) as {
+      itemId?: number;
+      content?: string;
+    };
 
     if (!itemId || typeof content !== "string") {
       return NextResponse.json({ error: "Invalid itemId or content" }, { status: 400 });
     }
 
-    const existing = sqlite
-      .prepare(`SELECT id FROM user_notes WHERE user_id = ? AND jlpt_item_id = ?`)
-      .get(session.userId, itemId) as { id: number } | undefined;
-
-    const now = new Date().toISOString();
-
-    if (existing) {
-      sqlite
-        .prepare(`UPDATE user_notes SET content = ?, updated_at = ? WHERE id = ?`)
-        .run(content, now, existing.id);
-    } else {
-      sqlite
-        .prepare(
-          `INSERT INTO user_notes (user_id, jlpt_item_id, content, updated_at) VALUES (?, ?, ?, ?)`
-        )
-        .run(session.userId, itemId, content, now);
-    }
+    setNote({
+      table: "user_notes",
+      fkColumn: "jlpt_item_id",
+      userId: session.userId,
+      fkId: itemId,
+      content,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});
