@@ -156,17 +156,17 @@ export default function ItemsBrowser({
       ) : (
         <div className="items-grid">
           {items.map((item) => (
-            <div key={item.id} className="item-card" onClick={() => openItem(item)} style={{ cursor: "pointer" }}>
+            <div key={item.id} className="item-card" data-type={item.type} onClick={() => openItem(item)} style={{ cursor: "pointer" }}>
               <div className="item-card-header">
                 <div className="item-expression-col">
-                  {item.type === "radical" && item.expression.startsWith("[") && item.wkImageUrl ? (
+                  {item.type === "radical" && item.wkImageUrl ? (
                     <img
                       src={item.wkImageUrl}
                       alt={item.meaning}
                       className="item-expression-img"
                     />
                   ) : (
-                    <div className="item-expression">{item.expression}</div>
+                    <div className="item-expression" style={{ color: `var(--accent-${item.type})` }}>{item.expression}</div>
                   )}
                   {hasAltExpression(item) && (
                     <span className="item-wk-alt" title={`WaniKani uses: ${item.wkCharacters}`}>

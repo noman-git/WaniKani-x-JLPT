@@ -59,7 +59,6 @@ export default function GrammarDetailModal({
   const [noteContent, setNoteContent] = useState("");
   const [noteSaving, setNoteSaving] = useState(false);
   const [noteSaved, setNoteSaved] = useState(false);
-  const [isNotesOpen, setIsNotesOpen] = useState(true);
   const [currentSlug, setCurrentSlug] = useState(slug);
   const [selectedVocabId, setSelectedVocabId] = useState<number | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -165,9 +164,10 @@ export default function GrammarDetailModal({
         }
 
         return (
-          <span 
-            key={i} 
-            className="inline-vocab" 
+          <span
+            key={i}
+            className="inline-vocab"
+            data-type={match.type === 'kanji' ? 'kanji' : 'vocab'}
             tabIndex={0}
             onMouseEnter={handleTooltipPosition}
           >
@@ -204,143 +204,143 @@ export default function GrammarDetailModal({
     <div className={inline ? "grammar-detail-inline-wrapper" : "modal-overlay"} ref={overlayRef} onClick={inline ? undefined : handleOverlayClick}>
       <div className={inline ? "" : "modal-wrapper"}>
         <div className={`modal-content grammar-modal ${inline ? "inline-mode" : ""}`} style={inline ? {boxShadow: 'none', border: 'none', padding: 0, position: 'relative' as const} : {}}>
-          {!inline && (
-            <div className="modal-header" style={{ paddingBottom: '12px', borderBottom: 'none' }}>
-              <div className="modal-header-actions" style={{display: "flex", gap: "10px", alignItems: "center", position: "absolute", top: "16px", right: "16px", zIndex: 10}}>
-                <button 
-                  className={`modal-toggle-note-btn ${isNotesOpen ? 'open' : ''} ${noteContent ? 'has-note' : ''}`}
-                  onClick={() => setIsNotesOpen(!isNotesOpen)}
-                  title="Toggle Notes"
-                >
-                  📝 Notes {noteContent && '(1)'}
-                </button>
-                <button className="modal-close" onClick={onClose} style={{ position: "relative", top: 0, right: 0 }}>✕</button>
-              </div>
-            </div>
-          )}
-          
           {loading ? (
-          <div className="loading-container" style={{ minHeight: 300 }}>
-            <div className="loading-spinner" />
-            <span>Loading grammar point...</span>
-          </div>
-        ) : !data ? (
-          <div className="empty-state">
-            <div className="empty-state-icon">❌</div>
-            <div className="empty-state-text">Grammar point not found</div>
-          </div>
-        ) : (
-          <div className="grammar-detail">
-            {/* Header */}
-            <div className="grammar-detail-header">
-              <div className="grammar-detail-title-row">
-                <h2 className="grammar-detail-title">{data.title}</h2>
-                <span className={`badge badge-${data.jlptLevel.toLowerCase()}`}>{data.jlptLevel}</span>
-              </div>
-              <div className="grammar-detail-romaji">{data.titleRomaji}</div>
-              <div className="grammar-detail-meaning">{data.meaning}</div>
-              <div className="grammar-detail-lesson">
-                Lesson {data.lessonNumber}: {data.lessonTitle}
-              </div>
+            <div className="loading-container" style={{ minHeight: 300 }}>
+              <div className="loading-spinner" />
+              <span>Loading grammar point...</span>
             </div>
-
-            {/* Tags */}
-            {data.tags.length > 0 && (
-              <div className="grammar-tags">
-                {data.tags.map((tag) => (
-                  <span key={tag} className="grammar-tag">{tag}</span>
-                ))}
-              </div>
-            )}
-
-            {/* Structure Box */}
-            <div className="grammar-section">
-              <h3 className="grammar-section-title">📐 Structure</h3>
-              <div className="grammar-structure-box">
-                {data.structure.split("\n").map((line, i) => (
-                  <div key={i} className="grammar-structure-line">{line}</div>
-                ))}
-              </div>
+          ) : !data ? (
+            <div className="empty-state">
+              <div className="empty-state-text">Grammar point not found</div>
             </div>
-
-            {/* Explanation */}
-            <div className="grammar-section">
-              <h3 className="grammar-section-title">📖 Explanation</h3>
-              <div className="grammar-explanation">
-                {data.explanation.split("\n\n").map((para, i) => (
-                  <p key={i}>{para}</p>
-                ))}
-              </div>
-            </div>
-
-            {/* Examples */}
-            {data.examples.length > 0 && (
-              <div className="grammar-section">
-                <h3 className="grammar-section-title">✏️ Examples</h3>
-                <div className="grammar-examples">
-                  {data.examples.map((ex, i) => (
-                    <div key={i} className="grammar-example">
-                      <div className="grammar-example-ja">{parseSentence(ex.ja, data.linkedItems)}</div>
-                      <div className="grammar-example-romaji">{ex.romaji}</div>
-                      <div className="grammar-example-en">{ex.en}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Related Grammar */}
-            {data.relatedGrammar.length > 0 && (
-              <div className="grammar-section">
-                <h3 className="grammar-section-title">🔗 Related Grammar</h3>
-                <div className="grammar-related">
-                  {data.relatedGrammar.map((rel) => (
-                    <button
-                      key={rel.slug}
-                      className="grammar-related-chip"
-                      onClick={() => navigateRelated(rel.slug)}
-                    >
-                      <span className="grammar-related-title">{rel.title}</span>
-                      <span className="grammar-related-meaning">{rel.meaning}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-
-          </div>
-        )}
-      </div>
-
-      {/* Sliding Notes Drawer - only in modal mode */}
-      {!inline && (
-        <div className={`modal-notes-drawer ${isNotesOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
-          {!loading && data && (
-            <div className="note-section">
-              <div className="note-header">
-                <span className="note-title">📝 My Note</span>
-              </div>
-              <textarea
-                className="note-textarea"
-                value={noteContent}
-                onChange={(e) => { setNoteContent(e.target.value); setNoteSaved(false); }}
-                placeholder="Add your personal note for this grammar point..."
-                rows={4}
-              />
-              <div className="note-footer">
-                <button
-                  className={`note-save-btn ${noteSaving ? "note-save-saving" : noteSaved ? "note-save-saved" : "note-save-idle"}`}
-                  onClick={saveNote}
-                  disabled={noteSaving}
+          ) : (
+            <>
+              {!inline && (
+                <div
+                  className="modal-header grammar-header"
+                  style={{
+                    backgroundColor: 'var(--accent-grammar)',
+                    color: 'white',
+                    borderBottom: 'none',
+                  }}
                 >
-                  {noteSaving ? "Saving..." : noteSaved ? "✓ Saved" : "Save Note"}
-                </button>
+                  <div className="modal-header-left">
+                    <span className="modal-expression" style={{ color: 'var(--paper)' }}>{data.title}</span>
+                    <div className="modal-header-meta">
+                      <span className="modal-reading-label" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                        {data.titleRomaji}
+                      </span>
+                      <span className="modal-meaning-label" style={{ color: 'white' }}>{data.meaning}</span>
+                    </div>
+                    <div className="modal-badges" style={{ marginTop: 10 }}>
+                      <span className="badge" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.6)' }}>
+                        {data.jlptLevel}
+                      </span>
+                      <span className="badge" style={{ color: 'rgba(255,255,255,0.85)', borderColor: 'rgba(255,255,255,0.4)' }}>
+                        Lesson {data.lessonNumber} · {data.lessonTitle}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="modal-header-actions">
+                    <button className="modal-close" onClick={onClose} style={{ color: 'white', borderColor: 'rgba(255,255,255,0.4)' }}>✕</button>
+                  </div>
+                </div>
+              )}
+
+              <div className="modal-body">
+                {/* Tags */}
+                {data.tags.length > 0 && (
+                  <div className="grammar-tags" style={{ marginTop: 0, marginBottom: 12 }}>
+                    {data.tags.map((tag) => (
+                      <span key={tag} className="grammar-tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Structure */}
+                <div className="modal-section">
+                  <h3 className="modal-section-title">Structure</h3>
+                  <div className="grammar-structure-box">
+                    {data.structure.split("\n").map((line, i) => (
+                      <div key={i} className="grammar-structure-line">{line}</div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Explanation */}
+                <div className="modal-section">
+                  <h3 className="modal-section-title">Explanation</h3>
+                  <div className="grammar-explanation">
+                    {data.explanation.split("\n\n").map((para, i) => (
+                      <p key={i}>{para}</p>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Examples */}
+                {data.examples.length > 0 && (
+                  <div className="modal-section">
+                    <h3 className="modal-section-title">Examples</h3>
+                    <div className="grammar-examples">
+                      {data.examples.map((ex, i) => (
+                        <div key={i} className="grammar-example">
+                          <div className="grammar-example-ja">{parseSentence(ex.ja, data.linkedItems)}</div>
+                          <div className="grammar-example-romaji">{ex.romaji}</div>
+                          <div className="grammar-example-en">{ex.en}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Related Grammar */}
+                {data.relatedGrammar.length > 0 && (
+                  <div className="modal-section">
+                    <h3 className="modal-section-title">Related Grammar</h3>
+                    <div className="grammar-related">
+                      {data.relatedGrammar.map((rel) => (
+                        <button
+                          key={rel.slug}
+                          className="grammar-related-chip"
+                          onClick={() => navigateRelated(rel.slug)}
+                        >
+                          <span className="grammar-related-title">{rel.title}</span>
+                          <span className="grammar-related-meaning">{rel.meaning}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Personal Note — inline at the bottom of the body */}
+                {!inline && (
+                  <div className="note-section">
+                    <div className="note-header">
+                      <span className="note-title">Note</span>
+                    </div>
+                    <textarea
+                      className="note-textarea"
+                      value={noteContent}
+                      onChange={(e) => { setNoteContent(e.target.value); setNoteSaved(false); }}
+                      placeholder="Add your personal note for this grammar point…"
+                      rows={4}
+                    />
+                    <div className="note-footer">
+                      <button
+                        className={`note-save-btn ${noteSaving ? "note-save-saving" : noteSaved ? "note-save-saved" : "note-save-idle"}`}
+                        onClick={saveNote}
+                        disabled={noteSaving}
+                      >
+                        {noteSaving ? "Saving…" : noteSaved ? "Saved" : "Save note"}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+            </>
           )}
         </div>
-      )}
+
     </div>
 
     {/* Render stacked Item Modal */}

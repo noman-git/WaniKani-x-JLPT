@@ -38,8 +38,11 @@ function UserMenu() {
             <span className="user-menu-name">{user.username}</span>
           </div>
           <div className="user-menu-divider" />
+          <button onClick={() => { setOpen(false); router.push('/study-plan'); }} className="user-menu-item">
+            Study Plan
+          </button>
           <button onClick={() => { setOpen(false); router.push('/settings'); }} className="user-menu-item">
-            ⚙️ Settings
+            Settings
           </button>
           <button onClick={() => { setOpen(false); logout(); }} className="user-menu-item user-menu-item-danger">
             Logout
@@ -64,16 +67,16 @@ function NavBar() {
 
   return (
     <>
-      {/* Desktop navbar — hidden on mobile via CSS */}
+      {/* Desktop masthead — hidden on mobile via CSS */}
       <nav className="nav nav-desktop-only">
         <div className="nav-inner">
           <Link href="/" className="nav-brand">
-            <span className="nav-brand-icon">⛩️</span>
             <span className="nav-brand-text">
-              JLPT Tracker
-              <span className="nav-brand-sub">N4 / N5</span>
+              Folio
+              <span className="nav-brand-sub">N4 · N5 · Study Journal</span>
             </span>
           </Link>
+          <span />
           <ul className="nav-links">
             <li><Link href="/radicals" className={`nav-link radical-nav ${isActive("/radicals") ? "active" : ""}`}>Radicals</Link></li>
             <li><Link href="/kanji" className={`nav-link kanji-nav ${isActive("/kanji") ? "active" : ""}`}>Kanji</Link></li>
@@ -101,6 +104,7 @@ function MobileNav() {
     { label: "Kanji", href: "/kanji" },
     { label: "Vocab", href: "/vocab" },
     { label: "Grammar", href: "/grammar" },
+    { label: "Study Plan", href: "/study-plan" },
     { label: "Settings", href: "/settings" },
   ];
 
@@ -113,14 +117,14 @@ function MobileNav() {
     <nav className="mobile-nav">
       <div className="mobile-nav-bar">
         <button onClick={() => router.push('/')} className="mobile-nav-brand" title="Dashboard">
-          ⛩️
+          文
         </button>
-        <button 
-          onClick={() => setMenuOpen(!menuOpen)} 
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
           className="mobile-nav-hamburger"
           aria-label="Menu"
         >
-          {menuOpen ? '✕' : '☰'}
+          {menuOpen ? 'CLOSE' : 'MENU'}
         </button>
       </div>
 

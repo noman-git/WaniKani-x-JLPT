@@ -9,6 +9,8 @@ export const GET = withAuth(async (req, session) => {
     const url = new URL(req.url);
     const userId = session.userId;
     const limit = parseIntSafe(url.searchParams.get("limit"), 100, 1, LIMIT_MAX);
+    const trackParam = url.searchParams.get("level");
+    const track = trackParam === "N5" || trackParam === "N4" ? trackParam : null;
 
     const now = new Date().toISOString();
 
@@ -23,7 +25,8 @@ export const GET = withAuth(async (req, session) => {
         and(
           eq(grammarProgress.userId, userId),
           isNotNull(grammarProgress.nextReviewAt),
-          lte(grammarProgress.nextReviewAt, now)
+          lte(grammarProgress.nextReviewAt, now),
+          track ? eq(grammarPoints.jlptLevel, track) : undefined
         )
       )
       .limit(limit);

@@ -35,25 +35,32 @@ export default function LoginPage() {
     }
   };
 
+  const now = new Date();
+  const dateMark = now.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" }).toUpperCase();
+
   return (
     <div className="login-page">
+      {/* Left — form */}
       <div className="login-card">
         <div className="login-header">
-          <span className="login-icon">⛩️</span>
-          <h1 className="login-title">JLPT Tracker</h1>
-          <p className="login-subtitle">
-            {mode === "login" ? "Welcome back" : "Create your account"}
-          </p>
+          <div className="login-subtitle" style={{ marginBottom: 18 }}>
+            Folio · a study journal
+          </div>
+          <h1 className="login-title">
+            {mode === "login" ? <>Welcome <em style={{ color: "var(--vermillion)", fontStyle: "italic" }}>back.</em></> : <>Open a <em style={{ color: "var(--vermillion)", fontStyle: "italic" }}>new folio.</em></>}
+          </h1>
         </div>
 
         <div className="login-tabs">
           <button
+            type="button"
             className={`login-tab ${mode === "login" ? "active" : ""}`}
             onClick={() => { setMode("login"); setError(null); }}
           >
-            Log In
+            Sign in
           </button>
           <button
+            type="button"
             className={`login-tab ${mode === "register" ? "active" : ""}`}
             onClick={() => { setMode("register"); setError(null); }}
           >
@@ -64,11 +71,11 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="login-form">
           {mode === "register" && (
             <div className="form-group">
-              <label className="form-label">Invite Code</label>
+              <label className="form-label">Invite code</label>
               <input
                 type="text"
                 className="form-input"
-                placeholder="Enter your invite code"
+                placeholder="given by the keeper"
                 value={inviteCode}
                 onChange={(e) => setInviteCode(e.target.value)}
                 required
@@ -82,7 +89,7 @@ export default function LoginPage() {
             <input
               type="text"
               className="form-input"
-              placeholder="Enter username"
+              placeholder="your handle"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -94,11 +101,11 @@ export default function LoginPage() {
 
           {mode === "register" && (
             <div className="form-group">
-              <label className="form-label">Display Name</label>
+              <label className="form-label">Display name</label>
               <input
                 type="text"
                 className="form-input"
-                placeholder="How should we call you?"
+                placeholder="how the desk shall greet you"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 required
@@ -112,7 +119,7 @@ export default function LoginPage() {
             <input
               type="password"
               className="form-input"
-              placeholder="Enter password"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -131,21 +138,68 @@ export default function LoginPage() {
             disabled={submitting}
           >
             {submitting
-              ? "Please wait..."
+              ? "One moment…"
               : mode === "login"
-              ? "Log In"
-              : "Create Account"}
+              ? "Enter the folio →"
+              : "Open the folio →"}
           </button>
         </form>
 
         <p className="login-footer">
           {mode === "login" ? (
-            <>Don&apos;t have an account? Ask the admin for an invite code.</>
+            <>No folio yet? Ask the keeper for an invite code.</>
           ) : (
-            <>You need an invite code from the admin to register.</>
+            <>An invite code from the keeper is required to register a new folio.</>
           )}
         </p>
       </div>
+
+      {/* Right — journal cover */}
+      <aside className="login-cover" aria-hidden>
+        <div className="login-cover-folio">
+          Folio <span>no.</span> 0001 ·· edition i.
+        </div>
+        <div className="login-cover-vertical">日本語勉強日記</div>
+
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 28,
+          padding: 40,
+          position: "relative",
+        }}>
+          <div className="login-cover-kanji">語</div>
+          <div style={{
+            fontFamily: "var(--font-display)",
+            fontStyle: "italic",
+            fontSize: 22,
+            color: "var(--ink-soft)",
+            letterSpacing: "-0.01em",
+            textAlign: "center",
+            maxWidth: 360,
+            lineHeight: 1.4,
+          }}>
+            “Language is a folio<br />
+            of small attentions,<br />
+            <span style={{ color: "var(--vermillion)" }}>kept by patient hands.</span>”
+          </div>
+        </div>
+
+        <div className="login-cover-hanko">印</div>
+
+        <div className="login-cover-meta">
+          <div className="login-cover-meta-row">
+            <span>date</span><span>·</span><span style={{ color: "var(--ink)" }}>{dateMark}</span>
+          </div>
+          <div className="login-cover-meta-row">
+            <span>set in</span><span>·</span><span style={{ color: "var(--ink)" }}>Fraunces · Plex · Mincho</span>
+          </div>
+          <div className="login-cover-meta-row">
+            <span>—</span><span style={{ color: "var(--vermillion)" }}>JLPT N4 · N5</span>
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }

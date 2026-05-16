@@ -17,6 +17,8 @@ export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const limit = parseIntSafe(url.searchParams.get("limit"), 5, 1, LIMIT_MAX);
+    const trackParam = url.searchParams.get("level");
+    const track = trackParam === "N5" || trackParam === "N4" ? trackParam : null;
     const userId = session.userId;
 
     const rawDb = sqlite;
@@ -38,14 +40,21 @@ export async function GET(req: NextRequest) {
     `).all(userId) as any[];
     const learnedIds = new Set(learnedRows.map(r => r.jlpt_item_id));
 
-    // 3. Fetch all UNLEARNED candidates, sorted strictly by wk_level!
+    // 3. Fetch all UNLEARNED candidates, sorted strictly by wk_level.
+    // Track filter (N5 / N4) restricts kanji & vocab to that JLPT level;
+    // radicals are always included regardless of level since they act as
+    // prerequisites for kanji of any level.
+    const trackFilter = track
+      ? `(j.jlpt_level = '${track}' OR j.type = 'radical')`
+      : `(j.jlpt_level != 'other' OR j.type = 'radical')`;
+
     const candidatesQuery = `
-       SELECT 
-          j.id as jlptItemId, 
-          j.expression, 
-          j.reading, 
-          j.meaning, 
-          j.type, 
+       SELECT
+          j.id as jlptItemId,
+          j.expression,
+          j.reading,
+          j.meaning,
+          j.type,
           j.jlpt_level as jlptLevel,
           COALESCE(w.wk_level, r.wk_level, 99) as wkLevel,
           COALESCE(w.component_subject_ids, r.amalgamation_subject_ids) as componentSubjectIds,
@@ -55,7 +64,7 @@ export async function GET(req: NextRequest) {
        LEFT JOIN wanikani_subjects w ON w.matched_jlpt_item_id = j.id
        LEFT JOIN wanikani_radicals r ON r.matched_jlpt_item_id = j.id
        WHERE (p.id IS NULL OR p.srs_stage = 0)
-         AND (j.jlpt_level != 'other' OR j.type = 'radical')
+         AND ${trackFilter}
        GROUP BY j.id
        ORDER BY wkLevel ASC, j.id ASC
     `;

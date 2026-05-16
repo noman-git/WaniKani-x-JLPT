@@ -4,7 +4,7 @@ import { submitSrs } from "@/lib/srs/submit";
 
 export const POST = withAuth(async (req, session) => {
   try {
-    const { jlptItemId, isCorrect, timeToAnswerMs, mistakeType, forceKnown } =
+    const { jlptItemId, isCorrect, timeToAnswerMs, mistakeType, forceKnown, forceUnknown } =
       await req.json();
 
     if (!jlptItemId) {
@@ -16,7 +16,7 @@ export const POST = withAuth(async (req, session) => {
       fkColumn: "jlpt_item_id",
       userId: session.userId,
       fkId: jlptItemId,
-      input: { isCorrect, timeToAnswerMs, mistakeType, forceKnown },
+      input: { isCorrect, timeToAnswerMs, mistakeType, forceKnown, forceUnknown },
     });
 
     return NextResponse.json({ success: true, ...result });

@@ -40,35 +40,34 @@ export const GET = withAuth(async (_req, session) => {
       .where(eq(userProgress.userId, userId))
       .groupBy(jlptItems.jlptLevel, userProgress.srsStage);
 
-    let mastered = 0; // Stage 8, 9, known
-    let inProgress = 0; // Stage 1-7 (Apprentice / Guru)
-    
-    const levels: Record<string, any> = {
-      "N5": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 },
-      "N4": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 },
-      "Other": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 },
+    let inProgress = 0; // any stage > 0
+
+    // Per-stage rollup: stages 1..9 each get their own count, grouped by
+    // JLPT level. Mirrors the F → SSS ranking the dashboard renders.
+    const blankLevel = () => ({
+      stage1: 0, stage2: 0, stage3: 0,
+      stage4: 0, stage5: 0, stage6: 0,
+      stage7: 0, stage8: 0, stage9: 0,
+    });
+    const levels: Record<string, ReturnType<typeof blankLevel>> = {
+      N5: blankLevel(),
+      N4: blankLevel(),
+      Other: blankLevel(),
     };
 
-    // jlpt_level enum is N4 | N5 | other → map "other" to "Other" bucket
     const levelKey = (raw: string) =>
       raw === "N5" ? "N5" : raw === "N4" ? "N4" : "Other";
 
     distributionRes.forEach(row => {
        const lvl = levelKey(row.level);
-       
-       if (row.stage >= 1 && row.stage <= 4) levels[lvl].apprentice += row.count;
-       else if (row.stage === 5 || row.stage === 6) levels[lvl].guru += row.count;
-       else if (row.stage === 7) levels[lvl].master += row.count;
-       else if (row.stage === 8) levels[lvl].enlightened += row.count;
-       else if (row.stage === 9) levels[lvl].burned += row.count;
-
-       if (row.stage > 0) {
-          if (row.stage >= 8) mastered += row.count;
-          else inProgress += row.count;
+       if (row.stage >= 1 && row.stage <= 9) {
+         const key = `stage${row.stage}` as keyof ReturnType<typeof blankLevel>;
+         levels[lvl][key] += row.count;
+         inProgress += row.count;
        }
     });
 
-    const upcomingLessons = totalItems - mastered - inProgress;
+    const upcomingLessons = totalItems - inProgress;
 
     // --- Grammar Stats ---
     const totalGrammarRes = await db
