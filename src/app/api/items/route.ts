@@ -9,6 +9,9 @@ export const GET = withAuth(async (request, session) => {
   const status = searchParams.get("status");
   const search = searchParams.get("search");
   const onWanikani = searchParams.get("onWanikani");
+  // SRS stage number 1..9 (each rank is its own stage now: F..SSS)
+  const stageParam = searchParams.get("stage");
+  const stage = stageParam && /^[1-9]$/.test(stageParam) ? parseInt(stageParam, 10) : null;
   const page = parseIntSafe(searchParams.get("page"), 1, 1, PAGE_MAX);
   const limit = parseIntSafe(searchParams.get("limit"), 50, 1, LIMIT_MAX);
 
@@ -44,6 +47,10 @@ export const GET = withAuth(async (request, session) => {
       whereClauses.push("w_agg.wk_subject_id IS NOT NULL AND w_agg.match_type != 'pseudo'");
     } else if (onWanikani === "false") {
       whereClauses.push("(w_agg.wk_subject_id IS NULL OR w_agg.match_type = 'pseudo')");
+    }
+    if (stage) {
+      whereClauses.push("p.srs_stage = @stage");
+      params.stage = stage;
     }
 
     const whereSQL =
@@ -89,6 +96,7 @@ export const GET = withAuth(async (request, session) => {
       SELECT
         j.id, j.expression, j.reading, j.meaning, j.type, j.jlpt_level as jlptLevel, j.sources,
         COALESCE(p.status, 'unknown') as status,
+        p.srs_stage as srsStage,
         w_agg.wk_subject_id as wkSubjectId,
         w_agg.wk_level as wkLevel,
         w_agg.wk_characters as wkCharacters,
@@ -97,7 +105,7 @@ export const GET = withAuth(async (request, session) => {
       ${progressJoin}
       ${wkSubquery}
       ${whereSQL}
-      ORDER BY j.jlpt_level ASC, j.type ASC, j.expression ASC
+      ORDER BY ${stage ? 'p.srs_stage DESC, ' : ''}j.jlpt_level ASC, j.type ASC, j.expression ASC
       LIMIT @limit OFFSET @offset
     `;
 

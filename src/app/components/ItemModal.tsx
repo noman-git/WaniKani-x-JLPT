@@ -169,7 +169,6 @@ export default function ItemModal({
   const [dictLoading, setDictLoading] = useState(false);
 
   const [note, setNote] = useState("");
-  const [isNotesOpen, setIsNotesOpen] = useState(true);
   const [selectedGrammarSlug, setSelectedGrammarSlug] = useState<string | null>(null);
 
   // Fetch based on target type
@@ -321,8 +320,6 @@ export default function ItemModal({
               onClose={onClose}
               canGoBack={history.length > 0}
               goBack={goBack}
-              isNotesOpen={isNotesOpen}
-              setIsNotesOpen={setIsNotesOpen}
               onNext={onNext}
               onPrev={onPrev}
             />
@@ -345,12 +342,6 @@ export default function ItemModal({
           )}
         </div>
 
-        {/* Sliding Notes Drawer */}
-        <div className={`modal-notes-drawer ${isNotesOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
-          {!loading && detail && target.type === "item" && (
-            <NoteSection itemId={detail.item.id} note={note} onNoteChange={setNote} />
-          )}
-        </div>
       </div>
 
       {selectedGrammarSlug && (
@@ -382,8 +373,6 @@ function ItemView({
   onClose,
   canGoBack,
   goBack,
-  isNotesOpen,
-  setIsNotesOpen,
   onNext,
   onPrev
 }: {
@@ -404,8 +393,6 @@ function ItemView({
   onClose: () => void;
   canGoBack: boolean;
   goBack: () => void;
-  isNotesOpen: boolean;
-  setIsNotesOpen: (s: boolean) => void;
   onNext?: () => void;
   onPrev?: () => void;
 }) {
@@ -436,16 +423,14 @@ function ItemView({
             </button>
           )}
           <div className="modal-expression-group">
-            {detail.item.type === "radical" &&
-            detail.item.expression.startsWith("[") &&
-            detail.wanikani?.imageUrl ? (
+            {detail.item.type === "radical" && detail.wanikani?.imageUrl ? (
               <img
                 src={detail.wanikani.imageUrl}
                 alt={detail.item.meaning}
                 className="modal-expression-img"
               />
             ) : (
-              <span className="modal-expression">{detail.item.expression}</span>
+              <span className="modal-expression" style={{ color: 'var(--paper)' }}>{detail.item.expression}</span>
             )}
             {hasAlt && detail.wanikani!.characters && (
               <span className="modal-wk-alt-expr" title={`WaniKani uses: ${detail.wanikani!.characters}`}>
@@ -463,15 +448,7 @@ function ItemView({
             {onPrev && <button className="modal-close" onClick={onPrev} title="Previous Item" style={{ color: 'white' }}>‹</button>}
             {onNext && <button className="modal-close" onClick={onNext} title="Next Item" style={{ color: 'white' }}>›</button>}
           </div>
-          <button 
-            className={`modal-toggle-note-btn ${isNotesOpen ? 'open' : ''} ${note ? 'has-note' : ''}`}
-            onClick={() => setIsNotesOpen(!isNotesOpen)}
-            title="Toggle Notes"
-            style={{ backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}
-          >
-            📝 Notes {note && '(1)'}
-          </button>
-          <button className="modal-close" onClick={onClose} title="Close" style={{ color: 'white' }}>✕</button>
+          <button className="modal-close" onClick={onClose} title="Close">✕</button>
         </div>
       </div>
 
@@ -636,6 +613,9 @@ function ItemView({
         )}
 
         {/* ── Appears in Grammar ── */}
+
+        {/* ── Personal Note ── */}
+        <NoteSection itemId={detail.item.id} note={note} onNoteChange={onNoteChange} />
       </div>
 
 
@@ -677,14 +657,14 @@ function NoteSection({
 
   const btnLabel =
     saveState === "saving" ? "Saving…" :
-    saveState === "saved"  ? "Saved ✓" :
-    saveState === "error"  ? "Error — retry" :
-    "Save Note";
+    saveState === "saved"  ? "Saved" :
+    saveState === "error"  ? "Retry" :
+    "Save note";
 
   return (
     <div className="note-section">
       <div className="note-header">
-        <span className="note-title">📝 My Note</span>
+        <span className="note-title">Note</span>
       </div>
       <textarea
         className="note-textarea"
@@ -752,7 +732,7 @@ function RadicalView({
               ←
             </button>
           )}
-          <span className="modal-expression radical-expression">
+          <span className="modal-expression radical-expression" style={{ color: "var(--paper)" }}>
             {detail.radical.characters || (
               detail.radical.imageUrl ? (
                 <img src={detail.radical.imageUrl} alt={primaryMeaning} className="radical-header-img" />
@@ -760,7 +740,6 @@ function RadicalView({
             )}
           </span>
           <div className="modal-header-meta">
-            <span className="modal-reading-label radical-type-label" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Radical</span>
             <span className="modal-meaning-label" style={{ color: 'white' }}>{primaryMeaning}</span>
           </div>
         </div>
@@ -779,7 +758,7 @@ function RadicalView({
                 className={`meaning-tag ${m.primary ? "primary" : ""}`}
               >
                 {m.meaning}
-                {m.primary && <span className="primary-star">★</span>}
+                {m.primary && <span className="primary-star">▪</span>}
               </span>
             ))}
           </div>
@@ -861,7 +840,7 @@ function WKTab({
               }`}
             >
               {m.meaning}
-              {m.primary && <span className="primary-star">★</span>}
+              {m.primary && <span className="primary-star">▪</span>}
             </span>
           ))}
         </div>
@@ -967,8 +946,8 @@ function ReadingGroup({
             key={i}
             className={`reading-tag ${colorClass} ${r.primary ? "primary" : ""}`}
           >
+            {r.primary && <span className="primary-star">▪</span>}
             {r.reading}
-            {r.primary && <span className="primary-star">★</span>}
           </span>
         ))}
       </div>

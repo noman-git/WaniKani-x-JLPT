@@ -26,7 +26,7 @@ export function QuizNoteManager({
   return (
     <div className="note-section">
       <div className="note-header">
-        <span className="note-title">📝 My Note</span>
+        <span className="note-title">Note</span>
       </div>
       <textarea
         className="note-textarea"
@@ -103,13 +103,9 @@ export default function LessonModal({ item }: { item: QuizItem }) {
 
           {/* Word Type */}
           {item.partsOfSpeech && item.partsOfSpeech.length > 0 && (
-            <div style={{ marginBottom: "16px", display: "flex", gap: "12px", alignItems: "center" }}>
-              <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--text-muted)", fontWeight: "bold", letterSpacing: "1px" }}>
-                WORD TYPE
-              </span>
-              <span style={{ color: "var(--text-primary)", fontSize: "15px" }}>
-                {item.partsOfSpeech.join(", ")}
-              </span>
+            <div className="cs-word-type">
+              <span className="cs-word-type-label">Word Type</span>
+              <span className="cs-word-type-value">{item.partsOfSpeech.join(", ")}</span>
             </div>
           )}
 
@@ -154,8 +150,7 @@ export default function LessonModal({ item }: { item: QuizItem }) {
             </div>
           ) : item.advancedReadings && item.advancedReadings.length > 0 ? (
             <div className="cs-readings-grid">
-              <div className="cs-reading-group">
-                <span className="cs-reading-type">Reading</span>
+              <div className="cs-reading-group cs-reading-group--single">
                 <div className="cs-reading-values">
                   {item.advancedReadings.map((r, i) => (
                     <span key={i} className={r.primary ? 'cs-reading-primary' : ''}>{r.reading}</span>
@@ -165,8 +160,7 @@ export default function LessonModal({ item }: { item: QuizItem }) {
             </div>
           ) : item.readings && item.readings.length > 0 ? (
             <div className="cs-readings-grid">
-              <div className="cs-reading-group">
-                <span className="cs-reading-type">Reading</span>
+              <div className="cs-reading-group cs-reading-group--single">
                 <div className="cs-reading-values">
                   {item.readings.map((r, i) => (
                     <span key={i} className={i === 0 ? 'cs-reading-primary' : ''}>{r}</span>

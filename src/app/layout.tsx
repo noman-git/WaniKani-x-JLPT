@@ -3,8 +3,8 @@ import "./globals.css";
 import { ClientLayout } from "./components/ClientLayout";
 
 export const metadata: Metadata = {
-  title: "JLPT Dashboard — N4/N5 Study Tracker",
-  description: "Track your JLPT N4 and N5 kanji and vocabulary progress with WaniKani integration",
+  title: "Folio — a JLPT study journal",
+  description: "An editorial study journal for JLPT N4 & N5 — kanji, vocabulary, radicals, and grammar with WaniKani-style SRS.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

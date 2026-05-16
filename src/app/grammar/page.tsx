@@ -75,10 +75,7 @@ export default function GrammarPage() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title" style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span className="grammar-icon">文</span>
-          Grammar
-        </h1>
+        <h1 className="page-title">Grammar</h1>
         <p className="page-subtitle">{stats.total} grammar points</p>
       </div>
 

@@ -1,11 +1,17 @@
 import { sqlite } from "@/lib/db";
-import { calculateNextState, FORCE_KNOWN_STATE, SrsState } from "@/lib/srs/algorithm";
+import {
+  calculateNextState,
+  FORCE_KNOWN_STATE,
+  FORCE_UNKNOWN_STATE,
+  SrsState,
+} from "@/lib/srs/algorithm";
 
 export interface SrsSubmitInput {
   isCorrect?: boolean;
   timeToAnswerMs?: number;
   mistakeType?: "reading" | "meaning";
   forceKnown?: boolean;
+  forceUnknown?: boolean;
 }
 
 export interface SrsSubmitResult {
@@ -41,16 +47,18 @@ export function submitSrs({ table, fkColumn, userId, fkId, input }: SubmitOpts):
 
   const nextState = input.forceKnown
     ? FORCE_KNOWN_STATE
-    : calculateNextState(
-        currentState,
-        !!input.isCorrect,
-        input.timeToAnswerMs || 5000,
-        input.mistakeType,
-      );
+    : input.forceUnknown
+      ? FORCE_UNKNOWN_STATE
+      : calculateNextState(
+          currentState,
+          !!input.isCorrect,
+          input.timeToAnswerMs || 5000,
+          input.mistakeType,
+        );
 
   const now = new Date();
   const nextDate = new Date(now.getTime() + nextState.interval * 24 * 60 * 60 * 1000);
-  const status = nextState.srsStage >= 8 ? "known" : "learning";
+  const status = nextState.srsStage >= 7 ? "known" : "learning";
 
   if (row !== undefined) {
     sqlite

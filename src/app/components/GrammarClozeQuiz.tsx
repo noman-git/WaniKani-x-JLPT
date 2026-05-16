@@ -237,37 +237,77 @@ export default function GrammarClozeQuiz({ items, onComplete, mode }: Props) {
   return (
     <div className="srs-quiz-wrapper">
       <div className="srs-quiz-header" style={{ alignItems: 'center' }}>
-         <span>{queue.length} items remaining</span>
+         <span className="folio-mark">{queue.length} <span>remaining</span></span>
          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '4px 8px', borderRadius: '4px' }}>
+            <span className={`badge badge-${currentItem.jlptLevel.toLowerCase()}`}>
               {currentItem.jlptLevel.toUpperCase()}
             </span>
-            <span style={{ fontSize: '10px', fontWeight: 'bold', backgroundColor: `${quizModeColor}20`, color: quizModeColor, padding: '4px 8px', borderRadius: '4px', letterSpacing: '1px' }}>
+            <span className="srs-type-badge" style={{ color: 'var(--accent-grammar)', borderColor: 'var(--accent-grammar)' }}>
               {quizModeLabel}
             </span>
          </div>
       </div>
 
-      <div className="srs-quiz-character" style={{ fontSize: hasCloze ? '28px' : '48px', padding: hasCloze ? '20px' : '0' }}>
+      <div
+        className="srs-quiz-character"
+        style={{
+          fontSize: hasCloze ? '36px' : '48px',
+          color: 'var(--accent-grammar)',
+          textAlign: 'center',
+          lineHeight: 1.3,
+        }}
+      >
         {isCloze && hasCloze ? (
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '2px', fontFamily: 'var(--font-jp)' }}>
-                <span>{linked.length > 0 ? parseSentence(preBlank, linked) : preBlank}</span>
-                <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '3px solid var(--text-primary)', margin: '0 6px' }}></span>
-                <span>{linked.length > 0 ? parseSentence(postBlank, linked) : postBlank}</span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'baseline', gap: '4px', fontFamily: 'var(--font-jp)' }}>
+                <span style={{ color: 'var(--ink)' }}>{linked.length > 0 ? parseSentence(preBlank, linked) : preBlank}</span>
+                <span style={{
+                  display: 'inline-block',
+                  minWidth: '90px',
+                  borderBottom: '3px solid var(--vermillion)',
+                  margin: '0 8px',
+                  height: '1em',
+                }} />
+                <span style={{ color: 'var(--ink)' }}>{linked.length > 0 ? parseSentence(postBlank, linked) : postBlank}</span>
             </div>
         ) : !isCloze ? (
             <div>
-              <div style={{ fontSize: '18px', color: 'var(--text-muted)', marginBottom: '8px' }}>What grammar pattern means:</div>
-              <div style={{ fontSize: '32px', color: 'var(--text-primary)' }}>{currentItem.meaning}</div>
+              <div style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                color: 'var(--ink-faded)',
+                marginBottom: '14px',
+              }}>
+                ── pattern that means
+              </div>
+              <div style={{
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontSize: '36px',
+                fontWeight: 500,
+                color: 'var(--ink)',
+                lineHeight: 1.2,
+              }}>
+                {currentItem.meaning}
+              </div>
             </div>
         ) : (
-            <div>{currentItem.meaning}</div>
+            <div style={{ color: 'var(--ink)' }}>{currentItem.meaning}</div>
         )}
       </div>
 
       {isCloze && hasCloze && example && (
-          <div style={{ textAlign: 'center', marginTop: '-20px', marginBottom: '30px', color: 'var(--text-muted)' }}>
-              {example.en}
+          <div style={{
+            textAlign: 'center',
+            marginTop: '-12px',
+            marginBottom: '24px',
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            color: 'var(--ink-soft)',
+            fontSize: '15px',
+          }}>
+            {example.en}
           </div>
       )}
 
@@ -313,21 +353,19 @@ export default function GrammarClozeQuiz({ items, onComplete, mode }: Props) {
       </div>
 
       {feedback !== null && (
-        <div style={{ width: '100%', marginTop: '32px', textAlign: 'center' }}>
+        <div style={{ width: '100%', maxWidth: 720, margin: '32px auto 0', textAlign: 'center' }}>
           {!showInfo ? (
-             <button 
+             <button
                onClick={() => setShowInfo(true)}
                className="srs-info-toggle-btn"
              >
-               <span>👁️</span> Show Grammar Info
+               Show grammar info
              </button>
           ) : (
-             <div className="srs-item-details-box" style={{ padding: '0', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', justifyContent: 'center', height: 'calc(100vh - 200px)', minHeight: '0', boxSizing: 'border-box' }}>
-                <div style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto', height: '100%' }}>
-                   <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-medium)', textAlign: 'left', margin: 0, overflow: 'hidden' }}>
-                      <div style={{ flex: '1', overflowY: 'auto', padding: '24px', WebkitOverflowScrolling: 'touch' }}>
-                         <GrammarDetailModal slug={currentItem.slug} onClose={() => {}} inline={true} />
-                      </div>
+             <div style={{ marginTop: 16 }}>
+                <div className="cs-card" style={{ padding: 0, textAlign: 'left' }}>
+                   <div style={{ padding: '8px 24px 24px' }}>
+                      <GrammarDetailModal slug={currentItem.slug} onClose={() => {}} inline={true} />
                    </div>
                 </div>
              </div>

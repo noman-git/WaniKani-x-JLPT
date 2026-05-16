@@ -5,11 +5,22 @@ export type SrsState = {
 };
 
 // State applied when a user clicks "Mark as Known" to skip an item out of the
-// learning queue. Maps to stage 8 (Master) ≈ 4 months until next review.
+// learning queue. Lands at stage 7 (Master, ~1 month) — never Enlightened or
+// Burned, even from the review queue. The stage→bucket mapping in
+// /api/srs/stats puts stage 7 in Master; stage 8 is Enlightened and 9 is
+// Burned, matching WaniKani's convention.
 export const FORCE_KNOWN_STATE: SrsState = {
-  srsStage: 8,
-  interval: 120,
+  srsStage: 7,
+  interval: 32,
   easeFactor: 2.7,
+};
+
+// Inverse: applied when a user toggles "Known" off. Resets to brand-new so
+// the item resurfaces in the upcoming-lessons queue.
+export const FORCE_UNKNOWN_STATE: SrsState = {
+  srsStage: 0,
+  interval: 0,
+  easeFactor: 2.5,
 };
 
 // Maps continuous interval (in days) back to WaniKani stages visually

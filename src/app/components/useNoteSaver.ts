@@ -71,9 +71,9 @@ export function useNoteSaver({
 
   const btnLabel =
     saveState === "saving" ? "Saving…" :
-    saveState === "saved" ? "Saved ✓" :
-    saveState === "error" ? "Error — retry" :
-    "Save Note";
+    saveState === "saved" ? "Saved" :
+    saveState === "error" ? "Retry" :
+    "Save note";
 
   return { note, setNote, saveState, handleSave, btnLabel };
 }
