@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, sqlite } from "@/lib/db";
 import { requireAuth, AuthError } from "@/lib/auth";
-import Database from "better-sqlite3";
-import path from "path";
+import { parseIntSafe, LIMIT_MAX } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   let session;
@@ -17,11 +16,12 @@ export async function GET(req: NextRequest) {
 
   try {
     const url = new URL(req.url);
-    const limit = parseInt(url.searchParams.get("limit") || "5", 10);
+    const limit = parseIntSafe(url.searchParams.get("limit"), 5, 1, LIMIT_MAX);
+    const trackParam = url.searchParams.get("level");
+    const track = trackParam === "N5" || trackParam === "N4" ? trackParam : null;
     const userId = session.userId;
 
-    const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-    const rawDb = new Database(dbPath, { readonly: true });
+    const rawDb = sqlite;
 
     // 1. Build a fast WK ID -> JLPT ID lookup
     const wkToJlpt = new Map<number, number>();
@@ -32,34 +32,44 @@ export async function GET(req: NextRequest) {
     `).all() as any[];
     mappingRows.forEach(r => wkToJlpt.set(r.wk_subject_id, r.matched_jlpt_item_id));
 
-    // 2. Fetch all learned items for the user
+    // 2. Fetch all learned items for the user. "Learned" = at least Guru
+    // (srs_stage >= 5). Anything earlier (Apprentice 1-4) is still being
+    // memorized and shouldn't unlock dependent lessons.
     const learnedRows = rawDb.prepare(`
-       SELECT jlpt_item_id FROM user_progress WHERE user_id = ? AND srs_stage > 0
+       SELECT jlpt_item_id FROM user_progress WHERE user_id = ? AND srs_stage >= 5
     `).all(userId) as any[];
     const learnedIds = new Set(learnedRows.map(r => r.jlpt_item_id));
 
-    // 3. Fetch all UNLEARNED candidates, sorted strictly by wk_level!
+    // 3. Fetch all UNLEARNED candidates, sorted strictly by wk_level.
+    // Track filter (N5 / N4) restricts kanji & vocab to that JLPT level;
+    // radicals are always included regardless of level since they act as
+    // prerequisites for kanji of any level. When no track is given, all
+    // items except 'other' are eligible.
     const candidatesQuery = `
-       SELECT 
-          j.id as jlptItemId, 
-          j.expression, 
-          j.reading, 
-          j.meaning, 
-          j.type, 
+       SELECT
+          j.id as jlptItemId,
+          j.expression,
+          j.reading,
+          j.meaning,
+          j.type,
           j.jlpt_level as jlptLevel,
           COALESCE(w.wk_level, r.wk_level, 99) as wkLevel,
           COALESCE(w.component_subject_ids, r.amalgamation_subject_ids) as componentSubjectIds,
           'true' as _isRaw
        FROM jlpt_items j
-       LEFT JOIN user_progress p ON p.jlpt_item_id = j.id AND p.user_id = ?
+       LEFT JOIN user_progress p ON p.jlpt_item_id = j.id AND p.user_id = ?1
        LEFT JOIN wanikani_subjects w ON w.matched_jlpt_item_id = j.id
        LEFT JOIN wanikani_radicals r ON r.matched_jlpt_item_id = j.id
        WHERE (p.id IS NULL OR p.srs_stage = 0)
-         AND (j.jlpt_level != 'other' OR j.type = 'radical')
+         AND (
+           j.type = 'radical'
+           OR (?2 IS NOT NULL AND j.jlpt_level = ?2)
+           OR (?2 IS NULL AND j.jlpt_level != 'other')
+         )
        GROUP BY j.id
        ORDER BY wkLevel ASC, j.id ASC
     `;
-    const sortedCandidates = rawDb.prepare(candidatesQuery).all(userId) as any[];
+    const sortedCandidates = rawDb.prepare(candidatesQuery).all(userId, track) as any[];
 
     // 4. Smart Prerequisites Pipeline
     const finalQueue: any[] = [];
@@ -92,8 +102,6 @@ export async function GET(req: NextRequest) {
           fullItemsFetchKeys.push(row.jlptItemId);
        }
     }
-
-    rawDb.close();
 
     if (fullItemsFetchKeys.length === 0) {
        return NextResponse.json({ lessons: [] });

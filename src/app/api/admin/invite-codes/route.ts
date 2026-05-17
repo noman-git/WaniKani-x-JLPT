@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { inviteCodes, users } from "@/lib/db/schema";
-import { requireAdmin, AuthError } from "@/lib/auth";
-import { NextRequest, NextResponse } from "next/server";
+import { withAdmin } from "@/lib/api-helpers";
+import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 
@@ -11,16 +11,7 @@ function generateCode(): string {
 }
 
 /** GET: List all invite codes */
-export async function GET(request: NextRequest) {
-  try {
-    requireAdmin(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 403 });
-    }
-    throw e;
-  }
-
+export const GET = withAdmin(async () => {
   const codes = db
     .select({
       id: inviteCodes.id,
@@ -35,19 +26,10 @@ export async function GET(request: NextRequest) {
     .all();
 
   return NextResponse.json({ codes });
-}
+});
 
 /** POST: Generate new invite codes */
-export async function POST(request: NextRequest) {
-  try {
-    requireAdmin(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 403 });
-    }
-    throw e;
-  }
-
+export const POST = withAdmin(async (request) => {
   try {
     const body = await request.json().catch(() => ({}));
     const count = Math.min(Math.max(body.count || 1, 1), 20); // 1-20 codes at a time
@@ -70,4 +52,4 @@ export async function POST(request: NextRequest) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

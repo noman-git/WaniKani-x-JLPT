@@ -119,15 +119,21 @@ function mergeSources(a: string, b: string): string {
 }
 
 // ── Score an item to pick the keeper (higher = better) ──
+//
+// JLPT level is the *dominant* factor: when the same expression+type appears
+// at multiple levels, the LOWER-NUMBERED (= lower difficulty) level wins.
+// N5 → 1000, N4 → 0. Rationale: items appearing at N5 are more fundamental;
+// the learner should encounter them at the easier level first.
+//
+// Reading/meaning richness only matter as tiebreakers within the same level.
 function itemScore(item: any): number {
   let score = 0;
-  // More readings = more informative
-  score += (item.reading || "").split("/").length * 10;
-  // Longer meaning = richer
-  score += (item.meaning || "").length;
-  // Lower JLPT number = harder level (prefer keeping N4 over N5)
   const level = parseInt((item.jlpt_level || "N5").replace("N", ""));
-  score += (6 - level) * 5; // N4 → 10, N5 → 5
+  // N5 (level=5) beats N4 (level=4) decisively
+  score += level * 1000;
+  // Tiebreakers
+  score += (item.reading || "").split("/").length * 10;
+  score += (item.meaning || "").length;
   return score;
 }
 

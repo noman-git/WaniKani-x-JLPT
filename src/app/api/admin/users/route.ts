@@ -1,22 +1,9 @@
-import { requireAdmin, AuthError } from "@/lib/auth";
-import { NextRequest, NextResponse } from "next/server";
-import Database from "better-sqlite3";
-import path from "path";
+import { withAdmin } from "@/lib/api-helpers";
+import { sqlite } from "@/lib/db";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
-  try {
-    requireAdmin(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 403 });
-    }
-    throw e;
-  }
-
-  const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-  const rawDb = new Database(dbPath, { readonly: true });
-
-  const usersList = rawDb
+export const GET = withAdmin(async () => {
+  const usersList = sqlite
     .prepare(
       `SELECT u.id, u.username, u.display_name, u.is_admin, u.created_at,
               COUNT(p.id) as progress_count
@@ -27,7 +14,5 @@ export async function GET(request: NextRequest) {
     )
     .all();
 
-  rawDb.close();
-
   return NextResponse.json({ users: usersList });
-}
+});

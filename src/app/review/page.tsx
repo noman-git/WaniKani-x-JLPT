@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import SrsQuiz, { QuizItem } from "../components/SrsQuiz";
 import { useRouter } from "next/navigation";
+import { readStudyTrack, withTrack } from "../components/useStudyTrack";
 
 export default function ReviewPage() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function ReviewPage() {
   useEffect(() => {
     async function loadReviews() {
       try {
-        const res = await fetch("/api/srs/reviews?limit=50");
+        const res = await fetch(withTrack("/api/srs/reviews?limit=50", readStudyTrack()));
         const data = await res.json();
         
         if (!data.reviews || data.reviews.length === 0) {

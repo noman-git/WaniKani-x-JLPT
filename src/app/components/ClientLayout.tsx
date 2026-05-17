@@ -1,9 +1,47 @@
 "use client";
 
-import { ReactNode, useState, useRef, useEffect } from "react";
+import { ReactNode, useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AuthProvider, useAuth } from "./AuthProvider";
+
+type Theme = "light" | "dark";
+
+// Read the theme the bootstrap script already applied to <html>. Keeps
+// SSR and the first client paint consistent — no useEffect-driven flash.
+function readInitialTheme(): Theme {
+  if (typeof document === "undefined") return "light";
+  return (document.documentElement.getAttribute("data-theme") as Theme) || "light";
+}
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>(readInitialTheme);
+
+  const toggle = useCallback(() => {
+    setTheme((prev) => {
+      const next: Theme = prev === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("folio-theme", next); } catch {}
+      return next;
+    });
+  }, []);
+
+  const isDark = theme === "dark";
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="theme-toggle"
+      role="switch"
+      aria-checked={isDark}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Light · 明" : "Dark · 暗"}
+    >
+      <span className="theme-toggle-glyph theme-toggle-glyph-light" aria-hidden="true">明</span>
+      <span className="theme-toggle-glyph theme-toggle-glyph-dark" aria-hidden="true">暗</span>
+    </button>
+  );
+}
 
 // Shared user menu dropdown (used by both desktop and mobile)
 function UserMenu() {
@@ -38,8 +76,11 @@ function UserMenu() {
             <span className="user-menu-name">{user.username}</span>
           </div>
           <div className="user-menu-divider" />
+          <button onClick={() => { setOpen(false); router.push('/study-plan'); }} className="user-menu-item">
+            Study Plan
+          </button>
           <button onClick={() => { setOpen(false); router.push('/settings'); }} className="user-menu-item">
-            ⚙️ Settings
+            Settings
           </button>
           <button onClick={() => { setOpen(false); logout(); }} className="user-menu-item user-menu-item-danger">
             Logout
@@ -64,21 +105,22 @@ function NavBar() {
 
   return (
     <>
-      {/* Desktop navbar — hidden on mobile via CSS */}
+      {/* Desktop masthead — hidden on mobile via CSS */}
       <nav className="nav nav-desktop-only">
         <div className="nav-inner">
           <Link href="/" className="nav-brand">
-            <span className="nav-brand-icon">⛩️</span>
             <span className="nav-brand-text">
-              JLPT Tracker
-              <span className="nav-brand-sub">N4 / N5</span>
+              Folio
+              <span className="nav-brand-sub">N4 · N5 · Study Journal</span>
             </span>
           </Link>
+          <span />
           <ul className="nav-links">
             <li><Link href="/radicals" className={`nav-link radical-nav ${isActive("/radicals") ? "active" : ""}`}>Radicals</Link></li>
             <li><Link href="/kanji" className={`nav-link kanji-nav ${isActive("/kanji") ? "active" : ""}`}>Kanji</Link></li>
             <li><Link href="/vocab" className={`nav-link vocab-nav ${isActive("/vocab") ? "active" : ""}`}>Vocab</Link></li>
             <li><Link href="/grammar" className={`nav-link grammar-nav ${isActive("/grammar") ? "active" : ""}`}>Grammar</Link></li>
+            <li><ThemeToggle /></li>
             <li><UserMenu /></li>
           </ul>
         </div>
@@ -101,6 +143,7 @@ function MobileNav() {
     { label: "Kanji", href: "/kanji" },
     { label: "Vocab", href: "/vocab" },
     { label: "Grammar", href: "/grammar" },
+    { label: "Study Plan", href: "/study-plan" },
     { label: "Settings", href: "/settings" },
   ];
 
@@ -113,15 +156,18 @@ function MobileNav() {
     <nav className="mobile-nav">
       <div className="mobile-nav-bar">
         <button onClick={() => router.push('/')} className="mobile-nav-brand" title="Dashboard">
-          ⛩️
+          文
         </button>
-        <button 
-          onClick={() => setMenuOpen(!menuOpen)} 
-          className="mobile-nav-hamburger"
-          aria-label="Menu"
-        >
-          {menuOpen ? '✕' : '☰'}
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <ThemeToggle />
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="mobile-nav-hamburger"
+            aria-label="Menu"
+          >
+            {menuOpen ? 'CLOSE' : 'MENU'}
+          </button>
+        </div>
       </div>
 
       {menuOpen && (
@@ -186,10 +232,11 @@ function AuthGate({ children }: { children: ReactNode }) {
 
 function LoginRedirect() {
   const pathname = usePathname();
-  // Use useEffect to avoid hydration issues
-  if (typeof window !== "undefined" && pathname !== "/login") {
-    window.location.href = "/login";
-  }
+  useEffect(() => {
+    if (pathname !== "/login") {
+      window.location.href = "/login";
+    }
+  }, [pathname]);
   return (
     <main className="container">
       <div className="loading-container">

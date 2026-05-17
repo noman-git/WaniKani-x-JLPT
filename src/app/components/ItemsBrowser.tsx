@@ -14,6 +14,7 @@ interface Item {
   wkSubjectId: number | null;
   wkLevel: number | null;
   wkCharacters: string | null;
+  wkImageUrl?: string | null; // Set on radicals; SVG fallback for image-only ones
   matchType: string | null; // "exact" | "reading" | "prefix_strip" | null
 }
 
@@ -57,7 +58,10 @@ export default function ItemsBrowser({
     params.set("limit", "30");
 
     try {
-      const res = await fetch(`${apiUrl}?${params}`);
+      // apiUrl may already contain a query string (e.g. "/api/items?type=vocab"),
+      // so pick the right separator before appending filter params.
+      const sep = apiUrl.includes("?") ? "&" : "?";
+      const res = await fetch(`${apiUrl}${sep}${params}`);
       const data = await res.json();
       setItems(data.items || []);
       setPagination(data.pagination || { page: 1, limit: 30, total: 0, totalPages: 0 });
@@ -152,10 +156,18 @@ export default function ItemsBrowser({
       ) : (
         <div className="items-grid">
           {items.map((item) => (
-            <div key={item.id} className="item-card" onClick={() => openItem(item)} style={{ cursor: "pointer" }}>
+            <div key={item.id} className="item-card" data-type={item.type} onClick={() => openItem(item)} style={{ cursor: "pointer" }}>
               <div className="item-card-header">
                 <div className="item-expression-col">
-                  <div className="item-expression">{item.expression}</div>
+                  {item.type === "radical" && item.wkImageUrl ? (
+                    <img
+                      src={item.wkImageUrl}
+                      alt={item.meaning}
+                      className="item-expression-img"
+                    />
+                  ) : (
+                    <div className="item-expression" style={{ color: `var(--accent-${item.type})` }}>{item.expression}</div>
+                  )}
                   {hasAltExpression(item) && (
                     <span className="item-wk-alt" title={`WaniKani uses: ${item.wkCharacters}`}>
                       WK: {item.wkCharacters}

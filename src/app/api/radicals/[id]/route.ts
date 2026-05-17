@@ -1,22 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import Database from "better-sqlite3";
-import path from "path";
-import { requireAuth, AuthError } from "@/lib/auth";
+import { NextResponse } from "next/server";
+import { sqlite } from "@/lib/db";
+import { withAuth } from "@/lib/api-helpers";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    await requireAuth(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 401 });
-    }
-    throw e;
-  }
-
-  const { id } = await params;
+export const GET = withAuth<{ id: string }>(async (_request, _session, ctx) => {
+  const { id } = await ctx!.params;
   const wkSubjectId = parseInt(id);
 
   if (isNaN(wkSubjectId)) {
@@ -24,8 +11,7 @@ export async function GET(
   }
 
   try {
-    const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-    const rawDb = new Database(dbPath, { readonly: true });
+    const rawDb = sqlite;
 
     // Get the radical with all its data
     const radical = rawDb
@@ -46,7 +32,6 @@ export async function GET(
     } | undefined;
 
     if (!radical) {
-      rawDb.close();
       return NextResponse.json({ error: "Radical not found" }, { status: 404 });
     }
 
@@ -99,8 +84,6 @@ export async function GET(
         .all(...itemIds) as typeof usedByKanji;
     }
 
-    rawDb.close();
-
     return NextResponse.json({
       radical: {
         wkSubjectId: radical.wk_subject_id,
@@ -117,4 +100,4 @@ export async function GET(
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

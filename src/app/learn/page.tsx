@@ -4,7 +4,16 @@ import { useState, useEffect } from "react";
 import SrsQuiz, { QuizItem } from "../components/SrsQuiz";
 import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
-import LessonModal, { QuizNoteManager } from "../components/LessonModal";
+import ItemModal from "../components/ItemModal";
+import { QuizNoteManager } from "../components/LessonModal";
+import { dedupeByExpression } from "@/lib/dedupe";
+import {
+  LessonHero,
+  LessonBottomNav,
+  useKnownToggle,
+  useLessonKeys,
+} from "../components/LessonScaffold";
+import { readStudyTrack, withTrack } from "../components/useStudyTrack";
 
 type LessonPhase = "loading" | "lesson" | "quiz" | "done";
 
@@ -13,11 +22,12 @@ export default function LearnPage() {
   const [phase, setPhase] = useState<LessonPhase>("loading");
   const [batch, setBatch] = useState<QuizItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const known = useKnownToggle({ endpoint: "/api/srs/submit", idField: "jlptItemId" });
 
   useEffect(() => {
     async function loadQueue() {
       try {
-        const res = await fetch("/api/srs/lessons?limit=5");
+        const res = await fetch(withTrack("/api/srs/lessons?limit=5", readStudyTrack()));
         const data = await res.json();
         
         if (!data.lessons || data.lessons.length === 0) {
@@ -86,22 +96,6 @@ export default function LearnPage() {
     loadQueue();
   }, []);
 
-  const handleMarkKnown = async () => {
-    const item = batch[currentIndex];
-    await fetch("/api/srs/submit", {
-       method: "POST",
-       headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({
-         jlptItemId: item.jlptItemId,
-         isCorrect: true,
-         timeToAnswerMs: 100,
-         mistakeType: null,
-         forceKnown: true
-       })
-    });
-    nextSlide();
-  };
-
   const nextSlide = () => {
     if (currentIndex + 1 >= batch.length) {
        setPhase("quiz");
@@ -116,17 +110,17 @@ export default function LearnPage() {
     }
   };
 
-  useEffect(() => {
-    if (phase === "lesson") {
-       const handleKey = (e: KeyboardEvent) => {
-          if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement) return;
-          if (e.key === "ArrowRight") nextSlide();
-          else if (e.key === "ArrowLeft") prevSlide();
-       };
-       window.addEventListener("keydown", handleKey);
-       return () => window.removeEventListener("keydown", handleKey);
-    }
-  }, [phase, currentIndex, batch.length]);
+  const handleToggleKnown = () => {
+    const item = batch[currentIndex];
+    if (item) known.toggle(item.jlptItemId);
+  };
+
+  useLessonKeys({
+    enabled: phase === "lesson",
+    onPrev: prevSlide,
+    onNext: nextSlide,
+    onToggleKnown: handleToggleKnown,
+  });
 
   useEffect(() => {
     if (phase === "lesson") {
@@ -147,17 +141,6 @@ export default function LearnPage() {
   if (phase === "lesson") {
     const item = batch[currentIndex];
 
-    // Build reading summary for hero card
-    let readingSummary = "";
-    if (item.type !== "radical") {
-      if (item.advancedReadings && item.advancedReadings.length > 0) {
-        const primary = item.advancedReadings.find(r => r.primary);
-        readingSummary = primary ? primary.reading : item.readings[0] || "";
-      } else {
-        readingSummary = item.readings[0] || "";
-      }
-    }
-
     return (
       <div className="cs-lesson-page">
 
@@ -165,44 +148,30 @@ export default function LearnPage() {
         {/* ── Scrollable Card Stack ── */}
         <div className="cs-card-stack">
 
-          {/* Card 1: Hero */}
-          <div 
-            className="cs-card cs-card-hero"
-            style={{ backgroundColor: `var(--accent-${item.type})` }}
+          <LessonHero
+            typeBadge={item.type}
+            typeColor={`var(--accent-${item.type})`}
+            extraBadges={[
+              ...(item.jlptLevel ? [item.jlptLevel.toUpperCase()] : []),
+              ...(item.wkLevel ? [`WK Lv ${item.wkLevel}`] : []),
+            ]}
+            isKnown={known.isKnown(item.jlptItemId)}
+            onToggleKnown={handleToggleKnown}
+            knownPending={known.pending}
           >
-            <div className="cs-hero-badges">
-              <span className="cs-hero-badge">{item.type}</span>
-              {item.jlptLevel && <span className="cs-hero-badge">{item.jlptLevel.toUpperCase()}</span>}
-              {item.wkLevel && <span className="cs-hero-badge">WK Lv {item.wkLevel}</span>}
-            </div>
-
-            <button 
-              onClick={handleMarkKnown}
-              className="cs-known-btn"
-              title="Already know this? Skip it"
-            >
-              ★ Known
-            </button>
-
-            {(!item.characters || item.characters.startsWith('[')) && item.imageUrl ? (
-              <div className="cs-hero-char">
-                <img 
-                  src={item.imageUrl} 
-                  alt={item.meanings?.[0] || 'radical'} 
-                  style={{ height: '90px', filter: 'brightness(0) invert(1)' }} 
+            {item.imageUrl ? (
+              <div className="cs-hero-char" style={{ color: `var(--accent-${item.type})` }}>
+                <img
+                  src={item.imageUrl}
+                  alt={item.meanings?.[0] || 'radical'}
+                  className="radical-svg-tint"
+                  style={{ height: '120px' }}
                 />
               </div>
             ) : (
-              <div className="cs-hero-char">{item.characters}</div>
+              <div className="cs-hero-char" style={{ color: `var(--accent-${item.type})` }}>{item.characters}</div>
             )}
-
-            <div className="cs-hero-info">
-              <span className="cs-hero-meaning">{item.meanings.join(", ")}</span>
-              {readingSummary && (
-                <span className="cs-hero-reading">{readingSummary}</span>
-              )}
-            </div>
-          </div>
+          </LessonHero>
 
           {/* Card 2: Meanings & Mnemonics */}
           {(item.meaningMnemonic || item.advancedMeanings) && (
@@ -221,13 +190,9 @@ export default function LearnPage() {
                 </div>
               )}
               {item.partsOfSpeech && item.partsOfSpeech.length > 0 && (
-                <div style={{ marginBottom: "16px", display: "flex", gap: "12px", alignItems: "center" }}>
-                  <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--text-muted)", fontWeight: "bold", letterSpacing: "1px" }}>
-                    WORD TYPE
-                  </span>
-                  <span style={{ color: "var(--text-primary)", fontSize: "15px" }}>
-                    {item.partsOfSpeech.join(", ")}
-                  </span>
+                <div className="cs-word-type">
+                  <span className="cs-word-type-label">Word Type</span>
+                  <span className="cs-word-type-value">{item.partsOfSpeech.join(", ")}</span>
                 </div>
               )}
               {item.meaningMnemonic && (
@@ -270,8 +235,7 @@ export default function LearnPage() {
                 </div>
               ) : item.advancedReadings && item.advancedReadings.length > 0 ? (
                 <div className="cs-readings-grid">
-                  <div className="cs-reading-group">
-                    <span className="cs-reading-type">Reading</span>
+                  <div className="cs-reading-group cs-reading-group--single">
                     <div className="cs-reading-values">
                       {item.advancedReadings.map((r, i) => (
                         <span key={i} className={r.primary ? 'cs-reading-primary' : ''}>{r.reading}</span>
@@ -281,8 +245,7 @@ export default function LearnPage() {
                 </div>
               ) : item.readings && item.readings.length > 0 ? (
                 <div className="cs-readings-grid">
-                  <div className="cs-reading-group">
-                    <span className="cs-reading-type">Reading</span>
+                  <div className="cs-reading-group cs-reading-group--single">
                     <div className="cs-reading-values">
                       {item.readings.map((r, i) => (
                         <span key={i} className={i === 0 ? 'cs-reading-primary' : ''}>{r}</span>
@@ -303,7 +266,7 @@ export default function LearnPage() {
           )}
 
           {/* Card 4: Composition (Radicals / Kanji / Used In) */}
-          <LessonCardStack item={item} />
+          <CompositionCards item={item} />
 
           {/* Card: Context Sentences */}
           {item.contextSentences && item.contextSentences.length > 0 && (
@@ -342,50 +305,25 @@ export default function LearnPage() {
           </div>
         </div>
 
-        {/* ── Fixed Bottom Navigation ── */}
-        <div className="cs-bottom-nav">
-          <div className="cs-progress-line">
-            <div 
-              className="cs-progress-fill" 
-              style={{ width: `${((currentIndex + 1) / batch.length) * 100}%` }}
-            />
-          </div>
-          <div className="cs-bottom-nav-buttons">
-            <button 
-              onClick={prevSlide} 
-              disabled={currentIndex === 0} 
-              className="cs-nav-btn"
-              style={{ opacity: currentIndex === 0 ? 0.3 : 1 }}
-            >
-              ← Prev
-            </button>
-            <span className="cs-nav-counter">{currentIndex + 1} / {batch.length}</span>
-            {currentIndex < batch.length - 1 ? (
-              <button onClick={nextSlide} className="cs-nav-btn">
-                Next →
-              </button>
-            ) : (
-              <button onClick={nextSlide} className="cs-nav-btn cs-nav-quiz">
-                Start Quiz →
-              </button>
-            )}
-          </div>
-        </div>
+        <LessonBottomNav
+          currentIndex={currentIndex}
+          total={batch.length}
+          onPrev={prevSlide}
+          onNext={nextSlide}
+        />
       </div>
     );
   }
 
   // Quiz Phase
   return (
-    <div className="srs-learn-container">
-      <SrsQuiz items={batch} mode="lesson-quiz" onComplete={() => location.reload()} />
-    </div>
+    <SrsQuiz items={batch} mode="lesson-quiz" onComplete={() => location.reload()} />
   );
 }
 
 // ── Composition Cards (extracted to avoid LessonModal duplication) ──
 
-function LessonCardStack({ item }: { item: QuizItem }) {
+function CompositionCards({ item }: { item: QuizItem }) {
   const [modalTarget, setModalTarget] = useState<{ type: "item"; id: number } | { type: "radical"; wkSubjectId: number } | null>(null);
 
   const hasRadicals = (item.radicals?.length || 0) > 0;
@@ -400,9 +338,8 @@ function LessonCardStack({ item }: { item: QuizItem }) {
       {modalTarget && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
           <div style={{ position: 'relative', zIndex: 10000 }}>
-            {/* We import ItemModal dynamically to avoid circular deps */}
-            <LazyItemModal 
-              target={modalTarget} 
+            <ItemModal
+              target={modalTarget}
               onClose={() => setModalTarget(null)}
               onNavigateItem={(id: number) => setModalTarget({ type: "item", id })}
               onNavigateRadical={(wkSubjectId: number) => setModalTarget({ type: "radical", wkSubjectId })}
@@ -442,9 +379,9 @@ function LessonCardStack({ item }: { item: QuizItem }) {
             Kanji Composition
           </h3>
           <div className="srs-chip-grid">
-            {item.componentKanji!.map((k, idx) => (
-              <div 
-                key={idx} 
+            {dedupeByExpression(item.componentKanji!).map((k, idx) => (
+              <div
+                key={idx}
                 className="srs-feature-chip kanji-composition-chip"
                 onClick={() => k.id && setModalTarget({ type: "item", id: k.id })}
                 style={{ cursor: k.id ? 'pointer' : 'default' }}
@@ -465,9 +402,9 @@ function LessonCardStack({ item }: { item: QuizItem }) {
             Found In Vocabulary
           </h3>
           <div className="srs-chip-grid grammar-grid">
-            {item.relatedVocab!.map((v, idx) => (
-              <div 
-                key={idx} 
+            {dedupeByExpression(item.relatedVocab!.filter((v) => v.type === "vocab")).map((v, idx) => (
+              <div
+                key={idx}
                 className="srs-grammar-chip vocab-chip-override"
                 onClick={() => setModalTarget({ type: "item", id: v.id })}
                 style={{ cursor: 'pointer' }}
@@ -488,9 +425,9 @@ function LessonCardStack({ item }: { item: QuizItem }) {
             Found In Kanji
           </h3>
           <div className="srs-chip-grid">
-            {item.usedInKanji!.map((k, idx) => (
-              <div 
-                key={idx} 
+            {dedupeByExpression(item.usedInKanji!.filter((k) => k.type === "kanji")).map((k, idx) => (
+              <div
+                key={idx}
                 className="srs-feature-chip kanji-composition-chip"
                 onClick={() => setModalTarget({ type: "item", id: k.id })}
                 style={{ cursor: 'pointer' }}
@@ -507,12 +444,3 @@ function LessonCardStack({ item }: { item: QuizItem }) {
   );
 }
 
-// Lazy-import ItemModal to avoid issues
-function LazyItemModal(props: any) {
-  const [Comp, setComp] = useState<any>(null);
-  useEffect(() => {
-    import("@/app/components/ItemModal").then(mod => setComp(() => mod.default));
-  }, []);
-  if (!Comp) return null;
-  return <Comp {...props} />;
-}

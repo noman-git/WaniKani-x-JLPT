@@ -25,8 +25,8 @@ export type QuizItem = {
   wkLevel?: number | null;
   radicals?: Array<{ id: number; characters: string | null; meaning: string; imageUrl: string | null; level: number; }> | null;
   componentKanji?: Array<{ id: number | null; expression: string; reading: string; meaning: string; jlptLevel: string | null; wkLevel: number | null; }> | null;
-  relatedVocab?: Array<{ id: number; expression: string; reading: string; meaning: string; jlptLevel: string; }> | null;
-  usedInKanji?: Array<{ id: number; expression: string; reading: string; meaning: string; jlptLevel: string; }> | null;
+  relatedVocab?: Array<{ id: number; expression: string; reading: string; meaning: string; type: string; jlptLevel: string; }> | null;
+  usedInKanji?: Array<{ id: number; expression: string; reading: string; meaning: string; type: string; jlptLevel: string; }> | null;
   jlptItemId: number;
   jlptLevel?: string | null;
 };
@@ -173,6 +173,52 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     }
   };
 
+  // Items the user toggled "known" during this session — toggle state only.
+  // The normal answer flow continues; if the user later gets it wrong, the
+  // standard wrong-answer penalty kicks in from the current (Master) state.
+  const [knownSet, setKnownSet] = useState<Set<number>>(new Set());
+  const [knownPending, setKnownPending] = useState(false);
+
+  const toggleKnownCurrent = async () => {
+    if (!currentTask || knownPending) return;
+    const itemId = currentTask.item.id;
+    const jlptItemId = currentTask.item.jlptItemId;
+    const wasKnown = knownSet.has(itemId);
+    // Optimistic flip
+    setKnownSet(prev => {
+      const next = new Set(prev);
+      if (wasKnown) next.delete(itemId);
+      else next.add(itemId);
+      return next;
+    });
+    setKnownPending(true);
+    try {
+      const res = await fetch("/api/srs/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jlptItemId,
+          isCorrect: true,
+          timeToAnswerMs: 100,
+          mistakeType: null,
+          forceKnown: !wasKnown,
+          forceUnknown: wasKnown,
+        }),
+      });
+      if (!res.ok) throw new Error("submit failed");
+    } catch (e) {
+      // Revert
+      setKnownSet(prev => {
+        const next = new Set(prev);
+        if (wasKnown) next.add(itemId);
+        else next.delete(itemId);
+        return next;
+      });
+    } finally {
+      setKnownPending(false);
+    }
+  };
+
   const reInsertAndPop = () => {
     // Put current task somewhere in the first 5 slots randomly
     const newQueue = queue.slice(1);
@@ -207,35 +253,47 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     // --- READING CHECK ---
     if (currentTask.questionType === "reading") {
        const advancedReadings = currentTask.item.advancedReadings || [];
-       const targetType = currentTask.item.matchType?.toLowerCase();
-       
+
+       // For kanji we expect the PRIMARY reading type only (the one
+       // marked `primary: true`). Other readings of that same type are
+       // also accepted (multiple primaries are fine), but readings of
+       // the OPPOSITE type only trigger a "wrong type" warning so the
+       // user can retry with the right kana.
+       const primaryReading = advancedReadings.find(r => r.primary);
+       const targetType = primaryReading?.type?.toLowerCase();
+
+       const stripHints = (r: string) =>
+         r.replace(/\..*/, '').replace(/[^ぁ-んァ-ンー]/g, '');
+
        if (currentTask.item.type === "kanji" && targetType) {
           const expectedReadingsForType = advancedReadings
-                .filter(r => r.type.toLowerCase() === targetType)
-                .map(r => r.reading.replace(/\..*/, '').replace(/[^ぁ-んァ-ンー]/g, ''));
-                
-          const allOtherValidReadings = advancedReadings
-                .map(r => r.reading.replace(/\..*/, '').replace(/[^ぁ-んァ-ンー]/g, ''));
-                
-          const fallbackReadings = currentTask.item.readings.map(r => r.replace(/[^ぁ-んァ-ンー]/g, ''));
-          
+                .filter(r => r.type?.toLowerCase() === targetType)
+                .map(r => stripHints(r.reading));
+
+          const otherTypeReadings = advancedReadings
+                .filter(r => r.type?.toLowerCase() && r.type.toLowerCase() !== targetType)
+                .map(r => stripHints(r.reading));
+
+          const fallbackReadings = currentTask.item.readings.map(stripHints);
+
           const primaryExpected = expectedReadingsForType.length > 0 ? expectedReadingsForType : fallbackReadings;
-          
+
           if (primaryExpected.includes(answerNorm)) {
              isCorrect = true;
-             if (primaryExpected.length > 1 || allOtherValidReadings.length > 0) {
+             if (primaryExpected.length > 1) {
                  setHasMultipleMeanings(true);
              }
-          } else if (allOtherValidReadings.includes(answerNorm) || fallbackReadings.includes(answerNorm)) {
+          } else if (otherTypeReadings.includes(answerNorm)) {
+             const otherLabel = targetType === "onyomi" ? "kun'yomi" : "on'yomi";
+             const wantLabel  = targetType === "onyomi" ? "on'yomi"  : "kun'yomi";
              isWarning = true;
-             warnMessage = `We are looking for the ${targetType} reading.`;
+             warnMessage = `That's the ${otherLabel} reading — we're looking for the ${wantLabel}.`;
           }
        } else {
-          // Normal vocab, just match any reading
-          const cleanExpected = currentTask.item.readings.map(r => r.replace(/[^ぁ-んァ-ンー]/g, ''));
-          // Include advanced reading equivalents if any
-          const cleanAdvanced = advancedReadings.map(r => r.reading.replace(/[^ぁ-んァ-ンー]/g, ''));
-          
+          // Vocab / radical / kanji with no marked primary — accept any reading.
+          const cleanExpected = currentTask.item.readings.map(stripHints);
+          const cleanAdvanced = advancedReadings.map(r => stripHints(r.reading));
+
           if (cleanExpected.includes(answerNorm) || cleanAdvanced.includes(answerNorm)) {
              isCorrect = true;
              if (cleanExpected.length > 1 || cleanAdvanced.length > 1) {
@@ -350,47 +408,76 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     }
   };
 
+  // Ctrl/Cmd + K — toggle "known" for the current item (does NOT pop from queue;
+  // the normal answer flow continues, and wrong answers still penalize).
+  useEffect(() => {
+    if (!currentTask) return;
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+        e.preventDefault();
+        toggleKnownCurrent();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTask, knownSet, knownPending]);
+
   if (!currentTask) return null;
 
   return (
     <div className="srs-quiz-wrapper">
       <div className="srs-quiz-header" style={{ alignItems: 'center' }}>
-         <span>{queue.length} items remaining</span>
+         <span className="folio-mark">{queue.length} <span>remaining</span></span>
          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             {currentTask.item.jlptLevel && (
-               <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '4px 8px', borderRadius: '4px' }}>
+               <span className={`badge badge-${currentTask.item.jlptLevel.toLowerCase()}`}>
                  {currentTask.item.jlptLevel.toUpperCase()}
                </span>
             )}
             {currentTask.item.wkLevel && (
-               <span style={{ fontSize: '11px', fontWeight: 'bold', backgroundColor: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', padding: '4px 8px', borderRadius: '4px' }}>
-                 WK Lv {currentTask.item.wkLevel}
-               </span>
+               <span className="badge badge-wk">WK Lv {currentTask.item.wkLevel}</span>
             )}
-            <span style={{ textTransform: 'uppercase', letterSpacing: '2px', color: '#6366f1' }}>{currentTask.item.type}</span>
+            <span
+               className="srs-type-badge"
+               style={{
+                  color: `var(--accent-${currentTask.item.type})`,
+                  borderColor: `var(--accent-${currentTask.item.type})`,
+               }}
+            >
+               {currentTask.item.type}
+            </span>
+            <button
+               type="button"
+               className={`cs-known-btn srs-known-btn ${knownSet.has(currentTask.item.id) ? "is-known" : ""}`}
+               onClick={toggleKnownCurrent}
+               disabled={knownPending}
+               title={knownSet.has(currentTask.item.id)
+                 ? "Marked known (Master) — click or ⌘K to unmark. Still answers normally."
+                 : "Mark known (Master). The item stays in the queue; getting it wrong still penalizes. ⌘K"}
+            >
+               {knownSet.has(currentTask.item.id) ? "✓ Known" : "★ Mark known"}
+               <kbd className="cs-known-kbd">⌘K</kbd>
+            </button>
          </div>
       </div>
 
-      <div 
+      <div
          className="srs-quiz-character"
          style={{
-            backgroundColor: `var(--accent-${currentTask.item.type})`,
-            padding: '40px 80px',
-            borderRadius: '16px',
-            boxShadow: `0 10px 30px var(--accent-${currentTask.item.type}-soft)`,
-            width: '100%',
-            maxWidth: '600px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            margin: '0 auto 48px auto'
+            margin: '0 auto 48px auto',
+            color: `var(--accent-${currentTask.item.type})`,
          }}
       >
-        {(!currentTask.item.characters || currentTask.item.characters.startsWith('[')) && currentTask.item.imageUrl ? (
-            <img 
-               src={currentTask.item.imageUrl} 
-               alt={currentTask.item.meanings[0] || "radical"} 
-               style={{ height: '80px', filter: 'brightness(0) invert(1)' }} 
+        {currentTask.item.imageUrl ? (
+            <img
+               src={currentTask.item.imageUrl}
+               alt={currentTask.item.meanings[0] || "radical"}
+               className="radical-svg-tint"
+               style={{ height: '120px' }}
             />
         ) : (
             currentTask.item.characters
@@ -435,9 +522,7 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
         </div>
 
         {feedback === "warning" && warningMsg && (
-           <div className="srs-typo-warning" style={{ backgroundColor: '#f59e0b', color: '#fff' }}>
-             {warningMsg}
-           </div>
+           <div className="srs-typo-warning">{warningMsg}</div>
         )}
 
         {feedback === "typo" && (
@@ -447,8 +532,8 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
         )}
         
         {feedback === "correct" && hasMultipleMeanings && (
-           <div className="srs-typo-warning" style={{ backgroundColor: '#10b981', color: '#fff' }}>
-             Correct! (This word has multiple valid {currentTask.questionType === "reading" ? "readings" : "meanings"})
+           <div className="srs-typo-warning" style={{ color: 'var(--moss)', borderLeftColor: 'var(--moss)', background: 'var(--moss-soft)' }}>
+             Correct — this word has multiple valid {currentTask.questionType === "reading" ? "readings" : "meanings"}.
            </div>
         )}
         

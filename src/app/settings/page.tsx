@@ -12,40 +12,61 @@ export default function SettingsPage() {
         <p className="page-subtitle">Your account and app info</p>
       </div>
 
-      <div className="card settings-card" style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Account</h3>
-        <div style={{ display: "grid", gap: 12 }}>
-          <div className="form-group">
-            <label className="form-label">Username</label>
-            <div className="form-input" style={{ color: "var(--text-secondary)" }}>
-              {user?.username}
-            </div>
+      <div className="settings-card" style={{ marginBottom: 24 }}>
+        <h3 style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: 11,
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: "var(--vermillion)",
+          marginBottom: 12,
+        }}>
+          Account
+        </h3>
+        <div className="form-group">
+          <label className="form-label">Username</label>
+          <div className="form-input" style={{ color: "var(--ink-soft)" }}>
+            {user?.username}
           </div>
         </div>
       </div>
 
-      <div className="card settings-card">
-        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>About</h3>
-        <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>
-          This dashboard tracks JLPT N4 and N5 kanji and vocabulary from community-curated lists.
-          It includes WaniKani data for meanings, readings, mnemonics, and radicals.
+      <div className="settings-card">
+        <h3 style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: 11,
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: "var(--vermillion)",
+          marginBottom: 12,
+        }}>
+          About
+        </h3>
+        <p style={{
+          fontFamily: "var(--font-display)",
+          fontStyle: "italic",
+          fontSize: 15,
+          color: "var(--ink-soft)",
+          lineHeight: 1.5,
+        }}>
+          Folio is a self-hosted study journal for JLPT N5 &amp; N4 — kanji, vocabulary, radicals, and grammar — with WaniKani-style SRS layered on top of community-curated reference data.
         </p>
-        <div style={{ marginTop: 16, fontSize: 13, color: "var(--text-muted)" }}>
-          <strong>Data Sources:</strong>
-          <ul style={{ marginTop: 8, paddingLeft: 20, lineHeight: 1.8 }}>
-            <li>
-              <a href="https://github.com/jamsinclair/open-anki-jlpt-decks" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-n5)" }}>
-                open-anki-jlpt-decks
-              </a>{" "}
-              — Tanos-based vocabulary lists
-            </li>
-            <li>
-              <a href="https://docs.api.wanikani.com/" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-n5)" }}>
-                WaniKani API v2
-              </a>{" "}
-              — Meanings, readings, mnemonics &amp; radicals
-            </li>
-          </ul>
+        <div style={{
+          marginTop: 16,
+          fontFamily: "var(--font-mono)",
+          fontSize: 10,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "var(--ink-faded)",
+        }}>
+          Sources · {" "}
+          <a href="https://github.com/jamsinclair/open-anki-jlpt-decks" target="_blank" rel="noopener noreferrer" style={{ color: "var(--vermillion)", textDecoration: "underline" }}>
+            open-anki-jlpt-decks
+          </a>{" "}
+          ·{" "}
+          <a href="https://docs.api.wanikani.com/" target="_blank" rel="noopener noreferrer" style={{ color: "var(--vermillion)", textDecoration: "underline" }}>
+            WaniKani API
+          </a>
         </div>
       </div>
     </>

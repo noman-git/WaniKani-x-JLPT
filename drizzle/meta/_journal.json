@@ -22,6 +22,20 @@
       "when": 1775660860482,
       "tag": "0002_loving_salo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1778935200000,
+      "tag": "0003_hardened_wk_matches",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1779009600000,
+      "tag": "0004_jlpt_items_unique",
+      "breakpoints": true
     }
   ]
 }

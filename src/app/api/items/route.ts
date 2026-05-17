@@ -1,25 +1,19 @@
-import { requireAuth, AuthError } from "@/lib/auth";
-import { NextRequest, NextResponse } from "next/server";
+import { sqlite } from "@/lib/db";
+import { parseIntSafe, PAGE_MAX, LIMIT_MAX, withAuth } from "@/lib/api-helpers";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
-  let session;
-  try {
-    session = await requireAuth(request);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 401 });
-    }
-    throw e;
-  }
-  
+export const GET = withAuth(async (request, session) => {
   const { searchParams } = new URL(request.url);
   const level = searchParams.get("level");
   const type = searchParams.get("type");
   const status = searchParams.get("status");
   const search = searchParams.get("search");
   const onWanikani = searchParams.get("onWanikani");
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "50");
+  // SRS stage number 1..9 (each rank is its own stage now: F..SSS)
+  const stageParam = searchParams.get("stage");
+  const stage = stageParam && /^[1-9]$/.test(stageParam) ? parseInt(stageParam, 10) : null;
+  const page = parseIntSafe(searchParams.get("page"), 1, 1, PAGE_MAX);
+  const limit = parseIntSafe(searchParams.get("limit"), 50, 1, LIMIT_MAX);
 
   const userId = session.userId;
 
@@ -54,20 +48,32 @@ export async function GET(request: NextRequest) {
     } else if (onWanikani === "false") {
       whereClauses.push("(w_agg.wk_subject_id IS NULL OR w_agg.match_type = 'pseudo')");
     }
+    if (stage) {
+      whereClauses.push("p.srs_stage = @stage");
+      params.stage = stage;
+    }
 
     const whereSQL =
       whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
 
+    // Pick ONE full WK row per matched JLPT item. The previous version used
+    // independent MIN()s per column which could mix data from different rows
+    // when an item had multiple matches. ROW_NUMBER gives us a deterministic,
+    // consistent row.
     const wkSubquery = `
       LEFT JOIN (
-        SELECT matched_jlpt_item_id,
-               MIN(wk_subject_id) as wk_subject_id,
-               MIN(wk_level) as wk_level,
-               MIN(characters) as wk_characters,
-               MIN(match_type) as match_type
-        FROM wanikani_subjects
-        WHERE matched_jlpt_item_id IS NOT NULL
-        GROUP BY matched_jlpt_item_id
+        SELECT matched_jlpt_item_id, wk_subject_id, wk_level,
+               characters as wk_characters, match_type
+        FROM (
+          SELECT matched_jlpt_item_id, wk_subject_id, wk_level, characters, match_type,
+                 ROW_NUMBER() OVER (
+                   PARTITION BY matched_jlpt_item_id
+                   ORDER BY (match_type = 'pseudo') ASC, wk_subject_id ASC
+                 ) as rn
+          FROM wanikani_subjects
+          WHERE matched_jlpt_item_id IS NOT NULL
+        )
+        WHERE rn = 1
       ) w_agg ON w_agg.matched_jlpt_item_id = j.id
     `;
 
@@ -90,6 +96,7 @@ export async function GET(request: NextRequest) {
       SELECT
         j.id, j.expression, j.reading, j.meaning, j.type, j.jlpt_level as jlptLevel, j.sources,
         COALESCE(p.status, 'unknown') as status,
+        p.srs_stage as srsStage,
         w_agg.wk_subject_id as wkSubjectId,
         w_agg.wk_level as wkLevel,
         w_agg.wk_characters as wkCharacters,
@@ -98,27 +105,22 @@ export async function GET(request: NextRequest) {
       ${progressJoin}
       ${wkSubquery}
       ${whereSQL}
-      ORDER BY j.jlpt_level ASC, j.type ASC, j.expression ASC
+      ORDER BY ${stage ? 'p.srs_stage DESC, ' : ''}j.jlpt_level ASC, j.type ASC, j.expression ASC
       LIMIT @limit OFFSET @offset
     `;
 
     params.limit = limit;
     params.offset = (page - 1) * limit;
 
-    const Database = (await import("better-sqlite3")).default;
-    const path = await import("path");
-    const dbPath = path.join(process.cwd(), "data", "jlpt.db");
-    const rawDb = new Database(dbPath, { readonly: true });
-
-    const countResult = rawDb.prepare(countQuery).get(params) as { total: number };
-    const items = rawDb.prepare(dataQuery).all(params);
+    const countResult = sqlite.prepare(countQuery).get(params) as { total: number };
+    const items = sqlite.prepare(dataQuery).all(params);
 
     // Summary stats scoped to this user
     const statsProgressJoin = userId
       ? `LEFT JOIN user_progress p ON p.jlpt_item_id = j.id AND p.user_id = ${userId}`
       : `LEFT JOIN user_progress p ON 0 = 1`;
 
-    const stats = rawDb
+    const stats = sqlite
       .prepare(
         `
         SELECT
@@ -140,7 +142,6 @@ export async function GET(request: NextRequest) {
       `
       )
       .all();
-    rawDb.close();
 
     return NextResponse.json({
       items,
@@ -156,4 +157,4 @@ export async function GET(request: NextRequest) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { grammarPoints, grammarProgress } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { requireAuth, AuthError } from "@/lib/auth";
+import { parseIntSafe, LIMIT_MAX } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   let session;
@@ -17,7 +18,9 @@ export async function GET(req: NextRequest) {
 
   try {
     const url = new URL(req.url);
-    const limit = parseInt(url.searchParams.get("limit") || "3", 10);
+    const limit = parseIntSafe(url.searchParams.get("limit"), 3, 1, LIMIT_MAX);
+    const trackParam = url.searchParams.get("level");
+    const track = trackParam === "N5" || trackParam === "N4" ? trackParam : null;
     const userId = session.userId;
 
     // Fetch grammar items that DO NOT exist in grammarProgress OR have srsStage = 0
@@ -32,6 +35,7 @@ export async function GET(req: NextRequest) {
         eq(grammarProgress.grammarPointId, grammarPoints.id),
         eq(grammarProgress.userId, userId)
       ))
+      .where(track ? eq(grammarPoints.jlptLevel, track) : undefined)
       .orderBy(grammarPoints.jlptLevel, grammarPoints.order)
       .limit(limit * 3);
 

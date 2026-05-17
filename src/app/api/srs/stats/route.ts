@@ -1,20 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { userProgress, jlptItems, grammarPoints, grammarProgress } from "@/lib/db/schema";
 import { eq, and, isNotNull, lte, sql } from "drizzle-orm";
-import { requireAuth, AuthError } from "@/lib/auth";
+import { withAuth } from "@/lib/api-helpers";
 
-export async function GET(req: NextRequest) {
-  let session;
-  try {
-    session = await requireAuth(req);
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return NextResponse.json({ error: e.message }, { status: 401 });
-    }
-    throw e;
-  }
-
+export const GET = withAuth(async (_req, session) => {
   try {
     const userId = session.userId;
 
@@ -50,31 +40,34 @@ export async function GET(req: NextRequest) {
       .where(eq(userProgress.userId, userId))
       .groupBy(jlptItems.jlptLevel, userProgress.srsStage);
 
-    let mastered = 0; // Stage 8, 9, known
-    let inProgress = 0; // Stage 1-7 (Apprentice / Guru)
-    
-    const levels: Record<string, any> = {
-      "N5": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 },
-      "N4": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 },
-      "Unknown": { apprentice: 0, guru: 0, master: 0, enlightened: 0, burned: 0 }
+    let inProgress = 0; // any stage > 0
+
+    // Per-stage rollup: stages 1..9 each get their own count, grouped by
+    // JLPT level. Mirrors the F → SSS ranking the dashboard renders.
+    const blankLevel = () => ({
+      stage1: 0, stage2: 0, stage3: 0,
+      stage4: 0, stage5: 0, stage6: 0,
+      stage7: 0, stage8: 0, stage9: 0,
+    });
+    const levels: Record<string, ReturnType<typeof blankLevel>> = {
+      N5: blankLevel(),
+      N4: blankLevel(),
+      Other: blankLevel(),
     };
 
-    distributionRes.forEach(row => {
-       const lvl = levels[row.level] ? row.level : "Unknown";
-       
-       if (row.stage >= 1 && row.stage <= 4) levels[lvl].apprentice += row.count;
-       else if (row.stage === 5 || row.stage === 6) levels[lvl].guru += row.count;
-       else if (row.stage === 7) levels[lvl].master += row.count;
-       else if (row.stage === 8) levels[lvl].enlightened += row.count;
-       else if (row.stage === 9) levels[lvl].burned += row.count;
+    const levelKey = (raw: string) =>
+      raw === "N5" ? "N5" : raw === "N4" ? "N4" : "Other";
 
-       if (row.stage > 0) {
-          if (row.stage >= 8) mastered += row.count;
-          else inProgress += row.count;
+    distributionRes.forEach(row => {
+       const lvl = levelKey(row.level);
+       if (row.stage >= 1 && row.stage <= 9) {
+         const key = `stage${row.stage}` as keyof ReturnType<typeof blankLevel>;
+         levels[lvl][key] += row.count;
+         inProgress += row.count;
        }
     });
 
-    const upcomingLessons = totalItems - mastered - inProgress;
+    const upcomingLessons = totalItems - inProgress;
 
     // --- Grammar Stats ---
     const totalGrammarRes = await db
@@ -119,4 +112,4 @@ export async function GET(req: NextRequest) {
     console.error("Stats Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
-}
+});

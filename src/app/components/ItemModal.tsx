@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import DOMPurify from "dompurify";
 import dynamic from "next/dynamic";
+import { dedupeByExpression } from "@/lib/dedupe";
 
 const GrammarDetailModal = dynamic(() => import("./GrammarDetailModal"), { ssr: false });
 
@@ -44,7 +45,7 @@ interface ItemDetail {
     subjectId: number;
     level: number;
     objectType: string;
-    characters: string;
+    characters: string | null;
     matchType: string | null;
     meanings: WKMeaning[];
     readings: WKReading[];
@@ -56,6 +57,7 @@ interface ItemDetail {
     contextSentences: Array<{ en: string; ja: string }> | null;
     patternsOfUse: Array<{ en: string; ja: string }> | null;
     partsOfSpeech: string[] | null;
+    imageUrl?: string | null;
   } | null;
   relatedVocab: Array<{
     id: number;
@@ -167,7 +169,6 @@ export default function ItemModal({
   const [dictLoading, setDictLoading] = useState(false);
 
   const [note, setNote] = useState("");
-  const [isNotesOpen, setIsNotesOpen] = useState(true);
   const [selectedGrammarSlug, setSelectedGrammarSlug] = useState<string | null>(null);
 
   // Fetch based on target type
@@ -319,8 +320,6 @@ export default function ItemModal({
               onClose={onClose}
               canGoBack={history.length > 0}
               goBack={goBack}
-              isNotesOpen={isNotesOpen}
-              setIsNotesOpen={setIsNotesOpen}
               onNext={onNext}
               onPrev={onPrev}
             />
@@ -343,12 +342,6 @@ export default function ItemModal({
           )}
         </div>
 
-        {/* Sliding Notes Drawer */}
-        <div className={`modal-notes-drawer ${isNotesOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
-          {!loading && detail && target.type === "item" && (
-            <NoteSection itemId={detail.item.id} note={note} onNoteChange={setNote} />
-          )}
-        </div>
       </div>
 
       {selectedGrammarSlug && (
@@ -380,8 +373,6 @@ function ItemView({
   onClose,
   canGoBack,
   goBack,
-  isNotesOpen,
-  setIsNotesOpen,
   onNext,
   onPrev
 }: {
@@ -402,8 +393,6 @@ function ItemView({
   onClose: () => void;
   canGoBack: boolean;
   goBack: () => void;
-  isNotesOpen: boolean;
-  setIsNotesOpen: (s: boolean) => void;
   onNext?: () => void;
   onPrev?: () => void;
 }) {
@@ -434,8 +423,16 @@ function ItemView({
             </button>
           )}
           <div className="modal-expression-group">
-            <span className="modal-expression">{detail.item.expression}</span>
-            {hasAlt && (
+            {detail.item.type === "radical" && detail.wanikani?.imageUrl ? (
+              <img
+                src={detail.wanikani.imageUrl}
+                alt={detail.item.meaning}
+                className="modal-expression-img"
+              />
+            ) : (
+              <span className="modal-expression" style={{ color: 'var(--paper)' }}>{detail.item.expression}</span>
+            )}
+            {hasAlt && detail.wanikani!.characters && (
               <span className="modal-wk-alt-expr" title={`WaniKani uses: ${detail.wanikani!.characters}`}>
                 WK: {detail.wanikani!.characters}
               </span>
@@ -451,15 +448,7 @@ function ItemView({
             {onPrev && <button className="modal-close" onClick={onPrev} title="Previous Item" style={{ color: 'white' }}>‹</button>}
             {onNext && <button className="modal-close" onClick={onNext} title="Next Item" style={{ color: 'white' }}>›</button>}
           </div>
-          <button 
-            className={`modal-toggle-note-btn ${isNotesOpen ? 'open' : ''} ${note ? 'has-note' : ''}`}
-            onClick={() => setIsNotesOpen(!isNotesOpen)}
-            title="Toggle Notes"
-            style={{ backgroundColor: 'rgba(0,0,0,0.2)', color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}
-          >
-            📝 Notes {note && '(1)'}
-          </button>
-          <button className="modal-close" onClick={onClose} title="Close" style={{ color: 'white' }}>✕</button>
+          <button className="modal-close" onClick={onClose} title="Close">✕</button>
         </div>
       </div>
 
@@ -526,7 +515,7 @@ function ItemView({
           <div className="modal-section">
             <h3 className="modal-section-title">Kanji Composition</h3>
             <div className="modal-related-vocab">
-              {detail.componentKanji.map((k, i) => {
+              {dedupeByExpression(detail.componentKanji).map((k, i) => {
                 const isJlpt = k.id !== null;
                 return isJlpt ? (
                   <button
@@ -587,7 +576,7 @@ function ItemView({
           <div className="modal-section">
             <h3 className="modal-section-title">Related JLPT Vocab</h3>
             <div className="modal-related-vocab">
-              {detail.relatedVocab.map((v) => (
+              {dedupeByExpression(detail.relatedVocab.filter((v) => v.type === "vocab")).map((v) => (
                 <button
                   key={v.id}
                   className="related-vocab-chip"
@@ -607,7 +596,7 @@ function ItemView({
           <div className="modal-section">
             <h3 className="modal-section-title">Found In Kanji</h3>
             <div className="modal-related-vocab">
-              {detail.usedInKanji.map((k) => (
+              {dedupeByExpression(detail.usedInKanji.filter((k) => k.type === "kanji")).map((k) => (
                 <button
                   key={k.id}
                   className="related-vocab-chip kanji-chip"
@@ -624,6 +613,9 @@ function ItemView({
         )}
 
         {/* ── Appears in Grammar ── */}
+
+        {/* ── Personal Note ── */}
+        <NoteSection itemId={detail.item.id} note={note} onNoteChange={onNoteChange} />
       </div>
 
 
@@ -665,14 +657,14 @@ function NoteSection({
 
   const btnLabel =
     saveState === "saving" ? "Saving…" :
-    saveState === "saved"  ? "Saved ✓" :
-    saveState === "error"  ? "Error — retry" :
-    "Save Note";
+    saveState === "saved"  ? "Saved" :
+    saveState === "error"  ? "Retry" :
+    "Save note";
 
   return (
     <div className="note-section">
       <div className="note-header">
-        <span className="note-title">📝 My Note</span>
+        <span className="note-title">Note</span>
       </div>
       <textarea
         className="note-textarea"
@@ -740,7 +732,7 @@ function RadicalView({
               ←
             </button>
           )}
-          <span className="modal-expression radical-expression">
+          <span className="modal-expression radical-expression" style={{ color: "var(--paper)" }}>
             {detail.radical.characters || (
               detail.radical.imageUrl ? (
                 <img src={detail.radical.imageUrl} alt={primaryMeaning} className="radical-header-img" />
@@ -748,7 +740,6 @@ function RadicalView({
             )}
           </span>
           <div className="modal-header-meta">
-            <span className="modal-reading-label radical-type-label" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Radical</span>
             <span className="modal-meaning-label" style={{ color: 'white' }}>{primaryMeaning}</span>
           </div>
         </div>
@@ -767,7 +758,7 @@ function RadicalView({
                 className={`meaning-tag ${m.primary ? "primary" : ""}`}
               >
                 {m.meaning}
-                {m.primary && <span className="primary-star">★</span>}
+                {m.primary && <span className="primary-star">▪</span>}
               </span>
             ))}
           </div>
@@ -791,27 +782,30 @@ function RadicalView({
         )}
 
         {/* Used by Kanji */}
-        {detail.usedByKanji.length > 0 && (
-          <div className="modal-section">
-            <h3 className="modal-section-title">
-              Found in {detail.usedByKanji.length} JLPT Kanji
-            </h3>
-            <div className="modal-related-vocab">
-              {detail.usedByKanji.map((k) => (
-                <button
-                  key={k.id}
-                  className="related-vocab-chip kanji-chip"
-                  onClick={() => navigateToItem(k.id)}
-                  title={`${k.reading} — ${k.meaning}`}
-                >
-                  <span className="vocab-chip-expr">{k.expression}</span>
-                  <span className="vocab-chip-meaning">{k.meaning}</span>
-                  <span className="vocab-chip-level">{k.jlptLevel}</span>
-                </button>
-              ))}
+        {detail.usedByKanji.length > 0 && (() => {
+          const usedByKanji = dedupeByExpression(detail.usedByKanji);
+          return (
+            <div className="modal-section">
+              <h3 className="modal-section-title">
+                Found in {usedByKanji.length} JLPT Kanji
+              </h3>
+              <div className="modal-related-vocab">
+                {usedByKanji.map((k) => (
+                  <button
+                    key={k.id}
+                    className="related-vocab-chip kanji-chip"
+                    onClick={() => navigateToItem(k.id)}
+                    title={`${k.reading} — ${k.meaning}`}
+                  >
+                    <span className="vocab-chip-expr">{k.expression}</span>
+                    <span className="vocab-chip-meaning">{k.meaning}</span>
+                    <span className="vocab-chip-level">{k.jlptLevel}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
 
@@ -846,7 +840,7 @@ function WKTab({
               }`}
             >
               {m.meaning}
-              {m.primary && <span className="primary-star">★</span>}
+              {m.primary && <span className="primary-star">▪</span>}
             </span>
           ))}
         </div>
@@ -952,8 +946,8 @@ function ReadingGroup({
             key={i}
             className={`reading-tag ${colorClass} ${r.primary ? "primary" : ""}`}
           >
+            {r.primary && <span className="primary-star">▪</span>}
             {r.reading}
-            {r.primary && <span className="primary-star">★</span>}
           </span>
         ))}
       </div>

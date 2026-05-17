@@ -1,10 +1,24 @@
 import json
 import os
+import re
 import time
 import sqlite3
 import asyncio
 from pathlib import Path
 from dotenv import load_dotenv
+
+# Gemini emits markdown emphasis (e.g. **bold**). The app renders these
+# fields as HTML, so we normalise at the data layer — convert `**…**` to
+# `<b>…</b>` once, here, before anything goes into the DB.
+_MD_BOLD = re.compile(r"\*\*([^*\n][^*\n]*?)\*\*")
+
+
+def md_to_html(s):
+    if s is None:
+        return None
+    if "**" not in s:
+        return s
+    return _MD_BOLD.sub(r"<b>\1</b>", s)
 
 try:
     from google import genai
@@ -157,7 +171,7 @@ def insert_pseudo_wk(data, original_item):
             WHERE wk_subject_id = ?
         """, (
             json.dumps(data["meanings"]), json.dumps(data["readings"]),
-            data.get("meaning_mnemonic"), data.get("reading_mnemonic"),
+            md_to_html(data.get("meaning_mnemonic")), md_to_html(data.get("reading_mnemonic")),
             json.dumps(data["context_sentences"]), json.dumps(data["parts_of_speech"]),
             jlpt_id, pseudo_wk_id
         ))
@@ -172,7 +186,7 @@ def insert_pseudo_wk(data, original_item):
         """, (
             pseudo_wk_id, original_item["expression"], json.dumps(data["meanings"]),
             json.dumps(data["readings"]), 0, original_item["type"], jlpt_id,
-            "pseudo", data.get("meaning_mnemonic"), data.get("reading_mnemonic"),
+            "pseudo", md_to_html(data.get("meaning_mnemonic")), md_to_html(data.get("reading_mnemonic")),
             json.dumps(data["context_sentences"]), json.dumps(data["parts_of_speech"])
         ))
         
@@ -205,6 +219,8 @@ def process_pass1_chunk(chunk_id, items):
                     temperature=0.1
                 )
             )
+            if resp.text is None:
+                raise ValueError("Gemini returned empty response")
             result = json.loads(resp.text)
             with open(cache_file, "w", encoding="utf-8") as f:
                 json.dump(result, f, ensure_ascii=False)
@@ -237,6 +253,8 @@ async def process_pass2_chunk_async(chunk_id, items):
                     temperature=0.5
                 )
             )
+            if resp.text is None:
+                raise ValueError("Gemini returned empty response")
             result = json.loads(resp.text)
             if len(result) != len(items):
                 print(f"Warning: Extracted {len(result)} items instead of {len(items)}. Retrying.")
