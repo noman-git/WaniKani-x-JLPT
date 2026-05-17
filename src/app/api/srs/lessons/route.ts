@@ -45,6 +45,8 @@ export async function GET(req: NextRequest) {
     // radicals are always included regardless of level since they act as
     // prerequisites for kanji of any level. When no track is given, all
     // items except 'other' are eligible.
+    // Named params (@track reused 3x). better-sqlite3 rejects the ?1/?2
+    // numbered form when the same number appears more than once.
     const candidatesQuery = `
        SELECT
           j.id as jlptItemId,
@@ -57,19 +59,19 @@ export async function GET(req: NextRequest) {
           COALESCE(w.component_subject_ids, r.amalgamation_subject_ids) as componentSubjectIds,
           'true' as _isRaw
        FROM jlpt_items j
-       LEFT JOIN user_progress p ON p.jlpt_item_id = j.id AND p.user_id = ?1
+       LEFT JOIN user_progress p ON p.jlpt_item_id = j.id AND p.user_id = @userId
        LEFT JOIN wanikani_subjects w ON w.matched_jlpt_item_id = j.id
        LEFT JOIN wanikani_radicals r ON r.matched_jlpt_item_id = j.id
        WHERE (p.id IS NULL OR p.srs_stage = 0)
          AND (
            j.type = 'radical'
-           OR (?2 IS NOT NULL AND j.jlpt_level = ?2)
-           OR (?2 IS NULL AND j.jlpt_level != 'other')
+           OR (@track IS NOT NULL AND j.jlpt_level = @track)
+           OR (@track IS NULL AND j.jlpt_level != 'other')
          )
        GROUP BY j.id
        ORDER BY wkLevel ASC, j.id ASC
     `;
-    const sortedCandidates = rawDb.prepare(candidatesQuery).all(userId, track) as any[];
+    const sortedCandidates = rawDb.prepare(candidatesQuery).all({ userId, track }) as any[];
 
     // 4. Smart Prerequisites Pipeline
     const finalQueue: any[] = [];
