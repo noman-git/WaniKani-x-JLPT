@@ -29,7 +29,9 @@ export const jlptItems = sqliteTable("jlpt_items", {
   type: text("type", { enum: ["kanji", "vocab", "radical"] }).notNull(),
   jlptLevel: text("jlpt_level", { enum: ["N4", "N5", "other"] }).notNull(),
   sources: text("sources").notNull().default("[]"),
-});
+}, (t) => ({
+  unqExpressionType: unique().on(t.expression, t.type),
+}));
 
 export const wanikaniSubjects = sqliteTable("wanikani_subjects", {
   id: integer("id").primaryKey({ autoIncrement: true }),

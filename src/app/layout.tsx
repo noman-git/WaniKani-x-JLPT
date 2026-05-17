@@ -8,10 +8,11 @@ export const metadata: Metadata = {
 };
 
 // Inline script — runs before paint to set the theme attribute and
-// avoid a flash of the wrong palette. Reads localStorage, falls back
-// to prefers-color-scheme. The `theme-ready` class is added on the
-// next frame so the cross-fade only applies to subsequent toggles.
-const themeBootstrap = `(function(){try{var s=localStorage.getItem('folio-theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=s||(m?'dark':'light');document.documentElement.setAttribute('data-theme',t);requestAnimationFrame(function(){document.documentElement.classList.add('theme-ready');});}catch(e){}})();`;
+// avoid a flash of the wrong palette. Defaults to light; honors a
+// user's saved choice in localStorage if present. The `theme-ready`
+// class is added on the next frame so the cross-fade only applies to
+// subsequent toggles.
+const themeBootstrap = `(function(){try{var s=localStorage.getItem('folio-theme');var t=s==='dark'?'dark':'light';document.documentElement.setAttribute('data-theme',t);requestAnimationFrame(function(){document.documentElement.classList.add('theme-ready');});}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
