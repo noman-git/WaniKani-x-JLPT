@@ -257,15 +257,20 @@ export default function LessonModal({ item }: { item: QuizItem }) {
           </h3>
           <div className="srs-chip-grid grammar-grid">
             {item.relatedVocab!.map((v, idx) => (
-              <div 
-                key={idx} 
-                className="srs-grammar-chip vocab-chip-override"
+              <div
+                key={idx}
+                className="srs-feature-chip vocab-composition-chip"
                 onClick={() => setModalTarget({ type: "item", id: v.id })}
                 style={{ cursor: 'pointer' }}
               >
-                <span className="srs-grammar-title" style={{ fontSize: '18px', fontWeight: 'bold' }}>{v.expression} <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 'normal' }}>{v.reading}</span></span>
-                <span className="srs-grammar-meaning">{v.meaning}</span>
-                <span className="srs-grammar-level">{v.jlptLevel?.toUpperCase() || ''}</span>
+                <div className="vocab-chip-head">
+                  <span className="vocab-chip-expr">{v.expression}</span>
+                  {v.reading && v.reading !== v.expression && (
+                    <span className="vocab-chip-reading">{v.reading}</span>
+                  )}
+                </div>
+                <div className="srs-chip-sub">{v.meaning}</div>
+                <div className="srs-chip-meta">{v.jlptLevel?.toUpperCase() || ''}</div>
               </div>
             ))}
           </div>
