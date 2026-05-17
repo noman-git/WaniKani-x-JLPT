@@ -2,7 +2,7 @@
 /**
  * cleanup-wk-overmatches.ts
  *
- * Cleans three known smells in `wanikani_subjects` that came in with the seed:
+ * Cleans known smells in `wanikani_subjects` that came in with the seed:
  *
  *   A. Over-match: rows where wanikani_subjects.object_type does not align with
  *      the linked jlpt_items.type. Example: WK kanji subject 560 (赤) was matched
@@ -16,6 +16,23 @@
  *
  *   C. object_type='vocab' (AI-pseudo) → 'vocabulary'. The frontend filters for
  *      'vocabulary' | 'kana_vocabulary' and misses the pseudo bucket.
+ *
+ *   D. Ghost rows: a NULL-matched row alongside a non-NULL-matched sibling for
+ *      the same wk_subject_id. Keep the matched one; delete the ghost.
+ *
+ *   E. Orphan pairs: two-plus rows for the same wk_subject_id where ALL rows
+ *      have matched_jlpt_item_id = NULL. Step B misses these because the rows
+ *      differ in match_type (one carries the original 'prefix_strip'/'reading'
+ *      tag, the other was the unmatched copy); Step D misses them because
+ *      neither has a matched sibling. Survivor rule: prefer a row with a
+ *      non-empty match_type (so 'prefix_strip'/'reading' tags survive); break
+ *      ties by MIN(id). Delete the rest.
+ *
+ *   F. Multi-match: same wk_subject_id matched to two different jlpt_items.
+ *      The partial unique index allows this. Survivor rule: prefer the row
+ *      whose matched jlpt_items.expression equals wk.characters (e.g. for
+ *      WK 6475 「伺う」 this keeps the 伺う kanji-form jlpt_item over the
+ *      うかがう kana-form one); break ties by MIN(id). Delete the rest.
  *
  * Idempotent: re-running after a clean run is a no-op.
  *
@@ -112,13 +129,15 @@ const deleteClones = db.prepare(`
   )
 `);
 
-// ── Step C → D ordering note ────────────────────────────────────────
+// ── Ordering note ───────────────────────────────────────────────────
 // Step A nulls the wrong-type WK→JLPT links but leaves the rows themselves.
 // Often those leftover rows are content-identical to the correctly-matched
 // row for the same wk_subject_id (just with matched_jlpt_item_id = NULL now).
-// Step D deletes those redundant ghosts. We do this BEFORE step B's clone
-// check (to maximize the clone-group sizes), but the script applies them in
-// order A → B → D → C inside the transaction.
+// Step D deletes those redundant ghosts. Step E mops up the case where Step A
+// produced TWO null-matched rows for the same wk_id (so Step D's "has a
+// matched sibling" condition doesn't fire). Step F resolves multi-match
+// groups (same wk_id matched to two different jlpt_items).
+// Apply order inside the transaction: A → F → D → E → B → C.
 
 // ── Step D: delete ghost rows (matched=NULL where a matched-non-NULL sibling exists) ──
 const ghostCount = (db.prepare(`
@@ -144,6 +163,91 @@ const deleteGhosts = db.prepare(`
     )
 `);
 
+// ── Step E: collapse orphan pairs (multi NULL-matched rows for same wk_id) ──
+const orphanPairCount = (db.prepare(`
+  SELECT COUNT(*) as c FROM (
+    SELECT wk_subject_id FROM wanikani_subjects
+    WHERE matched_jlpt_item_id IS NULL
+    GROUP BY wk_subject_id
+    HAVING COUNT(*) > 1
+  )
+`).get() as { c: number }).c;
+
+const orphanRowsToDelete = (db.prepare(`
+  SELECT COALESCE(SUM(c - 1), 0) as total FROM (
+    SELECT COUNT(*) as c FROM wanikani_subjects
+    WHERE matched_jlpt_item_id IS NULL
+    GROUP BY wk_subject_id
+    HAVING COUNT(*) > 1
+  )
+`).get() as { total: number }).total;
+
+console.log(`E. Orphan-pair groups (multi NULL-matched for same wk_id): ${orphanPairCount} (rows to delete: ${orphanRowsToDelete})`);
+
+// Survivor per group: row with a non-empty match_type wins
+// (preserves 'prefix_strip'/'reading'); ties broken by MIN(id).
+const deleteOrphans = db.prepare(`
+  DELETE FROM wanikani_subjects
+  WHERE id IN (
+    SELECT id FROM (
+      SELECT id,
+        ROW_NUMBER() OVER (
+          PARTITION BY wk_subject_id
+          ORDER BY
+            CASE WHEN match_type IS NOT NULL AND match_type != '' THEN 0 ELSE 1 END,
+            id
+        ) AS rn,
+        COUNT(*) OVER (PARTITION BY wk_subject_id) AS grp_size
+      FROM wanikani_subjects
+      WHERE matched_jlpt_item_id IS NULL
+    )
+    WHERE grp_size > 1 AND rn > 1
+  )
+`);
+
+// ── Step F: resolve multi-match (same wk_id, different jlpt_item matches) ──
+const multiMatchCount = (db.prepare(`
+  SELECT COUNT(*) as c FROM (
+    SELECT wk_subject_id FROM wanikani_subjects
+    WHERE matched_jlpt_item_id IS NOT NULL
+    GROUP BY wk_subject_id
+    HAVING COUNT(*) > 1
+  )
+`).get() as { c: number }).c;
+
+const multiMatchRowsToDelete = (db.prepare(`
+  SELECT COALESCE(SUM(c - 1), 0) as total FROM (
+    SELECT COUNT(*) as c FROM wanikani_subjects
+    WHERE matched_jlpt_item_id IS NOT NULL
+    GROUP BY wk_subject_id
+    HAVING COUNT(*) > 1
+  )
+`).get() as { total: number }).total;
+
+console.log(`F. Multi-match groups (same wk_id matched to multiple jlpt_items): ${multiMatchCount} (rows to delete: ${multiMatchRowsToDelete})`);
+
+// Survivor: row whose linked jlpt_items.expression equals wk.characters wins
+// (prefers the kanji-form match over the kana-form); ties broken by MIN(id).
+const deleteMultiMatch = db.prepare(`
+  DELETE FROM wanikani_subjects
+  WHERE id IN (
+    SELECT id FROM (
+      SELECT w.id,
+        ROW_NUMBER() OVER (
+          PARTITION BY w.wk_subject_id
+          ORDER BY
+            CASE WHEN j.expression = w.characters THEN 0 ELSE 1 END,
+            w.id
+        ) AS rn,
+        COUNT(*) OVER (PARTITION BY w.wk_subject_id) AS grp_size
+      FROM wanikani_subjects w
+      LEFT JOIN jlpt_items j ON j.id = w.matched_jlpt_item_id
+      WHERE w.matched_jlpt_item_id IS NOT NULL
+    )
+    WHERE grp_size > 1 AND rn > 1
+  )
+`);
+
 // ── Step C: count + normalize object_type='vocab' → 'vocabulary' ───
 const vocabPseudoCount = (db.prepare(`
   SELECT COUNT(*) as c FROM wanikani_subjects WHERE object_type = 'vocab'
@@ -161,10 +265,12 @@ if (DRY_RUN) {
 } else {
   const run = db.transaction(() => {
     const a = nullOvermatch.run().changes;
-    const b = deleteClones.run().changes;
+    const f = deleteMultiMatch.run().changes;
     const d = deleteGhosts.run().changes;
+    const e = deleteOrphans.run().changes;
+    const b = deleteClones.run().changes;
     const c = normalizeVocab.run().changes;
-    console.log(`\n✅ Applied: A=${a} nulled, B=${b} clones deleted, D=${d} ghosts deleted, C=${c} normalized`);
+    console.log(`\n✅ Applied: A=${a} nulled, F=${f} multi-match deleted, D=${d} ghosts deleted, E=${e} orphans deleted, B=${b} clones deleted, C=${c} normalized`);
   });
   run();
 
@@ -203,11 +309,31 @@ if (DRY_RUN) {
       )
   `).get() as { c: number }).c;
 
+  const remainingOrphans = (db.prepare(`
+    SELECT COUNT(*) as c FROM (
+      SELECT wk_subject_id FROM wanikani_subjects
+      WHERE matched_jlpt_item_id IS NULL
+      GROUP BY wk_subject_id
+      HAVING COUNT(*) > 1
+    )
+  `).get() as { c: number }).c;
+
+  const remainingMultiMatch = (db.prepare(`
+    SELECT COUNT(*) as c FROM (
+      SELECT wk_subject_id FROM wanikani_subjects
+      WHERE matched_jlpt_item_id IS NOT NULL
+      GROUP BY wk_subject_id
+      HAVING COUNT(*) > 1
+    )
+  `).get() as { c: number }).c;
+
   console.log(`\nVerify:`);
-  console.log(`  remaining over-match rows: ${remainingOvermatch} (expect 0)`);
-  console.log(`  remaining clone groups:    ${remainingClones} (expect 0)`);
-  console.log(`  remaining ghosts:          ${remainingGhosts} (expect 0)`);
-  console.log(`  remaining vocab pseudo:    ${remainingVocabPseudo} (expect 0)`);
+  console.log(`  remaining over-match rows:    ${remainingOvermatch} (expect 0)`);
+  console.log(`  remaining clone groups:       ${remainingClones} (expect 0)`);
+  console.log(`  remaining ghosts:             ${remainingGhosts} (expect 0)`);
+  console.log(`  remaining orphan pairs:       ${remainingOrphans} (expect 0)`);
+  console.log(`  remaining multi-match groups: ${remainingMultiMatch} (expect 0)`);
+  console.log(`  remaining vocab pseudo:       ${remainingVocabPseudo} (expect 0)`);
 }
 
 db.close();
