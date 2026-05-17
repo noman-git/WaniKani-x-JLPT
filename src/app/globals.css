@@ -2630,9 +2630,11 @@ main.container { padding-bottom: 96px; }
 .radical-chip:hover,
 .radical-composition-chip:hover,
 .related-vocab-chip:hover,
-.grammar-related-chip:hover {
+.grammar-related-chip:hover,
+.vocab-chip-override:hover {
   background: var(--paper-warm);
   border-color: var(--ink);
+  cursor: pointer;
 }
 
 .related-vocab-chip,
@@ -2669,6 +2671,7 @@ main.container { padding-bottom: 96px; }
   font-size: 9px;
   color: var(--clay);
   letter-spacing: 0.1em;
+  transition: all var(--t-fast);
 }
 
 .grammar-related-title {
