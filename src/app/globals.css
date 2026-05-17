@@ -2630,9 +2630,11 @@ main.container { padding-bottom: 96px; }
 .radical-chip:hover,
 .radical-composition-chip:hover,
 .related-vocab-chip:hover,
-.grammar-related-chip:hover {
+.grammar-related-chip:hover,
+.vocab-composition-chip:hover {
   background: var(--paper-warm);
   border-color: var(--ink);
+  cursor: pointer;
 }
 
 .related-vocab-chip,
@@ -2669,6 +2671,50 @@ main.container { padding-bottom: 96px; }
   font-size: 9px;
   color: var(--clay);
   letter-spacing: 0.1em;
+}
+
+/* Found-in-vocabulary chip on the lesson card — mirrors the
+   kanji-composition-chip column layout so expression + reading stack
+   neatly at the top, meaning + level fall underneath. */
+.vocab-composition-chip {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 10px 14px;
+  transition: all var(--t-fast);
+}
+
+.vocab-composition-chip .vocab-chip-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  line-height: 1.1;
+}
+
+.vocab-composition-chip .vocab-chip-expr {
+  font-family: var(--font-jp);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--accent-vocab);
+}
+
+.vocab-composition-chip .vocab-chip-reading {
+  font-family: var(--font-jp);
+  font-size: 13px;
+  color: var(--ink-faded);
+  font-weight: 400;
+}
+
+.vocab-composition-chip .srs-chip-sub {
+  color: var(--ink-soft);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+}
+
+.vocab-composition-chip .srs-chip-meta {
+  color: var(--ink-ghost);
 }
 
 .grammar-related-title {

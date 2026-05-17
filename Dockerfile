@@ -32,6 +32,11 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/drizzle ./drizzle
 
+# One-off maintenance scripts (run via `docker exec ... npx tsx scripts/...`).
+# tsx is installed globally so the script's .ts source needs no precompile.
+COPY --from=builder /app/scripts ./scripts
+RUN npm install -g tsx@4
+
 # Copy seed database (will be used if no DB exists on the volume)
 RUN mkdir -p /app/seed
 COPY --from=builder /app/data/jlpt-seed.db ./seed/
