@@ -1,9 +1,47 @@
 "use client";
 
-import { ReactNode, useState, useRef, useEffect } from "react";
+import { ReactNode, useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AuthProvider, useAuth } from "./AuthProvider";
+
+type Theme = "light" | "dark";
+
+// Read the theme the bootstrap script already applied to <html>. Keeps
+// SSR and the first client paint consistent — no useEffect-driven flash.
+function readInitialTheme(): Theme {
+  if (typeof document === "undefined") return "light";
+  return (document.documentElement.getAttribute("data-theme") as Theme) || "light";
+}
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>(readInitialTheme);
+
+  const toggle = useCallback(() => {
+    setTheme((prev) => {
+      const next: Theme = prev === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("folio-theme", next); } catch {}
+      return next;
+    });
+  }, []);
+
+  const isDark = theme === "dark";
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="theme-toggle"
+      role="switch"
+      aria-checked={isDark}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Light · 明" : "Dark · 暗"}
+    >
+      <span className="theme-toggle-glyph theme-toggle-glyph-light" aria-hidden="true">明</span>
+      <span className="theme-toggle-glyph theme-toggle-glyph-dark" aria-hidden="true">暗</span>
+    </button>
+  );
+}
 
 // Shared user menu dropdown (used by both desktop and mobile)
 function UserMenu() {
@@ -82,6 +120,7 @@ function NavBar() {
             <li><Link href="/kanji" className={`nav-link kanji-nav ${isActive("/kanji") ? "active" : ""}`}>Kanji</Link></li>
             <li><Link href="/vocab" className={`nav-link vocab-nav ${isActive("/vocab") ? "active" : ""}`}>Vocab</Link></li>
             <li><Link href="/grammar" className={`nav-link grammar-nav ${isActive("/grammar") ? "active" : ""}`}>Grammar</Link></li>
+            <li><ThemeToggle /></li>
             <li><UserMenu /></li>
           </ul>
         </div>
@@ -119,13 +158,16 @@ function MobileNav() {
         <button onClick={() => router.push('/')} className="mobile-nav-brand" title="Dashboard">
           文
         </button>
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="mobile-nav-hamburger"
-          aria-label="Menu"
-        >
-          {menuOpen ? 'CLOSE' : 'MENU'}
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <ThemeToggle />
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="mobile-nav-hamburger"
+            aria-label="Menu"
+          >
+            {menuOpen ? 'CLOSE' : 'MENU'}
+          </button>
+        </div>
       </div>
 
       {menuOpen && (

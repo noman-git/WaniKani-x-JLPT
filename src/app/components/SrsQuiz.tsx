@@ -438,7 +438,15 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
             {currentTask.item.wkLevel && (
                <span className="badge badge-wk">WK Lv {currentTask.item.wkLevel}</span>
             )}
-            <span className="srs-type-badge">{currentTask.item.type}</span>
+            <span
+               className="srs-type-badge"
+               style={{
+                  color: `var(--accent-${currentTask.item.type})`,
+                  borderColor: `var(--accent-${currentTask.item.type})`,
+               }}
+            >
+               {currentTask.item.type}
+            </span>
             <button
                type="button"
                className={`cs-known-btn srs-known-btn ${knownSet.has(currentTask.item.id) ? "is-known" : ""}`}
