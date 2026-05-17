@@ -4,17 +4,10 @@ import { NextRequest } from "next/server";
 import { db } from "./db";
 import { users } from "./db/schema";
 import { eq } from "drizzle-orm";
+import { getSessionSecret, getAdminSecret } from "./env";
 
 const SESSION_COOKIE = "jlpt_session";
 const SESSION_MAX_AGE = 30 * 24 * 60 * 60; // 30 days in seconds
-
-function getSecret() {
-  const secret = process.env.SESSION_SECRET;
-  if (!secret || secret.length < 16) {
-    throw new Error("SESSION_SECRET env var must be set (min 16 chars)");
-  }
-  return new TextEncoder().encode(secret);
-}
 
 export interface SessionPayload {
   userId: number;
@@ -28,7 +21,7 @@ export async function createSession(payload: SessionPayload) {
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime(`${SESSION_MAX_AGE}s`)
     .setIssuedAt()
-    .sign(getSecret());
+    .sign(getSessionSecret());
 
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, {
@@ -58,7 +51,7 @@ export async function getSession(
 
     if (!token) return null;
 
-    const { payload } = await jwtVerify(token, getSecret());
+    const { payload } = await jwtVerify(token, getSessionSecret());
     return {
       userId: payload.userId as number,
       username: payload.username as string,
@@ -88,12 +81,8 @@ export async function requireAuth(request: NextRequest): Promise<SessionPayload>
 
 /** Verify admin secret header for admin-only endpoints */
 export function requireAdmin(request: NextRequest): void {
-  const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) {
-    throw new AuthError("ADMIN_SECRET not configured");
-  }
   const provided = request.headers.get("authorization")?.replace("Bearer ", "");
-  if (provided !== adminSecret) {
+  if (provided !== getAdminSecret()) {
     throw new AuthError("Invalid admin secret");
   }
 }

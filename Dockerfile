@@ -42,4 +42,7 @@ RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
 USER nextjs
 EXPOSE 3000
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD wget --quiet --spider http://127.0.0.1:3000/api/health || exit 1
+
 CMD ["node", "server.js"]
