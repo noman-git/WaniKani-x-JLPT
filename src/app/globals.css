@@ -948,12 +948,17 @@ main.container { padding-bottom: 96px; }
   overflow: hidden;
 }
 
+.item-card[data-type="kanji"]   { --card-accent: var(--accent-kanji); }
+.item-card[data-type="vocab"]   { --card-accent: var(--accent-vocab); }
+.item-card[data-type="radical"] { --card-accent: var(--accent-radical); }
+.item-card[data-type="grammar"] { --card-accent: var(--accent-grammar); }
+
 .item-card::before {
   content: "";
   position: absolute;
   top: 0; left: 0;
   width: 0; height: 2px;
-  background: var(--vermillion);
+  background: var(--card-accent, var(--vermillion));
   transition: width var(--t-mid);
 }
 
