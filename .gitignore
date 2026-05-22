@@ -41,6 +41,7 @@ yarn-error.log*
 /data/jlpt-backup-*
 /data/jlpt.db.preclean-*
 /data/jlpt.db.backup-*
+/data/jlpt.db.preimport-*
 !/data/jlpt-seed.db
 /data/debug/
 /data/*.json
