@@ -10,7 +10,7 @@
  *   - <LessonHero>          → anchor card with badges, glyph, Mark Known toggle
  *   - <LessonBottomNav>     → progress bar + Prev / counter / Next or Quiz
  *   - useKnownToggle()      → stateful Mark Known / Mark Unknown w/ optimistic flip
- *   - useLessonKeys()       → vim-style (h/j/k/l) + arrow nav, ⌃Y / ⌘Y toggle known
+ *   - useLessonKeys()       → vim-style (h/j/k/l) + arrow nav, Y (or ⌃Y/⌘Y) toggle known
  */
 
 import { ReactNode, useState, useEffect, useCallback } from "react";
@@ -71,7 +71,7 @@ export function useKnownToggle({ endpoint, idField }: ToggleOpts) {
 }
 
 /* ============================================================
-   useLessonKeys — vim-style nav (h/j/k/l) + arrows, ⌃Y/⌘Y toggle known
+   useLessonKeys — vim-style nav (h/j/k/l) + arrows, Y (or ⌃Y/⌘Y) toggle known
    ============================================================ */
 type KeysOpts = {
   enabled: boolean;
@@ -107,6 +107,9 @@ export function useLessonKeys({ enabled, onPrev, onNext, onToggleKnown }: KeysOp
       } else if (e.key === "k" || e.key === "K") {
         e.preventDefault();
         window.scrollBy({ top: -SCROLL_STEP, behavior: "smooth" });
+      } else if (e.key === "y" || e.key === "Y") {
+        e.preventDefault();
+        onToggleKnown();
       }
     };
     window.addEventListener("keydown", handler);
@@ -168,11 +171,11 @@ export function LessonHero({
         disabled={knownPending}
         className={`cs-known-btn ${isKnown ? "is-known" : ""}`}
         title={isKnown
-          ? "Marked known — click (or press ⌃Y / ⌘Y) to unmark"
-          : "Already know this? Click (or press ⌃Y / ⌘Y) to mark known"}
+          ? "Marked known — click (or press Y) to unmark"
+          : "Already know this? Click (or press Y) to mark known"}
       >
         {isKnown ? "✓ Known" : "★ Mark known"}
-        <kbd className="cs-known-kbd">⌃Y</kbd>
+        <kbd className="cs-known-kbd">Y</kbd>
       </button>
 
       {children}
