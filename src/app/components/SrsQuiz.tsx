@@ -408,12 +408,12 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
     }
   };
 
-  // Ctrl/Cmd + K — toggle "known" for the current item (does NOT pop from queue;
+  // Ctrl/Cmd + Y — toggle "known" for the current item (does NOT pop from queue;
   // the normal answer flow continues, and wrong answers still penalize).
   useEffect(() => {
     if (!currentTask) return;
     const handler = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "y" || e.key === "Y")) {
         e.preventDefault();
         toggleKnownCurrent();
       }
@@ -453,11 +453,11 @@ export default function SrsQuiz({ items, onComplete, mode }: Props) {
                onClick={toggleKnownCurrent}
                disabled={knownPending}
                title={knownSet.has(currentTask.item.id)
-                 ? "Marked known (Master) — click or ⌘K to unmark. Still answers normally."
-                 : "Mark known (Master). The item stays in the queue; getting it wrong still penalizes. ⌘K"}
+                 ? "Marked known (Master) — click or ⌃Y/⌘Y to unmark. Still answers normally."
+                 : "Mark known (Master). The item stays in the queue; getting it wrong still penalizes. ⌃Y/⌘Y"}
             >
                {knownSet.has(currentTask.item.id) ? "✓ Known" : "★ Mark known"}
-               <kbd className="cs-known-kbd">⌘K</kbd>
+               <kbd className="cs-known-kbd">⌃Y</kbd>
             </button>
          </div>
       </div>
