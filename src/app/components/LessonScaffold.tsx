@@ -10,7 +10,7 @@
  *   - <LessonHero>          → anchor card with badges, glyph, Mark Known toggle
  *   - <LessonBottomNav>     → progress bar + Prev / counter / Next or Quiz
  *   - useKnownToggle()      → stateful Mark Known / Mark Unknown w/ optimistic flip
- *   - useLessonKeys()       → arrow-key nav + K / ⌘K shortcut for known toggle
+ *   - useLessonKeys()       → vim-style (h/j/k/l) + arrow nav, ⌃Y / ⌘Y toggle known
  */
 
 import { ReactNode, useState, useEffect, useCallback } from "react";
@@ -71,7 +71,7 @@ export function useKnownToggle({ endpoint, idField }: ToggleOpts) {
 }
 
 /* ============================================================
-   useLessonKeys — arrow nav + K / ⌘K toggle
+   useLessonKeys — vim-style nav (h/j/k/l) + arrows, ⌃Y/⌘Y toggle known
    ============================================================ */
 type KeysOpts = {
   enabled: boolean;
@@ -80,22 +80,33 @@ type KeysOpts = {
   onToggleKnown: () => void;
 };
 
+const SCROLL_STEP = 80;
+
 export function useLessonKeys({ enabled, onPrev, onNext, onToggleKnown }: KeysOpts) {
   useEffect(() => {
     if (!enabled) return;
     const handler = (e: KeyboardEvent) => {
       const inField = e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement;
-      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+      // ⌃Y / ⌘Y — toggle known (works even while typing in a note field)
+      if ((e.ctrlKey || e.metaKey) && (e.key === "y" || e.key === "Y")) {
         e.preventDefault();
         onToggleKnown();
         return;
       }
       if (inField) return;
-      if (e.key === "ArrowRight") onNext();
-      else if (e.key === "ArrowLeft") onPrev();
-      else if (e.key === "k" || e.key === "K") {
+      // Arrow keys keep working for non-vim users.
+      if (e.key === "ArrowRight" || e.key === "l" || e.key === "L") {
         e.preventDefault();
-        onToggleKnown();
+        onNext();
+      } else if (e.key === "ArrowLeft" || e.key === "h" || e.key === "H") {
+        e.preventDefault();
+        onPrev();
+      } else if (e.key === "j" || e.key === "J") {
+        e.preventDefault();
+        window.scrollBy({ top: SCROLL_STEP, behavior: "smooth" });
+      } else if (e.key === "k" || e.key === "K") {
+        e.preventDefault();
+        window.scrollBy({ top: -SCROLL_STEP, behavior: "smooth" });
       }
     };
     window.addEventListener("keydown", handler);
@@ -157,11 +168,11 @@ export function LessonHero({
         disabled={knownPending}
         className={`cs-known-btn ${isKnown ? "is-known" : ""}`}
         title={isKnown
-          ? "Marked known — click (or press K) to unmark"
-          : "Already know this? Click (or press K) to mark known"}
+          ? "Marked known — click (or press ⌃Y / ⌘Y) to unmark"
+          : "Already know this? Click (or press ⌃Y / ⌘Y) to mark known"}
       >
         {isKnown ? "✓ Known" : "★ Mark known"}
-        <kbd className="cs-known-kbd">K</kbd>
+        <kbd className="cs-known-kbd">⌃Y</kbd>
       </button>
 
       {children}
