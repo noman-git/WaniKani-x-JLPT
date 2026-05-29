@@ -92,6 +92,26 @@ git add data/jlpt-seed.db && git commit -m "Reseed"
 
 `scripts/export-seed.ts` copies `jlpt.db` → `jlpt-seed.db`, deletes rows from `users`, `invite_codes`, `user_progress`, `user_notes`, `grammar_progress`, `grammar_notes`, `kanji_cache`, then `VACUUM`s.
 
+## Shipping reference-data changes to prod
+
+Re-baking the seed does **not** update the live VPS DB. The seed is only copied
+into `jlpt.db` when that file is missing (see Deployment), and the persistent
+volume always has it — so a reseed + redeploy never touches live reference data.
+
+**Reference-data fixes ship as Drizzle data-migrations.** Write a hand-authored
+`drizzle/NNNN_*.sql` containing the `UPDATE`/`INSERT` statements and add a matching
+entry to `drizzle/meta/_journal.json`. The migrator runs on every boot, applies
+each migration exactly once (tracked in `__drizzle_migrations`), and touches no
+user/progress tables. This auto-applies on the next Coolify deploy — no `docker
+exec` needed.
+
+- Keep the same change in the seed too (`export-seed.ts` + commit) so fresh
+  first-boot installs get it without replaying migrations.
+- Do **not** use `scripts/test-sync.ts` against prod — it deletes
+  `user_progress` / `user_notes` / `grammar_progress` before reloading the seed.
+- Example: `0005_backfill_radical_svgs.sql` backfills `character_image_url` for
+  the 18 image-only radicals.
+
 ## Deployment (Coolify on VPS)
 
 The repo ships a multi-stage `Dockerfile` that:
