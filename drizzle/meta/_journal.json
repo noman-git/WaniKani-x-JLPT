@@ -36,6 +36,13 @@
       "when": 1779009600000,
       "tag": "0004_jlpt_items_unique",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1780056324722,
+      "tag": "0005_backfill_radical_svgs",
+      "breakpoints": true
     }
   ]
 }
