@@ -248,10 +248,7 @@ export default function ItemsBrowser({
         return (
           <ItemModal
             target={modalTarget}
-            onClose={() => {
-              setModalTarget(null);
-              loadItems();
-            }}
+            onClose={() => setModalTarget(null)}
             onNavigateItem={(id: number) => setModalTarget({ type: "item", id })}
             onNavigateRadical={(wkSubjectId: number) => setModalTarget({ type: "radical", wkSubjectId })}
             onNext={onNext}

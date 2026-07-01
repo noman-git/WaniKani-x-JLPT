@@ -136,10 +136,7 @@ export default function GrammarPage() {
       {selectedSlug && (
         <GrammarDetailModal
           slug={selectedSlug}
-          onClose={() => {
-            setSelectedSlug(null);
-            loadGrammar();
-          }}
+          onClose={() => setSelectedSlug(null)}
         />
       )}
     </>
