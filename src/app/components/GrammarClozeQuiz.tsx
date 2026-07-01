@@ -120,24 +120,24 @@ export default function GrammarClozeQuiz({ items, onComplete, mode }: Props) {
       isCorrect = answerNorm === cleanTitle || answerNorm === wanakana.toHiragana(currentItem.titleRomaji);
     }
 
+    // Submit fire-and-forget: awaiting here keeps `loading` (and thus the
+    // input's `disabled`) true across the round-trip, which blurs the input and
+    // breaks Enter-to-advance. Set feedback + clear loading synchronously so the
+    // input keeps focus, exactly like SrsQuiz.
     if (isCorrect) {
       setFeedback("correct");
-      try {
-        await fetch("/api/grammar/srs/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ grammarPointId: currentItem.id, isCorrect: true, timeToAnswerMs, mistakeType: null, forceKnown: false })
-        });
-      } catch {}
+      fetch("/api/grammar/srs/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ grammarPointId: currentItem.id, isCorrect: true, timeToAnswerMs, mistakeType: null, forceKnown: false })
+      }).catch(() => {});
     } else {
       setFeedback("incorrect");
-      try {
-        await fetch("/api/grammar/srs/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ grammarPointId: currentItem.id, isCorrect: false, timeToAnswerMs, mistakeType: currentItem.quizMode === "cloze" ? "reading" : "meaning", forceKnown: false })
-        });
-      } catch {}
+      fetch("/api/grammar/srs/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ grammarPointId: currentItem.id, isCorrect: false, timeToAnswerMs, mistakeType: currentItem.quizMode === "cloze" ? "reading" : "meaning", forceKnown: false })
+      }).catch(() => {});
     }
     setLoading(false);
   };
